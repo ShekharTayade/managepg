@@ -1,0 +1,224 @@
+{% load static %}
+	<!-- <div class="container">
+		 <div class="row" style = "padding:5px 0;">
+			<div class="col-lg-6 mb-3 mb-lg-0 text-white">
+				{% if ecom_site.phone_support_available %}
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a class = "text-white clickable" data-toggle="modal" data-target="#phone-help">
+						<i class="fa fa-phone"></i>&nbsp;Help								
+					</a> 
+				{% endif %}
+			</div>
+			<div id="phone-help" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" class="modal fade">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Contact Number</h5>
+							<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+						</div>
+						<div class="modal-body">	
+							We are here to help!<br />
+							Please call: {{ecom_site.support_phonenumber }}<br />
+							<small>Timing: {{ecom_site.phone_support_start_time}} to {{ecom_site.phone_support_end_time}}</small>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 text-center text-lg-right">
+			<ul class="menu list-inline mb-0">
+				{% if user.is_authenticated %}
+				<li class="list-inline-item clickable">
+					<a href="#" data-toggle="dropdown">
+						<i class="fa fa-user-circle-o nfa-2x"></i>
+						{{user.username}}
+					</a>
+					<ul class="dropdown-menu dropdown-menu-login pull-right" >
+						<li><a href="{% url 'logout' %}">Logout</a></li>
+						<li class="dropdown-divider"></li>
+						<li> <a href="{% url 'password_change' %}">Change Password</a></li>   
+					</ul>
+
+				</li>
+
+				{% else %}
+					<div id="login" class="navbar-collapse collapse d-none d-lg-block text-lg-right pull-right">
+						<a href="#" data-toggle="modal" data-target="#login-modal" class="btn btn-primary navbar-btn">
+							<i class="fa fa-login"></i><span>Login</span>
+						</a>
+					</div>
+				{% endif %}
+			</ul>
+		</div>
+	</div> -->
+    <!-- navbar-->
+	<header class="header mb-1">
+
+		<nav class="navbar navbar-expand-lg">
+			<div class="container">
+				<a href="{% url 'index' %}" class="navbar-brand home">
+					<img src="{% static 'img/logo_website.png' %}" alt="SAM logo" class="d-none d-md-inline-block">
+					<img src="{% static 'img/logo-small.png' %}" alt="SAMs logo" class="d-inline-block d-md-none">
+					<span class="sr-only">Homepage</span>
+				</a>
+				<div class="navbar-buttons">
+					<button type="button" data-toggle="collapse" data-target="#navigation" class="btn btn-outline-secondary navbar-toggler"><span class="sr-only">Toggle navigation</span><i class="fa fa-align-justify"></i></button>
+				</div>
+				<div id="navigation" class="collapse navbar-collapse">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+							<a href="#" class="nav-link active">Home</a>
+						</li>
+						<li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Menu<b class="caret"></b></a>
+							<ul class="dropdown-menu megamenu">
+								<li>
+									<div class="row">
+										<div class="col-md-6 col-lg-3">
+											<h5>Bookings</h5>
+											<ul class="list-unstyled mb-3">
+											  <li class="nav-item"><a href="{% url 'booking' %}" class="nav-link">New Booking</a></li>
+											  <li class="nav-item"><a href="booking.html" class="nav-link">Edit Existing Booking</a></li>
+											  <li class="nav-item"><a href="booking.html" class="nav-link">Delete a Booking</a></li>
+											</ul>
+										</div>
+										<div class="col-md-6 col-lg-3">
+											<h5>Registration (Check-in)</h5>
+											<ul class="list-unstyled mb-3">
+												<li class="nav-item"><a href="booking.html" class="nav-link">Register</a></li>
+												<li class="nav-item"><a href="booking.html" class="nav-link">Edit Registration</a></li>
+												<li class="nav-item"><a href="booking.html" class="nav-link">Print Registration Form</a></li>
+											</ul>
+										</div>
+										<div class="col-md-6 col-lg-3">
+											<h5>Vacate (Check-out)</h5>
+											<ul class="list-unstyled mb-3">
+												<li class="nav-item"><a href="booking.html" class="nav-link">Vacate</a></li>
+												<li class="nav-item"><a href="booking.html" class="nav-link">Modify Check-out</a></li>
+												<li class="nav-item"><a href="booking.html" class="nav-link">Print</a></li>
+											</ul>
+										</div>
+										<div class="col-md-6 col-lg-3">
+											<h5>Billing & Payments</h5>
+											<ul class="list-unstyled mb-3">
+												<li class="nav-item"><a href="booking.html" class="nav-link">Receive Payment</a></li>
+												<li class="nav-item"><a href="booking.html" class="nav-link">Generate Bills</a></li>
+											</ul>
+											<h5>Manage Rooms</h5>
+											<ul class="list-unstyled mb-3">
+												<li class="nav-item"><a href="booking.html" class="nav-link">Rooms</a></li>
+												<li class="nav-item"><a href="booking.html" class="nav-link">Rooms Conversions</a></li>
+											</ul>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</li>
+					</ul>
+	 
+				</div>
+				
+				<div class="col-lg-6 text-center">
+					<ul class="menu list-inline mb-0">
+						{% if user.is_authenticated %}
+						<div class = "pull-right">
+						<li class="list-inline-item clickable pull-right">
+							<a href="#" data-toggle="dropdown">
+								<i class="fa fa-user-circle-o nfa-2x"></i>
+								{{user.username}}
+							</a>
+							<ul class="dropdown-menu dropdown-menu-login">
+								<li><a href="{% url 'logout' %}">Logout</a></li>
+								<li class="dropdown-divider"></li>
+								<li><a href="{% url 'password_change' %}" > Change Password</a></li>   
+							</ul>
+						</li>
+						</div>
+						{% else %}
+						<div id="login" class="navbar-collapse collapse d-none d-lg-block text-lg-right pull-right">
+							<a href="#" data-toggle="modal" data-target="#login-modal" class="btn btn-primary navbar-btn">
+								<i class="fa fa-login"></i><span>Login</span>
+							</a>
+						</div>						
+					{% endif %}
+					</ul>
+				</div>
+			
+			
+			</div>
+		</nav>
+	  
+		<!-- Login Modal -->
+		<div id="login-modal" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" class="modal fade">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Customer login</h5>
+						<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+					</div>
+					<div class="modal-body">
+						<form action = "{% url 'login'%}" method="post" accept-charset="UTF-8" role="form" method="POST">
+							 {% csrf_token %}
+							<div class="form-group">
+								<input name = "username" type="text" class="form-control" placeholder="Username">
+							</div>
+							<div class="form-group">
+								<input id="email-modal" name = "email" type="text" placeholder="email" class="form-control">
+							</div>
+							<div class="form-group">
+								<input id="password-modal" name = "password" type="password" placeholder="password" class="form-control">
+							</div>
+							<input name="remember" type="checkbox" value="Remember Me" checked> Remember Me						
+							<input hidden name="curr_pg" value="{{request.path}}" >						
+							<!-- To check if user is not authenticated and display an error message if not autheticated -->
+							<!-- The view returns a value "invalid" in invalid key if use if not authenticated. -->
+							<p>
+								<div class="text-center">
+									<button type = "submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Log in</button>
+								</div>
+
+								<div class="text-center text-muted"> <a href="">
+									<small class = "text-muted"><a href="{% url 'password_reset' %}">Forgot Username/Password</a></small></a>
+                                    <!-- <span style="float:right"><a href="{% url 'password_reset' %}">Forgot Username or Password?</a></span> -->
+								</div>
+							</p>
+							<div id = "show-loginerror">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END: Login modal -->
+		
+	
+		<!-- Change Password Modal -->
+		<div id="changepassword-modal" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" class="modal fade">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title"></h5>
+						<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+					</div>
+					<div class="modal-body">	
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+								Change Password
+								</h3>
+							</div>
+							<div class="panel-body">
+								<form method="post" novalidate action = "{% url 'password_change' %}">
+									{% csrf_token %}
+									{% include 'includes/form.html' %}
+									<!--<button type="submit" class="btn btn-success">Change password</button>-->
+									<input class="btn btn-lg btn-primary btn-block" type="submit" value="Change">
+								</form>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+			<!-- END: Login Modal -->
+		  
+    </header>

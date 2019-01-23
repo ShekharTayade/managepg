@@ -1,0 +1,627 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Booking</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class="col-lg-3">
+						<!--
+						*** MENUS AND FILTERS ***
+						_________________________________________________________
+						-->
+						<div class="card sidebar-menu mb-4">
+							<div class="card-header">
+								<h3 class="h4 card-title">Booking</h3>
+							</div>
+							<div class="card-body">
+								<ul class="nav nav-pills flex-column category-menu">
+									<li><a href="category.html" class="nav-link">New</a>
+									</li>
+									<li><a href="category.html" class="nav-link active">Edit Existing Booking</a>
+									</li>
+									<li><a href="category.html" class="nav-link">Print</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="card sidebar-menu mb-4">
+							<div class="card-header">
+								<h3 class="h4 card-title">Room Availability <a href="#" class="btn btn-sm btn-danger pull-right"></a></h3>
+							</div>
+						</div>
+						<div class="card-body">
+							<form>
+								<div class="form-group">
+									<div class="checkbox">
+									<label>
+										<input type="checkbox"><span class="colour white"></span> Single (14)
+									</label>
+									</div>
+									<div class="checkbox">
+										<label>
+											<input type="checkbox"><span class="colour blue"></span> Two-Bed (10)
+										</label>
+									</div>
+									<div class="checkbox">
+										<label>
+											<input type="checkbox"><span class="colour green"></span>  Three-Bed (20)
+										</label>
+									</div>
+									<div class="checkbox">
+										<label>
+											<input type="checkbox"><span class="colour yellow"></span>  Four-Bed (13)
+										</label>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="col-lg-9">
+						<div class="box">
+							<h1>New Booking</h1>
+							<p>Record candidate details and confirm booking.</p>
+						</div>
+						<div class="box info-bar">
+							<form class="form-horizontal" action="">
+								<div class = "row">
+									<h4>Registration Number:</h4>
+									<div class = "col-sm-4">
+										<span class="form-control" id="reg">XXXXXXXX</span>
+									</div>
+								</div>
+								<hr>
+								<div class="col-md-12">
+									<nav class="nav-justified ">
+										<div class="nav nav-tabs " id="nav-tab" role="tablist">
+											<a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Candidate Details</a>
+											<a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Personal and Room Details</a>
+											<a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Parent/Guardian Details</a>
+										</div>
+									</nav>
+									
+									<div class="tab-content" id="nav-tabContent">
+										<!-- Tab 1 -->
+										<div class="tab-pane fade show active" id="pop1" role="tabpanel" aria-labelledby="pop1-tab">
+											<div class = "row">
+												<div class = "col-sm-4">
+													<label> First Name:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="fname" placeholder = "First Name">
+													</div>
+												</div>
+												<div class = "col-sm-4">
+													<label> Middle Name:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+													</div>
+												</div>
+												<div class = "col-sm-4">
+													<label> Last Name:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Last Name">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4 pull-left">
+													<label> Date of Birth:</label>
+													<div class="form-group">
+														<input class="form-control" type="date" class="form-control" id="dob" placeholder = "DD/MM/YYY">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label> Email:</label>
+													<div class="form-group">
+														<input class="form-control" type="email" class="form-control" id="email" placeholder = "Valid Email ID">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label> Phone:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Mobile/Landline(with STD code)">
+													</div>
+												</div>
+											</div>
+									        <div class = "row">
+												<div class = "col-sm-4 pull-left">
+													<label> Working / Studying:</label>
+													<div class="form-group">
+														<input class="form-control" type="email" class="form-control" id="working" placeholder = "working / studying">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label> Company Name:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="working" placeholder = "Name of the Company">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> Company Contact:</label>
+													<div class="form-group">
+														<input class="form-control" type="email" class="form-control" id="email" placeholder = " Name">
+													</div>
+												</div>
+												<div class = "col-sm-6 pull-left">
+													<label>Company contact Phone:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Mobile/Landline(with STD code)">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-12 pull-left">
+													<label> Company Address:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "1234 Main street">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-12 pull-left">
+													<label> Company Address2:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "Apartment, Studio or Floor">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> inputCity:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "inputCity">
+													</div>
+												</div>
+												<div class="form-group col-md-4">
+                                                  <label for="inputState">State</label>
+                                                  <select id="inputState" class="form-control">
+                                                    <option selected>Choose...</option>
+                                                    <option>...</option>
+                                                  </select>
+                                                </div>
+                                                <div class="form-group col-md-2">
+                                                  <label for="inputZip">Zip</label>
+                                                  <input type="text" class="form-control" id="inputZip">
+                                                </div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-12 pull-left">
+													<label> Permanent Address:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "1234 Main street">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-12 pull-left">
+													<label> Permanent Address2:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "Apartment, Studio or Floor">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> inputCity:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "inputCity">
+													</div>
+												</div>
+												<div class="form-group col-md-4">
+                                                  <label for="inputState">State</label>
+                                                  <select id="inputState" class="form-control">
+                                                    <option selected>Choose...</option>
+                                                    <option>...</option>
+                                                  </select>
+                                                </div>
+                                                <div class="form-group col-md-2">
+                                                  <label for="inputZip">Zip</label>
+                                                  <input type="text" class="form-control" id="inputZip">
+                                                </div>
+											</div>
+											 <div class="row">
+
+                                                  <div class="col-sm-10">
+                                                    <div class="form-check">
+                                                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                                      <label class="form-check-label" for="gridRadios1">
+                                                        Same as permanent address
+                                                      </label>
+                                                    </div>
+                                                     </div>
+                                                </div>
+                                            <div class = "row">
+												<div class = "col-sm-12 pull-left">
+													<label> Current Address:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "1234 Main street">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-12 pull-left">
+													<label> Current Address2:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "Apartment, Studio or Floor">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> inputCity:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "inputCity">
+													</div>
+												</div>
+												<div class="form-group col-md-4">
+                                                  <label for="inputState">State</label>
+                                                  <select id="inputState" class="form-control">
+                                                    <option selected>Choose...</option>
+                                                    <option>...</option>
+                                                  </select>
+                                                </div>
+                                                <div class="form-group col-md-2">
+                                                  <label for="inputZip">Zip</label>
+                                                  <input type="text" class="form-control" id="inputZip">
+                                                </div>
+											</div>
+											
+										</div>
+										<!-- END : Tab 1 -->
+										
+										<!-- Tab 2 -->
+										<div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
+										
+										<div class = "row">
+												<div class = "col-sm-4 pull-left">
+													<label> Date:</label>
+													<div class="form-group">
+														<input class="form-control" type="date" class="form-control" id="Date" placeholder = "DD/MM/YYY">
+													</div>
+                                                </div>
+
+												<div class = "col-sm-4">
+													<label> Time of checkin:</label>
+													<div class="form-group">
+														<input class="form-control" type="time" class="form-control" id="time" placeholder = "Time">
+													</div>
+												</div>
+												<div class = "col-sm-4">
+													<label> Food Arrangements:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Food Arrangements">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4 pull-left">
+													<label> Referred by Name:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="refname" placeholder = "ref name">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label>Ref Phone:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Mobile/Landline(with STD code)">
+													</div>
+												</div>
+										    </div>
+										    <div class = "row">
+												<div class = "col-sm-4 pull-left">
+													<label> Allergic to any:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="refname" placeholder = "Allergy Details">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label> Any other details to provide:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="refname" placeholder = "Other Details">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label> Blood Grouup:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="refname" placeholder = "Blood Group">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4 pull-left">
+													<label> Doctor Name:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="refname" placeholder = "Doctor name">
+													</div>
+												</div>
+												<div class = "col-sm-4 pull-left">
+													<label>Ref Phone:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Mobile/Landline(with STD code)">
+													</div>
+												</div>
+										    </div>	
+											<div class = "row">
+												<div class = "col-sm-3">
+													<div class="form-group">
+														<div class="radio">
+														  <label><input type="radio" name="optradio" checked>Block 1</label>
+														</div>
+														<div class="radio">
+														  <label><input type="radio" name="optradio">Block 2</label>
+														</div>
+													</div>
+												</div>
+												<div class = "col-sm-3">
+													<div class= "form-group">
+														<label for="parent1">Floor:</label>
+														<select class="form-control" id="parent1">
+															<option>Floor 1</option>
+															<option>Floor 2</option>
+															<option>Floor 3</option>
+															<option>Floor 4</option>
+														</select>
+													</div>
+												</div>
+												
+												<div class = "col-sm-3">
+													<div class= "form-group">
+														<label for="parent1">Room:</label>
+														<select class="form-control" id="parent1">
+															<option>Room 1</option>
+															<option>Room 2</option>
+															<option>Room 3</option>
+															<option>Room 4</option>
+														</select>
+													</div>
+												</div>
+												<div class = "col-sm-3">
+													<div class= "form-group">
+														<label for="parent1">Bed:</label>
+														<select class="form-control" id="parent1">
+															<option>Bed 1</option>
+															<option>Bed 2</option>
+															<option>Bed 3</option>
+															<option>Bed 4</option>
+														</select>
+													</div>
+												</div>
+												<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> Emergency Contact 1:</label>
+													<div class="form-group">
+														<input class="form-control" type="email" class="form-control" id="email" placeholder = " Name">
+													</div>
+												</div>
+												<div class = "col-sm-6 pull-left">
+													<label>Emergency contact 1 Phone:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Mobile/Landline(with STD code)">
+													</div>
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> Emergency Contact 2:</label>
+													<div class="form-group">
+														<input class="form-control" type="email" class="form-control" id="email" placeholder = " Name">
+													</div>
+												</div>
+												<div class = "col-sm-6 pull-left">
+													<label>Emergency contact 2 Phone:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Mobile/Landline(with STD code)">
+													</div>
+												</div>
+											</div>
+											</div>
+                                            <div class = "row">
+												<div class = "col-sm-3 pull-left">
+													<label> Id Card Number:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="refname" placeholder = "Id Card No.">
+													</div>
+												</div>
+												<div class = "col-sm-3">
+													<div class= "form-group">
+														<label for="Food Opted">Food Opted:</label>
+														<select class="form-control" id="food opted">
+															<option>Yes</option>
+															<option>No</option>
+														</select>
+													</div>
+												</div>
+<!--
+												<div class = "col-sm-3 pull-left">
+													<label>Food Opted:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Yes / No">
+													</div>
+												</div>
+-->
+												<div class = "col-sm-3">
+													<div class= "form-group">
+														<label for="Type">Type:</label>
+														<select class="form-control" id="type">
+															<option>Veg</option>
+															<option>Non-Veg</option>
+														</select>
+													</div>
+												</div>
+												<div class = "col-sm-3">
+													<div class= "form-group">
+														<label for="Tenure">Tenure:</label>
+														<select class="form-control" id="tenure">
+															<option>One Month</option>
+															<option>Normal</option>
+														</select>
+													</div>
+												</div>
+<!--
+                                                <div class = "col-sm-3 pull-left">
+													<label>Tenure:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="lname" placeholder = "Tenure">
+													</div>
+												</div>
+-->
+										    </div>	
+										</div>
+										<!-- END: Tab 2 -->
+												
+										<!-- Tab 3 -->
+										<div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														<label for="parent1">Select Guardian:</label>
+														<select class="form-control" id="parent1">
+															<option>Father</option>
+															<option>Mother</option>
+															<option>Husband</option>
+															<option>Wife</option>
+															<option>Guardian</option>
+														</select>
+													</div>
+												</div>
+
+												<div class = "col-sm-8">
+													<div class = "row">
+														<div class = "col-sm-6">
+															<div class= "form-group">
+																<label for="sel2">Educational Qualification:</label>
+																	<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+																<label for="sel2">Occupation/Designation:</label>
+																	<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+															</div>
+														</div>
+														<div class = "col-sm-6">
+															<div class= "form-group">
+																<label for="sel2">Company:</label>
+																	<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+																<label for="sel2">Phone:</label>
+																	<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														<label for="parent1">Select Guardian:</label>
+														<select class="form-control" id="parent1">
+															<option>Father</option>
+															<option>Mother</option>
+															<option>Husband</option>
+															<option>Wife</option>
+															<option>Guardian</option>
+														</select>
+													</div>
+												</div>
+
+												<div class = "col-sm-8">
+													<div class = "row">
+														<div class = "col-sm-6">
+															<div class= "form-group">
+																<label for="sel2">Educational Qualification:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+																<label for="sel2">Occupation/Designation:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+															</div>
+														</div>
+														<div class = "col-sm-6">
+															<div class= "form-group">
+																<label for="sel2">Company:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+																<label for="sel2">Phone:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														<label for="parent1">Select Guardian:</label>
+														<select class="form-control" id="parent1">
+															<option>Father</option>
+															<option>Mother</option>
+															<option>Husband</option>
+															<option>Wife</option>
+															<option>Guardian</option>
+														</select>
+													</div>
+												</div>
+
+												<div class = "col-sm-8">
+													<div class = "row">
+														<div class = "col-sm-6">
+															<div class= "form-group">
+																<label for="sel2">Educational Qualification:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+																<label for="sel2">Occupation/Designation:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+															</div>
+														</div>
+														<div class = "col-sm-6">
+															<div class= "form-group">
+																<label for="sel2">Company:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+																<label for="sel2">Phone:</label>
+																<input class="form-control" type="text" class="form-control" id="mname" placeholder = "Middle Name">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+										</div>
+										<!-- END: Tab 3 -->
+									
+									</div>
+									<!-- END: Tab-content -->
+									
+								</div>	
+
+								<hr>
+								<div class = "text-center">
+									<button class = "btn-primary " type="submit" class="btn btn-default">Register</button>
+								</div>
+								
+							</form>				  
+
+						</div>
+					</div>
+					<!-- END`: Col-9 -->
+				</div>
+			</div>
+        </div>
+    </div>
+	
+		
+	{% endblock sitecontent %}
+
+	
+	
+	{% block jscripts %}
+	{% endblock jscripts %}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+{% load static %}
+{% load topbar from guesthouse_base %}
+{% load main_slider from guesthouse_base %}
+{% load advantages from guesthouse_base %}
+{% load site_footer from guesthouse_base %}
+{% load copy_right from guesthouse_base %}
+
+<html>
+	{% block html-head %}
+	 <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>SAMS</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="robots" content="all,follow">
+		<!-- Bootstrap CSS-->
+		<link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+		<!-- Font Awesome CSS-->
+		<link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">
+		<!-- Google fonts - Roboto -->
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100">
+		<!-- owl carousel-->
+		<link rel="stylesheet" href="{% static 'vendor/owl.carousel/assets/owl.carousel.css' %}">
+		<link rel="stylesheet" href="{% static 'vendor/owl.carousel/assets/owl.theme.default.css' %}">
+		<!-- theme stylesheet-->
+		<link rel="stylesheet" href="{% static 'css/style.default.css' %}" id="theme-stylesheet">
+		<!-- Custom stylesheet - for your changes-->
+		<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+		<!-- Favicon-->
+		<link rel="shortcut icon" href="{% static 'favicon.png' %}">
+		<!-- Tweaks for older IEs--><!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+	</head>
+	{% endblock html-head %}
+	
+	{% block html-body %}
+	<body>
+		<!-- Header Section with menu, login -->
+		{% block siteheader %}
+			
+			<!-- Top slim bar with tagline, login, register etc-->
+			{% topbar request messsages %}
+
+			<!-- Admin Menu-->
+		{% endblock siteheader %}
+		<!-- END: Header Section with menu, login -->
+
+
+		<div id="all">
+			<div id="content" class= " h-25" style="background-color:#fff">
+				{% block sitecontent %}
+							
+					{% main_slider request%}
+
+					{% advantages request%}
+				
+				{% endblock sitecontent %}
+
+				{% site_footer request %}
+				<!-- *** FOOTER END ***-->
+    
+				<!--COPYRIGHT -->
+				{% copy_right request %}
+				
+			</div>
+		</div>
+		<!-- *** COPYRIGHT END ***-->
+
+		{% block jscripts %}
+
+		
+		{% endblock jscripts %}
+
+		<!-- JavaScript files-->
+		<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+		<script src="{% static 'vendor/popper.js/umd/popper.min.js' %}"> </script>
+		<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'vendor/jquery.cookie/jquery.cookie.js' %}"> </script>
+		<script src="{% static 'vendor/owl.carousel/owl.carousel.min.js' %}"></script>
+		<script src="{% static 'vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.js' %}"></script>
+		<script src="https://maps.googleapis.com/maps/api/js"></script>
+		<script src="{% static 'js/front.js' %}"></script>
+
+		<script>
+			// In case of invalid login, let's trigger the login modal
+			$(document).ready(function(){
+				{% if messages %}
+					{% for message in messages %}
+						{% if message.tags %} 
+							$('#show-loginerror').html("<div class='alert alert-danger'><button type='button' class='close' data-dismiss='alert'></button>{{message}}</div>");
+						{% endif %}
+					{% endfor %}
+				
+					$('#login-modal').modal('show'); 
+				{% endif %}
+				
+			});		
+		</script>
+		
+	</body>
+	{% endblock html-body %}
+
+</html>
