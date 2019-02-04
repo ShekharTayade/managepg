@@ -23,3 +23,13 @@
 /*  transform: translate(-50%, -50%); */
   width: 100%;
 }
+
+#content .info-bar  {
+	padding: 5px !important;
+}
+
+.img-display {
+	width:9vw; 
+	height:10vw;
+	object-fit:scale-down;
+}

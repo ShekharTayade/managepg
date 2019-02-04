@@ -28,7 +28,9 @@ DATABASES = {
     )
 }
 
-	
+
+# Guest HOuse ID
+GH_ID = 1	
 	
 
 # Quick-start development settings - unsuitable for production
@@ -67,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'managepg.urls'
@@ -82,6 +85,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+				'django.template.context_processors.media',
+                'social_django.context_processors.backends',				
             ],
         },
     },
@@ -154,6 +159,7 @@ STATICFILES_DIR = [
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
+
 LOGOUT_REDIRECT_URL = 'index'
 
 LOGOUT_URL = 'logout'
@@ -186,4 +192,8 @@ DEFAULT_FROM_EMAIL = ''
 EMAIL_SUBJECT_PREFIX = ''
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+print("BASE_DIR")
+print(BASE_DIR)
+print("MEDIA_ROOT")
+print(MEDIA_ROOT)

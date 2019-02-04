@@ -1,0 +1,617 @@
+{% load widget_tweaks %}
+											<div class = "row">
+												<div class = "col-sm-6">
+													<div class="form-group">
+														Parent/Guardian:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_type.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_type class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_type.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_type class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_type class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_type.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_type.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Name:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_name.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_name class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_name.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_name class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_name class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_name.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_name.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+															
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Phone Number:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_phone_number.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_phone_number class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_phone_number.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_phone_number class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_phone_number class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_phone_number.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_phone_number.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+															
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Email:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_email_id.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_email_id class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_email_id.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_email_id class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_email_id class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_email_id.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_email_id.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Qualifications:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_qualifications.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_qualifications class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_qualifications.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_qualifications class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_qualifications class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_qualifications.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_qualifications.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Occupation:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_occupation.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_occupation class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_occupation.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_occupation class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_occupation class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_occupation.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_occupation.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Company Name:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_1_company.errors %}
+													
+																{% render_field guest_form.parent_guardian_1_company class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_1_company.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_1_company class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_1_company class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_1_company.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_1_company.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>												
+											</div>
+											
+											<hr>
+											
+											
+											
+
+											<div class = "row">
+												<div class = "col-sm-6">
+													<div class="form-group">
+														Parent/Guardian:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_type.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_type class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_type.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_type class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_type class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_type.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_type.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Name:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_name.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_name class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_name.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_name class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_name class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_name.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_name.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+															
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Phone Number:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_phone_number.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_phone_number class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_phone_number.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_phone_number class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_phone_number class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_phone_number.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_phone_number.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+															
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Email:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_email_id.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_email_id class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_email_id.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_email_id class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_email_id class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_email_id.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_email_id.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Qualifications:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_qualifications.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_qualifications class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_qualifications.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_qualifications class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_qualifications class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_qualifications.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_qualifications.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Occupation:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_occupation.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_occupation class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_occupation.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_occupation class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_occupation class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_occupation.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_occupation.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Company Name:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_2_company.errors %}
+													
+																{% render_field guest_form.parent_guardian_2_company class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_2_company.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_2_company class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_2_company class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_2_company.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_2_company.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>												
+											</div>											
+											
+											
+											
+											<hr>
+											
+											
+											
+											
+											<div class = "row">
+												<div class = "col-sm-6">
+													<div class="form-group">
+														Parent/Guardian:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_type.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_type class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_type.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_type class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_type class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_type.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_type.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Name:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_name.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_name class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_name.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_name class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_name class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_name.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_name.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+															
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Phone Number:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_phone_number.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_phone_number class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_phone_number.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_phone_number class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_phone_number class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_phone_number.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_phone_number.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+															
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Email:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_email_id.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_email_id class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_email_id.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_email_id class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_email_id class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_email_id.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_email_id.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Qualifications:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_qualifications.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_qualifications class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_qualifications.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_qualifications class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_qualifications class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_qualifications.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_qualifications.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Occupation:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_occupation.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_occupation class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_occupation.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_occupation class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_occupation class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_occupation.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_occupation.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+
+												<div class = "col-sm-4">
+													<div class="form-group">
+														Company Name:
+														{% if guest_form.is_bound %}
+															{% if guest_form.parent_guardian_3_company.errors %}
+													
+																{% render_field guest_form.parent_guardian_3_company class="form-control is-invalid" %}
+																{% for error in guest_form.parent_guardian_3_company.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.parent_guardian_3_company class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.parent_guardian_3_company class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.parent_guardian_3_company.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.parent_guardian_3_company.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>												
+											</div>																						
+											
+											
+											
+											
+											

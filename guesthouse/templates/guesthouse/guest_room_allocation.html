@@ -1,0 +1,275 @@
+{% load widget_tweaks %}
+										<div class = "row">
+											<div class = "col-md-6">
+												<div class="form-group">
+													{{ booking_form.tenure.label_tag }}
+													{% if booking_form.is_bound %}
+														{% if booking_form.tenure.errors %}
+												
+															{% render_field booking_form.tenure class="form-control is-invalid" %}
+															{% for error in booking_form.tenure.errors %}
+																<div class="invalid-feedback">
+																  {{ error }}
+																</div>
+															{% endfor %}
+												
+														{% else %}
+															{% render_field booking_form.tenure class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+														{% render_field booking_form.tenure class="form-control" %}
+													{% endif %}
+												
+													{% if booking_form.tenure.help_text %}
+														<small class="form-text text-muted">
+															{{ booking_form.tenure.help_text }}
+														</small>
+													{% endif %}
+												</div>														
+													
+											</div>
+
+											<div class = "col-md-6">
+												<div class = "row">
+													<div class = "col-md-6">
+														<div class="form-group">
+															{{ booking_form.check_in_date.label_tag }}
+															{% if guest_form.is_bound %}
+																{% if booking_form.check_in_date.errors %}
+																	<div class = "col-sm-8">
+																		<input name="booking-check_in_date" class="form-control  is-invalid" id="id_booking-check_in_date" type="date" value= "{{booking_form.check_in_date.value}}">
+																	</div>
+																	{% for error in booking_form.check_in_date.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	<input name="booking-check_in_date" class="form-control is-valid" id="id_booking-check_in_date" type="date" value= "{{booking_form.check_in_date.value}}">
+																{% endif %}
+															{% else %}
+																	<input name="booking-check_in_date" class="form-control" id="id_booking-check_in_date" type="date" value= "{{booking_form.check_in_date.value}}">
+															{% endif %}
+														
+															{% if booking_form.check_in_date.help_text %}
+																<small class="form-text text-muted">
+																	{{ booking_form.check_in_date.help_text }}
+																</small>
+															{% endif %}
+														</div>														
+													</div>
+													<div class = "col-md-6">
+														<div class="form-group">
+															{{ booking_form.check_in_time.label_tag }}
+															{% if guest_form.is_bound %}
+																{% if booking_form.check_in_time.errors %}
+																	<div class = "col-sm-8">
+																		{% render_field booking_form.check_in_time class="form-control is-invalid clockpicker" %}
+																	</div>
+																	{% for error in booking_form.check_in_time.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field booking_form.check_in_time type="date" class="form-control is-valid clockpicker" %}
+																{% endif %}
+															{% else %}
+																	{% render_field booking_form.check_in_time type="date" class="form-control clockpicker" %}
+															{% endif %}
+														
+															{% if booking_form.check_in_time.help_text %}
+																<small class="form-text text-muted">
+																	{{ booking_form.check_in_time.help_text }}
+																</small>
+															{% endif %}
+														</div>														
+													</div>
+												</div>
+												<div class = "row">
+													<div class = "col-md-6">
+														<div class="form-group">
+															
+															{{ booking_form.check_out_date.label_tag }}
+															{% if guest_form.is_bound %}
+																{% if booking_form.check_out_date.errors %}
+																	<div class = "col-sm-8">
+																		<input name="booking-check_out_date" class="form-control  is-invalid" id="id_booking-check_out_date" type="date" value= "{{booking_form.check_out_date.value}}">
+																	</div>
+																	{% for error in booking_form.check_out_date.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	<input name="booking-check_out_date" class="form-control  is-valid" id="id_booking-check_out_date" type="date" value= "{{booking_form.check_out_date.value}}">
+																{% endif %}
+															{% else %}
+																<input name="booking-check_out_date" class="form-control" id="id_booking-check_out_date" type="date" value= "{{booking_form.check_out_date.value}}">
+															{% endif %}
+														
+															{% if booking_form.check_out_date.help_text %}
+																<small class="form-text text-muted">
+																	{{ booking_form.check_out_date.help_text }}
+																</small>
+															{% endif %}
+														</div>	
+													</div>
+													<div class = "col-md-6">
+														<div class="form-group">
+															{{ booking_form.check_out_time.label_tag }}
+															{% if guest_form.is_bound %}
+																{% if booking_form.check_out_time.errors %}
+																	<div class = "col-sm-8">
+																		{% render_field booking_form.check_out_time class="form-control is-invalid clockpicker" %}
+																	</div>
+																	{% for error in booking_form.check_out_time.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field booking_form.check_out_time type="date" class="form-control is-valid clockpicker" %}
+																{% endif %}
+															{% else %}
+																	{% render_field booking_form.check_out_time type="date" class="form-control clockpicker" %}
+															{% endif %}
+														
+															{% if booking_form.check_out_time.help_text %}
+																<small class="form-text text-muted">
+																	{{ booking_form.check_out_time.help_text }}
+																</small>
+															{% endif %}
+														</div>														
+													</div>
+												</div>
+											</div>
+										</div>
+										<hr>
+										
+										<div class = "row">
+											<div class = "col-sm-12">
+												<h4>Room/Bed Allocation</h4>
+											</div>
+										</div>
+										
+										<div class = "row">
+											<div class = "col-sm-3">
+												<div class="form-group">
+													{{ room_allocation_form.block.label_tag }}
+													{% if room_allocation_form.is_bound %}
+														{% if room_allocation_form.block.errors %}
+												
+															{% render_field room_allocation_form.block class="form-control is-invalid" %}
+															{% for error in room_allocation_form.block.errors %}
+																<div class="invalid-feedback">
+																  {{ error }}
+																</div>
+															{% endfor %}
+												
+														{% else %}
+															{% render_field room_allocation_form.block class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+														{% render_field room_allocation_form.block class="form-control" %}
+													{% endif %}
+												
+													{% if room_allocation_form.block.help_text %}
+														<small class="form-text text-muted">
+															{{ room_allocation_form.block.help_text }}
+														</small>
+													{% endif %}
+												</div>															
+											</div>
+											<div class = "col-sm-3">
+
+												<div class="form-group">
+													{{ room_allocation_form.floor.label_tag }}
+													{% if room_allocation_form.is_bound %}
+														{% if room_allocation_form.floor.errors %}
+												
+															{% render_field room_allocation_form.floor    class="form-control is-invalid" %}
+															{% for error in room_allocation_form.floor.errors %}
+																<div class="invalid-feedback">
+																  {{ error }}
+																</div>
+															{% endfor %}
+												
+														{% else %}
+															{% render_field room_allocation_form.floor    class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+														{% render_field room_allocation_form.floor    class="form-control" %}
+													{% endif %}
+												
+													{% if room_allocation_form.floor.help_text %}
+														<small class="form-text text-muted">
+															{{ room_allocation_form.floor.help_text }}
+														</small>
+													{% endif %}
+												</div>														
+												
+											</div>
+											
+											<div class = "col-sm-3">
+
+												<div class="form-group">
+													{{ room_allocation_form.room.label_tag }}
+													{% if room_allocation_form.is_bound %}
+														{% if room_allocation_form.room.errors %}
+												
+															{% render_field room_allocation_form.room    class="form-control is-invalid" %}
+															{% for error in room_allocation_form.room.errors %}
+																<div class="invalid-feedback">
+																  {{ error }}
+																</div>
+															{% endfor %}
+												
+														{% else %}
+															{% render_field room_allocation_form.room    class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+														{% render_field room_allocation_form.room    class="form-control" %}
+													{% endif %}
+												
+													{% if room_allocation_form.room.help_text %}
+														<small class="form-text text-muted">
+															{{ room_allocation_form.room.help_text }}
+														</small>
+													{% endif %}
+												</div>														
+												
+											</div>
+											<div class = "col-sm-3">
+												<div class="form-group">
+													{{ room_allocation_form.bed.label_tag }}
+													{% if room_allocation_form.is_bound %}
+														{% if room_allocation_form.bed.errors %}
+												
+															{% render_field room_allocation_form.bed    class="form-control is-invalid" %}
+															{% for error in room_allocation_form.bed.errors %}
+																<div class="invalid-feedback">
+																  {{ error }}
+																</div>
+															{% endfor %}
+												
+														{% else %}
+															{% render_field room_allocation_form.bed    class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+														{% render_field room_allocation_form.bed    class="form-control" %}
+													{% endif %}
+												
+													{% if room_allocation_form.bed.help_text %}
+														<small class="form-text text-muted">
+															{{ room_allocation_form.bed.help_text }}
+														</small>
+													{% endif %}
+												</div>														
+												
+											</div>											
+										</div>

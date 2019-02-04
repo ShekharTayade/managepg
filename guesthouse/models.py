@@ -69,6 +69,8 @@ class Guesthouse (models.Model):
 	show_featured_section = models.BooleanField(null=False, default=False)
 	featured_header = models.CharField(max_length = 50, blank=True, default='')
 	number_of_featured_slides = models.IntegerField(null=True, blank=True)
+	month_year_suffix = models.CharField(max_length = 6, null=True) # For generating booking numbers
+
 
 	def __str__(self):
 		return self.gh_name
@@ -134,27 +136,27 @@ class Guest (models.Model):
 	first_name = models.CharField(max_length = 500, blank=False)
 	middle_name = models.CharField(max_length = 500, blank=True, default='')
 	last_name = models.CharField(max_length = 500, blank=True, default='')	
-	date_of_birth = models.DateField(null=True)
+	date_of_birth = models.DateField(blank=True, null=True)
 	gender = models.CharField(
 		max_length=6,
 		choices=GENDER_CHOICES,
 		default='FEMALE',
-	),
+	)
 	id_card_number = models.CharField(max_length=100, blank=True, default='')
 	email_id = models.EmailField(blank=True, default='')
 	phone_number = models.CharField(max_length=100, blank=True, default='')
-	current_address_1 = models.CharField(max_length=600, blank=False, null=False)
+	current_address_1 = models.CharField(max_length=600, blank=True, default='')
 	current_address_2 = models.CharField(max_length=600, blank=True, default='')
-	current_city = models.CharField(max_length=600, blank=False, null=False)
-	current_state = models.ForeignKey(State, on_delete = models.PROTECT, null=False, related_name='current_addr_state')
-	current_pin_code = models.ForeignKey(Pin_code, on_delete = models.PROTECT, null=True, related_name='current_addr_pin_code')
-	current_country = models.ForeignKey(Country, on_delete = models.PROTECT, null=False, default= "IND", related_name='current_addr_country')	
-	permanent_address_1 = models.CharField(max_length=600, blank=False, null=False)
+	current_city = models.CharField(max_length=600, blank=True, default='')
+	current_state = models.ForeignKey(State, on_delete = models.DO_NOTHING, blank=True, null=True,  related_name='current_addr_state')
+	current_pin_code = models.ForeignKey(Pin_code, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='current_addr_pin_code')
+	current_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='current_addr_country')	
+	permanent_address_1 = models.CharField(max_length=600, blank=True, default='')
 	permanent_address_2 = models.CharField(max_length=600, blank=True, default='')
-	permanent_city = models.CharField(max_length=600, blank=False, null=False)
-	permanent_state = models.ForeignKey(State, on_delete = models.PROTECT, null=False, related_name='permanent_addr_state')
-	permanent_pin_code = models.ForeignKey(Pin_code, on_delete = models.PROTECT, null=True, related_name='permanent_pin_code')
-	permanent_country = models.ForeignKey(Country, on_delete = models.PROTECT, null=False, default= "IND", related_name='permanent_addr_country')	
+	permanent_city = models.CharField(max_length=600, blank=True, default='')
+	permanent_state = models.ForeignKey(State, on_delete = models.DO_NOTHING, blank=True, null=True,  related_name='permanent_addr_state')
+	permanent_pin_code = models.ForeignKey(Pin_code, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='permanent_addr_pin_code')
+	permanent_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='permanent_addr_country')	
 	occupation = models.CharField(
         max_length=2,
         choices=OCCUPATION_CHOICES,
@@ -166,14 +168,15 @@ class Guest (models.Model):
 	company_address_1 = models.CharField(max_length=600, blank=True, default='')
 	company_address_2 = models.CharField(max_length=600, blank=True, default='')
 	company_city = models.CharField(max_length=600, blank=True, default='')
-	company_state = models.ForeignKey(State, on_delete = models.PROTECT, null=True, related_name='company_addr_state')
-	company_pin_code = models.ForeignKey(Pin_code, on_delete = models.PROTECT, null=True, related_name='company_addr_pin_code')
-	company_country = models.ForeignKey(Country, on_delete = models.PROTECT, null=True, related_name='company_addr_country')
-	guest_photo = models.ImageField(upload_to='uploads/%Y/%m/%d/', blank=True, null=True)
+	company_state = models.ForeignKey(State, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='company_addr_state')
+	company_pin_code = models.ForeignKey(Pin_code, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='company_addr_pin_code')
+	company_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='company_addr_country')
+	guest_photo = models.ImageField(upload_to='uploads/%Y/%m/%d/', blank=True, default="")
 	blood_group = models.CharField(max_length=10, blank=True, default='')
 	allergy_details = models.CharField(max_length=2000, blank=True, default='')
 	other_details = models.CharField(max_length=5000, blank=True, default='')
 	doctor_to_call = models.CharField(max_length=500, blank=True, default='')
+	doctor_contact_number = models.CharField(max_length=500, blank=True, default='')
 	referred_by = models.CharField(max_length=500, blank=True, default='')
 	referred_by_contact_details = models.CharField(max_length=100, blank=True, default='')
 	emergency_contact_1_name = models.CharField(max_length=500, blank=True, default='')
@@ -201,8 +204,8 @@ class Guest (models.Model):
 	parent_guardian_3_company = models.CharField(max_length=500, blank=True, default='')
 	parent_guardian_3_phone_number = models.CharField(max_length=500, blank=True, default='')
 	parent_guardian_3_email_id = models.EmailField(blank=True, default='')	
-	created_date = models.DateTimeField(null=False)	
-	updated_date = models.DateTimeField(null=True)			
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
 	
 
 class Booking (models.Model):
@@ -211,34 +214,47 @@ class Booking (models.Model):
 		('VEG', 'Vegetarian'),
 		('NOV-VEG', 'None-Vegetarian'),
 	)	
-
+	
+	ONE_MONTH = 'ST'
+	LONG_TERM = 'LT'
 	TENURE = (
-			('ONE-MONTH', 'One Month'),
-			('LONG-TERM', 'Long Term'),
+			(ONE_MONTH, 'One Month'),
+			(LONG_TERM, 'Long Term'),
 	)	
 	
 	booking_number = models.CharField(max_length = 15, primary_key = True)
-	guest = models.ForeignKey(Guest, models.CASCADE, null=False)
-	guesthouse = models.ForeignKey(Guesthouse, models.CASCADE, null=False)
-	check_in_datetime = models.DateTimeField(null=True)
-	food_opted = models.BooleanField(default=False)
-	food_preference = models.CharField(max_length = 7, blank=True, choices=FOOD_PREF, default = "")
-	tenure = models.CharField(max_length = 7, blank=True, choices=TENURE, default = "")
-	created_date = models.DateTimeField(null=False)	
-	updated_date = models.DateTimeField(null=True)	
-	
+	guest = models.ForeignKey(Guest, models.DO_NOTHING, null=False)
+	guesthouse = models.ForeignKey(Guesthouse, models.DO_NOTHING, null=False)
+	check_in_date = models.DateField(null=True, blank=True)
+	check_in_time = models.TimeField(null=True, blank=True)
+	check_out_date = models.DateField(null=True, blank=True)
+	check_out_time = models.TimeField(null=True, blank=True)
+	food_option = models.BooleanField(default=False)
+	food_preference = models.CharField(max_length = 7, blank=True, choices=FOOD_PREF, default = "VEG")
+	tenure = models.CharField(max_length = 2, blank=True, choices=TENURE, default = LONG_TERM)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
-class room_allocation(models.Model):
+
+class Room_allocation(models.Model):
 	alloc_id = models.AutoField(primary_key=True)
 	booking = models.ForeignKey(Booking, models.CASCADE, null=False)
 	guest = models.ForeignKey(Guest, models.CASCADE, null=False)
-	bed = models.ForeignKey(Bed, models.CASCADE, null=False)
-	room = models.ForeignKey(Room, models.CASCADE, null=False)
-	floor = models.ForeignKey(Floor, models.CASCADE, null=False)
-	block = models.ForeignKey(Block, models.CASCADE, null=False)
-	allocation_start_date = models.DateTimeField(null=False)
-	allocation_end_date = models.DateTimeField(null=True)
-	created_date = models.DateTimeField(null=False)	
-	updated_date = models.DateTimeField(null=True)
+	bed = models.ForeignKey(Bed, models.PROTECT, null=True, blank=True)
+	room = models.ForeignKey(Room, models.PROTECT, null=True, blank=True)
+	floor = models.ForeignKey(Floor, models.PROTECT, null=True, blank=True)
+	block = models.ForeignKey(Block, models.PROTECT, null=True, blank=True)
+	allocation_start_date = models.DateTimeField(null=True, blank=True)
+	allocation_end_date = models.DateTimeField(null=True, blank=True)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
+
+	
+class Generate_number_by_month(models.Model):
+	type = models.CharField(max_length = 50, null=False, primary_key = True)
+	description = models.CharField(max_length = 1000, null=True)
+	month_year = models.CharField(max_length = 6, null=False)
+	current_number = models.IntegerField(null=False)
 	
 
+	

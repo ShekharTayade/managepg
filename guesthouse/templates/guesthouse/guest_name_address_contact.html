@@ -1,0 +1,461 @@
+{% load widget_tweaks %}
+											<div class = "row">
+												<div class = "col-sm-4">
+													<div class="form-group">
+														{{ guest_form.first_name.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.first_name.errors %}
+													
+																{% render_field guest_form.first_name class="form-control is-invalid" %}
+																{% for error in guest_form.first_name.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.first_name class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.first_name class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.first_name.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.first_name.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+												<div class = "col-sm-4">
+													<div class="form-group">
+														{{ guest_form.middle_name.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.middle_name.errors %}
+													
+																{% render_field guest_form.middle_name class="form-control is-invalid" %}
+																{% for error in guest_form.middle_name.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.middle_name class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.middle_name class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.middle_name.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.middle_name.help_text }}
+															</small>
+														{% endif %}													</div>
+												</div>
+												<div class = "col-sm-4">
+													<div class="form-group">
+														{{ guest_form.last_name.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.last_name.errors %}
+													
+																{% render_field guest_form.last_name class="form-control is-invalid" %}
+																{% for error in guest_form.last_name.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.last_name class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.last_name class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.last_name.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.last_name.help_text }}
+															</small>
+														{% endif %}
+													</div>
+												</div>
+											</div>
+
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<div class="form-group">
+														{{ guest_form.email_id.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.email_id.errors %}
+													
+																{% render_field guest_form.email_id class="form-control is-invalid" %}
+																{% for error in guest_form.email_id.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.email_id class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.email_id class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.email_id.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.email_id.help_text }}
+															</small>
+														{% endif %}
+													</div>
+												</div>
+												<div class = "col-sm-6">
+													<div class="form-group">
+														{{ guest_form.phone_number.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.phone_number.errors %}
+													
+																{% render_field guest_form.phone_number    class="form-control is-invalid" %}
+																{% for error in guest_form.phone_number.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.phone_number    class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.phone_number    class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.phone_number.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.phone_number.help_text }}
+															</small>
+														{% endif %}
+													</div>
+												</div>
+											</div>
+
+											
+
+
+											<div class = "row">
+
+												<div class = "col-sm-12">
+													<label> Current Address</label>
+												</div>
+												<div class = "col-sm-6">
+													<div class="form-group">
+														{% if guest_form.is_bound %}
+															{% if guest_form.current_address_1.errors %}
+													
+																{% render_field guest_form.current_address_1    class="form-control is-invalid" %}
+																{% for error in guest_form.current_address_1.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.current_address_1    class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.current_address_1    class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.current_address_1.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.current_address_1.help_text }}
+															</small>
+														{% endif %}
+													</div>
+												</div>	
+												<div class = "col-sm-6">
+													<div class="form-group">
+														{% if guest_form.is_bound %}
+															{% if guest_form.current_address_2.errors %}
+													
+																{% render_field guest_form.current_address_2    class="form-control is-invalid" %}
+																{% for error in guest_form.current_address_2.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.current_address_2    class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.current_address_2    class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.current_address_2.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.current_address_2.help_text }}
+															</small>
+														{% endif %}
+													</div>														
+
+												</div>
+											</div>
+											<div class = "row">
+												<div class="form-group col-md-3">
+													<!--<label for="inputZip">Zip</label>
+													<input type="text" class="form-control" id="inputZip">-->
+													<div class="form-group">
+														Pin Code
+														{% if guest_form.is_bound %}
+															{% if guest_form.current_pin_code.errors %}
+													
+																{% render_field guest_form.current_pin_code class="form-control is-invalid" type="text" %}
+																{% for error in guest_form.current_pin_code.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.current_pin_code class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.current_pin_code class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.current_pin_code.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.current_pin_code.help_text }}
+															</small>
+														{% endif %}
+													</div>						
+												</div>
+												<div class = "col-sm-5 pull-left">
+													<!--<label> inputCity:</label>
+													<div class="form-group">
+														<input class="form-control" type="text" class="form-control" id="paddress" placeholder = "inputCity">
+													</div>-->
+													<div class="form-group">
+														City
+														{% if guest_form.is_bound %}
+															{% if guest_form.current_city.errors %}
+													
+																{% render_field guest_form.current_city    class="form-control is-invalid" %}
+																{% for error in guest_form.current_city.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.current_city    class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.current_city    class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.current_city.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.current_city.help_text }}
+															</small>
+														{% endif %}
+													</div>													
+													
+												</div>
+												<div class="form-group col-md-4">
+													<div class="form-group">
+														State
+														{% if guest_form.is_bound %}
+															{% if guest_form.current_state.errors %}
+													
+																{% render_field guest_form.current_state class="form-control is-invalid" type="text" %}
+																{% for error in guest_form.current_state.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.current_state class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.current_state class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.current_state.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.current_state.help_text }}
+															</small>
+														{% endif %}
+													</div>													  
+												  
+												</div>
+											</div>
+
+											<div class="row">
+
+												<div class="col-sm-12">
+													<div class="form-check">
+														<input class="form-check-input" type="checkbox"
+														id="same_addr" name="same_addr"
+														value = ""
+														onclick="same_addr_check();">
+														<label class="form-check-label" for="guest_form.same_addr">
+															Same as Current address
+														</label>
+													</div>
+												</div>
+											</div>
+											
+											<div id = "prem_addr_sec">
+												<div class = "row">
+													<div class = "col-sm-12">
+														<label> Permanent Address</label>
+													</div>
+													<div class = "col-sm-6">
+
+														<div class="form-group">
+															{% if guest_form.is_bound %}
+																{% if guest_form.permanent_address_1.errors %}
+														
+																	{% render_field guest_form.permanent_address_1    class="form-control is-invalid" %}
+																	{% for error in guest_form.permanent_address_1.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field guest_form.permanent_address_1    class="form-control is-valid" %}
+																{% endif %}
+															{% else %}
+																{% render_field guest_form.permanent_address_1    class="form-control" %}
+															{% endif %}
+														
+															{% if guest_form.permanent_address_1.help_text %}
+																<small class="form-text text-muted">
+																	{{ guest_form.permanent_address_1.help_text }}
+																</small>
+															{% endif %}
+														</div>														
+														
+													</div>
+													<div class = "col-sm-6">
+														<div class="form-group">
+															{% if guest_form.is_bound %}
+																{% if guest_form.permanent_address_2.errors %}
+														
+																	{% render_field guest_form.permanent_address_2    class="form-control is-invalid" %}
+																	{% for error in guest_form.permanent_address_2.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field guest_form.permanent_address_2    class="form-control is-valid" %}
+																{% endif %}
+															{% else %}
+																{% render_field guest_form.permanent_address_2    class="form-control" %}
+															{% endif %}
+														
+															{% if guest_form.permanent_address_2.help_text %}
+																<small class="form-text text-muted">
+																	{{ guest_form.permanent_address_2.help_text }}
+																</small>
+															{% endif %}
+														</div>														
+
+													</div>
+												</div>
+												<div class = "row">
+													<div class="form-group col-md-3">
+														<div class="form-group">
+															Pin Code
+															{% if guest_form.is_bound %}
+																{% if guest_form.permanent_pin_code.errors %}
+														
+																	{% render_field guest_form.permanent_pin_code class="form-control is-invalid" type="text" %}
+																	{% for error in guest_form.permanent_pin_code.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field guest_form.permanent_pin_code class="form-control is-valid" %}
+																{% endif %}
+															{% else %}
+																{% render_field guest_form.permanent_pin_code class="form-control" %}
+															{% endif %}
+														
+															{% if guest_form.permanent_pin_code.help_text %}
+																<small class="form-text text-muted">
+																	{{ guest_form.permanent_pin_code.help_text }}
+																</small>
+															{% endif %}
+														</div>						
+													</div>
+													<div class = "col-sm-5 pull-left">
+														<div class="form-group">
+															City
+															{% if guest_form.is_bound %}
+																{% if guest_form.permanent_city.errors %}
+														
+																	{% render_field guest_form.permanent_city    class="form-control is-invalid" %}
+																	{% for error in guest_form.permanent_city.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field guest_form.permanent_city    class="form-control is-valid" %}
+																{% endif %}
+															{% else %}
+																{% render_field guest_form.permanent_city    class="form-control" %}
+															{% endif %}
+														
+															{% if guest_form.permanent_city.help_text %}
+																<small class="form-text text-muted">
+																	{{ guest_form.permanent_city.help_text }}
+																</small>
+															{% endif %}
+														</div>													
+														
+													</div>
+													<div class="form-group col-md-4">
+														<div class="form-group">
+															State
+															{% if guest_form.is_bound %}
+																{% if guest_form.permanent_state.errors %}
+														
+																	{% render_field guest_form.permanent_state class="form-control is-invalid" type="text" %}
+																	{% for error in guest_form.permanent_state.errors %}
+																		<div class="invalid-feedback">
+																		  {{ error }}
+																		</div>
+																	{% endfor %}
+														
+																{% else %}
+																	{% render_field guest_form.permanent_state class="form-control is-valid" %}
+																{% endif %}
+															{% else %}
+																{% render_field guest_form.permanent_state class="form-control" %}
+															{% endif %}
+														
+															{% if guest_form.permanent_state.help_text %}
+																<small class="form-text text-muted">
+																	{{ guest_form.permanent_state.help_text }}
+																</small>
+															{% endif %}
+														</div>													  
+													  
+													</div>
+												</div>
+											</div>
+
+
+
+										

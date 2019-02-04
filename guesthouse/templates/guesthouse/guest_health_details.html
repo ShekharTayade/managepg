@@ -1,0 +1,140 @@
+{% load widget_tweaks %}
+										    <div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<label> Allergies, if any:</label>
+													<div class="form-group">
+														{% if guest_form.is_bound %}
+															{% if guest_form.allergy_details.errors %}
+													
+																{% render_field guest_form.allergy_details class="form-control is-invalid" %}
+																{% for error in guest_form.allergy_details.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.allergy_details class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.allergy_details class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.allergy_details.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.allergy_details.help_text }}
+															</small>
+														{% endif %}
+													</div>													
+												</div>
+												<div class = "col-sm-6">
+													<label> Any other Health Details:</label>
+													<div class="form-group">
+														{% if guest_form.is_bound %}
+															{% if guest_form.other_details.errors %}
+													
+																{% render_field guest_form.other_details class="form-control is-invalid" %}
+																{% for error in guest_form.other_details.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.other_details class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.other_details class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.other_details.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.other_details.help_text }}
+															</small>
+														{% endif %}
+													</div>													
+												</div>
+											</div>
+											<div class = "row">
+												<div class = "col-sm-3">
+													<div class="form-group">
+														{{ guest_form.blood_group.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.blood_group.errors %}
+													
+																{% render_field guest_form.blood_group class="form-control is-invalid" %}
+																{% for error in guest_form.blood_group.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.blood_group class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.blood_group class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.blood_group.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.blood_group.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+												<div class = "col-sm-4">
+													<div class="form-group">
+														{{ guest_form.doctor_to_call.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.doctor_to_call.errors %}
+													
+																{% render_field guest_form.doctor_to_call class="form-control is-invalid" %}
+																{% for error in guest_form.doctor_to_call.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.doctor_to_call class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.doctor_to_call class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.doctor_to_call.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.doctor_to_call.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+												<div class = "col-sm-5">
+													<div class="form-group">
+														{{ guest_form.doctor_contact_number.label_tag }}
+														{% if guest_form.is_bound %}
+															{% if guest_form.doctor_contact_number.errors %}
+													
+																{% render_field guest_form.doctor_contact_number class="form-control is-invalid" %}
+																{% for error in guest_form.doctor_contact_number.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.doctor_contact_number class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.doctor_contact_number class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.doctor_contact_number.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.doctor_contact_number.help_text }}
+															</small>
+														{% endif %}
+													</div>	
+												</div>
+											</div>	

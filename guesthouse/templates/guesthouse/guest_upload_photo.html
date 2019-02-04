@@ -1,0 +1,40 @@
+{% load widget_tweaks %}
+											<div class = "row">
+												{{guest_form.first_name.value}}&nbsp; {{guest_form.middle_name.value}}&nbsp;{{guest_form.last_name.value}}
+											</div>
+											
+											<div class = "row">
+												<div class = "col-sm-6 pull-left">
+													<div class="form-group">
+														Upload Photo:
+														{% if guest_form.is_bound %}
+															{% if guest_form.guest_photo.errors %}
+													
+																{% render_field guest_form.guest_photo class="form-control is-invalid" %}
+																{% for error in guest_form.guest_photo.errors %}
+																	<div class="invalid-feedback">
+																	  {{ error }}
+																	</div>
+																{% endfor %}
+													
+															{% else %}
+																{% render_field guest_form.guest_photo class="form-control is-valid" %}
+															{% endif %}
+														{% else %}
+															{% render_field guest_form.guest_photo class="form-control" %}
+														{% endif %}
+													
+														{% if guest_form.guest_photo.help_text %}
+															<small class="form-text text-muted">
+																{{ guest_form.guest_photo.help_text }}
+															</small>
+														{% endif %}
+													</div>												
+												</div>
+											</div>
+
+
+
+											
+
+									
