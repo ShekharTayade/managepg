@@ -34,7 +34,7 @@
 														{% if guest_form.is_bound %}
 															{% if guest_form.gender.errors %}
 													
-																{% render_field guest_form.gender class="form-control is-invalid" %}
+																{% render_field guest_form.gender|append_attr:"readonly:readonly" class="form-control is-invalid" %}
 																{% for error in guest_form.gender.errors %}
 																	<div class="invalid-feedback">
 																	  {{ error }}
@@ -42,10 +42,10 @@
 																{% endfor %}
 													
 															{% else %}
-																{% render_field guest_form.gender class="form-control is-valid" %}
+																{% render_field guest_form.gender|append_attr:"readonly:readonly" class="form-control is-valid" %}
 															{% endif %}
 														{% else %}
-															{% render_field guest_form.gender class="form-control" %}
+															{% render_field guest_form.gender|append_attr:"readonly:readonly" class="form-control" %}
 														{% endif %}
 													
 														{% if guest_form.gender.help_text %}

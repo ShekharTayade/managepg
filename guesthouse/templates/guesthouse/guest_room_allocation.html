@@ -161,6 +161,7 @@
 											<div class = "col-sm-3">
 												<div class="form-group">
 													{{ room_allocation_form.block.label_tag }}
+													<div id = "blocks-div">
 													{% if room_allocation_form.is_bound %}
 														{% if room_allocation_form.block.errors %}
 												
@@ -183,12 +184,14 @@
 															{{ room_allocation_form.block.help_text }}
 														</small>
 													{% endif %}
+													</div>
 												</div>															
 											</div>
 											<div class = "col-sm-3">
 
 												<div class="form-group">
 													{{ room_allocation_form.floor.label_tag }}
+													<div id = "floors-div">
 													{% if room_allocation_form.is_bound %}
 														{% if room_allocation_form.floor.errors %}
 												
@@ -211,6 +214,7 @@
 															{{ room_allocation_form.floor.help_text }}
 														</small>
 													{% endif %}
+													</div>
 												</div>														
 												
 											</div>
@@ -219,6 +223,7 @@
 
 												<div class="form-group">
 													{{ room_allocation_form.room.label_tag }}
+													<div id = "rooms-div">
 													{% if room_allocation_form.is_bound %}
 														{% if room_allocation_form.room.errors %}
 												
@@ -241,12 +246,14 @@
 															{{ room_allocation_form.room.help_text }}
 														</small>
 													{% endif %}
+													</div>
 												</div>														
 												
 											</div>
 											<div class = "col-sm-3">
 												<div class="form-group">
 													{{ room_allocation_form.bed.label_tag }}
+													<div id = "beds-div">
 													{% if room_allocation_form.is_bound %}
 														{% if room_allocation_form.bed.errors %}
 												
@@ -269,6 +276,7 @@
 															{{ room_allocation_form.bed.help_text }}
 														</small>
 													{% endif %}
+													</div>
 												</div>														
 												
 											</div>											

@@ -9,6 +9,8 @@ from allauth.account.views import LoginView
 from . import views
 
 urlpatterns =[
+	url(r'^$', views.index, name='index'),	
+
 	url(r'^accounts/', include('allauth.urls')),
 	url(r'^login/$', views.guesthouselogin, name='login'),	
 	url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
@@ -28,7 +30,6 @@ urlpatterns =[
 	   auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
 	   name='password_reset_complete'), 
 
-	url(r'^$', views.index, name='index'),	
 	url(r'^booking/$', views.booking_form_new, name='booking'),
 	url(r'^ajax/get_addr_pin_city_state/$', views.get_addr_pin_city_state, name='get_addr_pin_city_state'),
 ]

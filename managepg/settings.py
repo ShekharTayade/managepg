@@ -193,7 +193,4 @@ EMAIL_SUBJECT_PREFIX = ''
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
-print("BASE_DIR")
-print(BASE_DIR)
-print("MEDIA_ROOT")
-print(MEDIA_ROOT)
+

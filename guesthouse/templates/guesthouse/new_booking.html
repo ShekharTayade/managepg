@@ -79,6 +79,9 @@
 													{% render_field booking_form.guest|append_attr:"hidden:hidden" type="text" class="form-control"%}
 													{% render_field booking_form.guesthouse|append_attr:"hidden:hidden" type="text" class="form-control"%}
 													{% render_field guest_form.guest_id|append_attr:"hidden:hidden" type="text" class="form-control"%}
+													{% render_field guest_form.current_country|append_attr:"hidden:hidden" class="form-control"%}
+													{% render_field guest_form.permanent_country|append_attr:"hidden:hidden" class="form-control"%}
+													{% render_field guest_form.company_country|append_attr:"hidden:hidden" class="form-control"%}
 													{% render_field room_allocation_form.alloc_id|append_attr:"hidden:hidden" type="text" class="form-control"%}
 													{% render_field room_allocation_form.booking|append_attr:"hidden:hidden" type="text" class="form-control"%}
 													{% render_field room_allocation_form.guest|append_attr:"hidden:hidden" type="text" class="form-control"%}												</label>
@@ -87,7 +90,7 @@
 
 											</div>
 											<div class = "col-sm-4">
-												<img class="img-thumbnail img-display pull-right" src="{{ guest_form.guest_photo.url }}" alt="Photo">
+												<img class="img-thumbnail img-display pull-right" src="{{guest.guest_photo.url}}" alt="Photo">
 
 											</div>
 										</div>
@@ -311,47 +314,101 @@
 		// Copying addr from current to parmement
 		function same_addr_check(){
 			
-			if (document.getElementById("guest_form.same_addr").checked) {
-				document.getElementById("prem_addr_sec").style.display = "none";
+			if (document.getElementById("same_addr").checked) {
+				//document.getElementById("prem_addr_sec").style.display = "none";
+				// Copy data over to permanenet address
+				$("#id_guest-permanent_address_1").val( $("#id_guest-current_address_1").val() );
+				$("#id_guest-permanent_address_2").val( $("#id_guest-current_address_2").val() );
+				$("#id_guest-permanent_pin_code").val( $("#id_guest-current_pin_code").val() );
+				$("#id_guest-permanent_city").val( $("#id_guest-current_city").val() );
+				$("#id_guest-permanent_state").val( $("#id_guest-current_state").val() );
 			} else {
-				document.getElementById("prem_addr_sec").style.display = "block";
-			}
+				//document.getElementById("prem_addr_sec").style.display = "block";
+				$("#id_guest-permanent_address_1").val( '' );
+				$("#id_guest-permanent_address_2").val( '' );
+				$("#id_guest-permanent_pin_code").val( '' );
+				$("#id_guest-permanent_city").val( '' );
+				$("#id_guest-permanent_state").val( '' );			}
 		}
 		
 
 	
-	$( document ).ready(function() {
-    
-        // Initiate clock picker on start and end time.
-        $('.clockpicker').clockpicker({
-           autoclose:"true",
-            placement:"bottom"            
-        });	
-	
+		$( document ).ready(function() {
+		
+			// Initiate clock picker on start and end time.
+			$('.clockpicker').clockpicker({
+			   autoclose:"true",
+				placement:"bottom"            
+			});	
+		
 
-		/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
-		autocomplete(document.getElementById("id_guest-current_pin_code"), {{pin_code_arr|safe}});
-		autocomplete(document.getElementById("id_guest-current_city"), {{city_arr|safe}});		
+			/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+			autocomplete(document.getElementById("id_guest-current_pin_code"), {{pin_code_arr|safe}});
+			autocomplete(document.getElementById("id_guest-current_city"), {{city_arr|safe}});		
 
-		autocomplete(document.getElementById("id_guest-permanent_pin_code"), {{pin_code_arr|safe}});	
-		autocomplete(document.getElementById("id_guest-permanent_city"), {{city_arr|safe}});		
+			autocomplete(document.getElementById("id_guest-permanent_pin_code"), {{pin_code_arr|safe}});	
+			autocomplete(document.getElementById("id_guest-permanent_city"), {{city_arr|safe}});		
 
-		autocomplete(document.getElementById("id_guest-company_pin_code"), {{pin_code_arr|safe}});	
-		autocomplete(document.getElementById("id_guest-company_city"), {{city_arr|safe}});	
+			autocomplete(document.getElementById("id_guest-company_pin_code"), {{pin_code_arr|safe}});	
+			autocomplete(document.getElementById("id_guest-company_city"), {{city_arr|safe}});	
 
-		$("#id_guest-current_pin_code").on('change', function(){
-			getCities($(this).val(), "CURR_ADDR");
+			$("#id_guest-current_pin_code").on('change', function(){
+				getCities($(this).val(), "CURR_ADDR");
+			});
+			$("#id_guest-paremanent_pin_code").on('change', function(){
+				getCities($(this).val(), "CURR_ADDR");
+			});
+			$("#id_guest-company_pin_code").on('change', function(){
+				getCities($(this).val(), "CURR_ADDR");
+			});
+
 		});
-		$("#id_guest-paremanent_pin_code").on('change', function(){
-			getCities($(this).val(), "CURR_ADDR");
-		});
-		$("#id_guest-company_pin_code").on('change', function(){
-			getCities($(this).val(), "CURR_ADDR");
-		});
+		
 
-	});
-	
-	</script>	
-	
+		//Update the drop-downs according to the current room/bed availability
+		// Blocks
+		{% if blocks %}
+			var txt = "<select id='id_room-block' name ='room-block' class='form-control' >";
+			{% for b in blocks %}
+				txt += "<option value = '{{b.block_id}}'>" + " {{b.block_name}} " + "</option>";
+			{% endfor %}
+			txt += "</select>"; 
+			
+			$("#blocks-div").html(txt);
+		{% endif %}
+
+		// Floors
+		{% if floors %}
+			var txt = "<select id='id_room-floor' name ='room-floor' class='form-control' >";
+			{% for b in floors %}
+				txt += "<option value = '{{b.floor_id}}'>" + " {{b.floor_name}} " + "</option>";
+			{% endfor %}
+			txt += "</select>"; 
+			
+			$("#floors-div").html(txt);
+		{% endif %}
+
+		// Rooms
+		{% if rooms %}
+			var txt = "<select id='id_room-room' name ='room-room' class='form-control' >";
+			{% for b in rooms %}
+				txt += "<option value = '{{b.room_id}}'>" + " {{b.room_name}} " + "</option>";
+			{% endfor %}
+			txt += "</select>"; 
+			
+			$("#rooms-div").html(txt);
+		{% endif %}
+
+		// Beds
+		{% if beds %}
+			txt = "<select id='id_bed-bed' name ='bed-bed' class='form-control' >";
+			{% for b in beds %}
+				txt += "<option value = '{{b.bed_id}}'>" + " {{b.bed_name}} " + "</option>";
+			{% endfor %}
+			txt += "</select>"; 
+			
+			$("#beds-div").html(txt);
+		{% endif %}
+	</script>
 	
 	{% endblock jscripts %}

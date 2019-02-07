@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.conf import settings
 
 from datetime import datetime
@@ -11,7 +11,8 @@ import json
 
 from .views import *
 from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
-from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation, Generate_number_by_month
+from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation 
+from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
 
 today = datetime.date.today()
 def booking_form_new(request):
@@ -23,6 +24,7 @@ def booking_form_new(request):
 		
 		# Parse request into the three forms
 		guest_form = GuestForm(request.POST.copy(), request.FILES, prefix = "guest")
+		guest = {}
 		booking_form = BookingForm(request.POST.copy(), prefix="booking")
 		room_allocation_form = Room_allocationForm(request.POST.copy(), prefix="room")
 		
@@ -54,13 +56,12 @@ def booking_form_new(request):
 				except Pin_code.DoesNotExist:
 					None
 				
-				
 				guest.save()
 				validation_msg.append("Guest Details are saved.")
 
 				guest_form = GuestForm(request.POST.copy(), instance = guest, prefix="guest")
-				guest_form.data['guest-guest_id'] = guest.guest_id
-
+				guest_form.data['guest-guest_id'] = guest.guest_id				
+				
 				if booking_form.is_valid():
 					booking = booking_form.save(commit=False)
 					
@@ -115,8 +116,19 @@ def booking_form_new(request):
 		guest_form = GuestForm(prefix="guest",
 				initial={'current_state': 'KARNATAKA', 'permanent_state':'KARNATAKA',
 				'company_state':'KARNATAKA'})
+		guest = {} # passing an empty guest instance, it's used in POST to dsiplay the photo in the browser
 		room_allocation_form = Room_allocationForm(prefix="room",)
-		validation_msg = []
+
+	# Get available beds, and pass to front end
+	room_availability = get_availablity(request, today)
+	blocks = room_availability['blocks']
+	floors = room_availability['floors']
+	rooms = room_availability['rooms']
+	beds = room_availability['beds']
+
+	validation_msg = []
+	if beds is None:
+		validation_msg.append['There is no availability currently!!']
 
 	country_list = Country.objects.all()
 	country_arr = []
@@ -140,217 +152,14 @@ def booking_form_new(request):
 		pin_code_arr.append(p.pin_code)		
 		
 	
-	return render(request, 'guesthouse/booking_widget_tweaks.html', {
+	return render(request, 'guesthouse/new_booking.html', {
 		'booking_form': booking_form, 'guest_form':guest_form, 'room_allocation_form':room_allocation_form,
 		'country_arr':country_arr, 'state_arr':state_arr, 'city_arr':city_arr, 'pin_code_arr':pin_code_arr, 
-		'validation_msg':validation_msg
+		'validation_msg':validation_msg, 'guest':guest, 'beds':beds, 'rooms':rooms, 
+		'floors':floors, 'blocks':blocks
 		})
 
-
-
-def booking_form(request):
-
- 
-	if request.method == 'POST':
-		
-		# Parse request in to the three forms
-		g_form = parseToForm("guest_form.",request.POST, request.FILES)
-		b_form = parseToForm("booking_form.",request.POST, request.FILES)
-		r_form = parseToForm("room_allocation_form.",request.POST, request.FILES)
-
-		guest_form = GuestForm(g_form)
-
-		# Get DB values as required
-		guest_form = set_DB_values_for_fields("guest_form", guest_form)
-		
-		booking_form = BookingForm(b_form)
-		# Get DB values as required
-		booking_form = set_DB_values_for_fields("booking_form", booking_form)
-
-		room_allocation_form = Room_allocationForm(r_form)
-		# Get DB values as required
-		room_allocation_form = set_DB_values_for_fields("room_allocation_form", booking_form)
-
-		
-		validations = applyBookingValidations(guest_form, booking_form, room_allocation_form)
-		validation_result = validations['result']
-		validation_msg = validations['msg']
-		
-		if validation_result:
-			if guest_form.is_valid():
-				guest = guest_form.save(commit=False)
-				guest.save()
-
-				if booking_form.is_valid():
-					booking = booking_form.save(commit=False)
-					booking.guest_id = guest.guest_id
-					booking.guesthouse_id = settings.GH_ID
-					booking.booking_number = getNextbookingNumber()
-					booking.save()
-					# Create, Update room allocation, only if check_in_date is present
-					if room_allocation_form.data['check_in_date'] :
-						if room_allocation_form.is_valid():
-							room_allocation_form.data['booking_id'] = booking.booking_id
-							room_allocation_form.data['guest_id'] = booking.guest_id
-							room = room_allocation_form.save(commit=False)
-							room.save()
-				
-							validation_msg.append("New booking is saved.")
-				
-	else:
-		#booking_form = BookingForm()
-		#guest_form = GuestForm(initial={'current_state': 'KARNATAKA'})
-		#room_allocation_form = Room_allocationForm()
-		guest_form = {}
-		booking_form = {}
-		room_allocation_form = {}
-		
-		validations = applyBookingValidations(guest_form, booking_form, room_allocation_form)
-		validation_result = validations['result']
-		validation_msg = validations['msg']
-		
-		guest_form = GuestForm(initial={'current_state': 'KARNATAKA'})
-		booking_form = BookingForm()
-		room_allocation_form = Room_allocationForm()
-	# set initial values
-	init_values = set_initial_values( guest_form, booking_form )
-
 	
-	
-	return render(request, 'guesthouse/booking_widget_tweaks.html', {
-		'booking_form': booking_form, 'guest_form':guest_form, 'room_allocation_form':room_allocation_form,
-		'country_arr':init_values['country_arr'], 'state_arr':init_values['state_arr'],
-		'city_arr':init_values['city_arr'], 'pin_code_arr':init_values['pin_code_arr'], 
-		'validation_msg':validation_msg,
-		'occup_list':init_values['occup_list'], 'occupation':init_values['occupation'], 
-		'gender':init_values['gender'], 'food_option':init_values['food_option'], 
-		'food_preference': init_values['food_preference'], 
-		'food_pref_list':init_values['food_pref_list'], 'tenure':init_values['tenure'] 
-		})
-
-
-def set_initial_values(guest_form, booking_form):
-	country_list = Country.objects.all()
-	country_arr = []
-	for c in country_list:
-		country_arr.append(c.country_name)
-		
-	state_list = State.objects.all()
-	state_arr = []
-	for s in state_list:
-		state_arr.append(s.state_name)
-		
-
-	city_list = City.objects.all()
-	city_arr = []
-	for ct in city_list:
-		city_arr.append(ct.city)
-
-	pin_code_list = Pin_code.objects.all()
-	pin_code_arr = []
-	for p in pin_code_list:
-		pin_code_arr.append(p.pin_code)	
-
-		
-	food_pref_list = ["Vegetarian", "Non-Vegetarian"]
-	occup_list = ["Studying", "Working"] # Default value for Occupation
-	gender = "Female"
-		
-	if guest_form.data :
-		if guest_form.data['occupation'] == "ST":
-			occupation = "Studying"
-		else:
-			occupation = "Working"
-	else :
-		occupation = "Studying"
-	
-			
-		
-	if booking_form.data :
-		# Set values from the current forms
-		if booking_form.data['food_option'] :
-			food_option = "Yes"
-		else :
-			food_option = "No"
-			
-		if booking_form.data['food_preference'] == "VEG":
-			food_preference = "Vegetarian"
-		else :
-			food_preference = "Vegetarian"
-		if booking_form.data['tenure'] == "ST":
-			tenure = "One Month"
-		else:
-			tenure = "Long Term"
-	else:
-		food_preference = "Vegetarian"
-		tenure = "Long Term"
-		food_option = "Yes"
-		
-	return {'country_arr':country_arr, 'state_arr':state_arr,
-		'city_arr':city_arr, 'pin_code_arr':pin_code_arr, 'occupation':occupation, 'occup_list':occup_list, 
-		'gender':gender, 'food_option': food_option,'food_pref_list':food_pref_list, 
-		'food_preference':food_preference, 'tenure':tenure}
-
-def set_DB_values_for_fields( form_name, form ):
-
-	if form_name == "guest_form":
-		if form.data['occupation'] == "Studying":
-			form.data['occupation'] = "ST"
-		if form.data['occupation'] == "Working":
-			form.data['occupation'] = "SR"
-		if form.data['gender'] == "Female":
-			form.data['gender'] = "FEMALE"
-		if form.data['gender'] == "Male":
-			form.data['gender'] = "MALE"
-		
-		if form.data['parent_guardian_1_type'] == "Father":
-			form.data['parent_guardian_1_type'] = "FATHER"
-		if form.data['parent_guardian_1_type'] == "Mother":
-			form.data['parent_guardian_1_type'] = "MOTHER"
-		if form.data['parent_guardian_1_type'] == "Husband":
-			form.data['parent_guardian_1_type'] = "HUSBAND"
-		if form.data['parent_guardian_1_type'] == "Wife":
-			form.data['parent_guardian_1_type'] = "Wife"
-		if form.data['parent_guardian_1_type'] == "Guardian":
-			form.data['parent_guardian_1_type'] = "GUARDIAN"
-
-		if form.data['parent_guardian_2_type'] == "Father":
-			form.data['parent_guardian_2_type'] = "FATHER"
-		if form.data['parent_guardian_2_type'] == "Mother":
-			form.data['parent_guardian_2_type'] = "MOTHER"
-		if form.data['parent_guardian_2_type'] == "Husband":
-			form.data['parent_guardian_2_type'] = "HUSBAND"
-		if form.data['parent_guardian_2_type'] == "Wife":
-			form.data['parent_guardian_2_type'] = "Wife"
-		if form.data['parent_guardian_2_type'] == "Guardian":
-			form.data['parent_guardian_2_type'] = "GUARDIAN"
-			
-		if form.data['parent_guardian_3_type'] == "Father":
-			form.data['parent_guardian_3_type'] = "FATHER"
-		if form.data['parent_guardian_3_type'] == "Mother":
-			form.data['parent_guardian_3_type'] = "MOTHER"
-		if form.data['parent_guardian_3_type'] == "Husband":
-			form.data['parent_guardian_3_type'] = "HUSBAND"
-		if form.data['parent_guardian_3_type'] == "Wife":
-			form.data['parent_guardian_3_type'] = "Wife"
-		if form.data['parent_guardian_3_type'] == "Guardian":
-			form.data['parent_guardian_3_type'] = "GUARDIAN"
-
-	
-	if form_name == "booking_form":
-		if form.data['food_preference'] == "Vegetarian":
-			form.data['food_preference'] = "VEG"
-		if form.data['food_preference'] == "Non-Vegetarian":
-			form.data['food_preference'] = "NON-VEG"
-		
-		if form.data['tenure'] == "One Month":
-			form.data['tenure'] = "ST"
-		if form.data['tenure'] == "Long Term":
-			form.data['tenure'] = "LT"
-			
-
-	return form
-		
 def parseToForm(form_str, data, files):
 
 	form = {}
@@ -402,8 +211,29 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 	msg = []
 	return {'result':result, 'msg':msg}
 	
-def get_room_availablity():
+def get_availablity(request, from_date):
 
-	rooms = {}
-	return { 'rooms':rooms }
+	# Get all beds currently allocated
+	bed_alloc = Room_allocation.objects.filter(
+		allocation_end_date__gt = from_date, bed_id__isnull = False).values('bed_id')
+
+	# Get the currently available beds (exclude allocated beds)
+	beds = Bed.objects.exclude(bed_id__in=bed_alloc)
+
+	rooms_arr = []
+	floors_arr = [] 
+	blocks_arr = []
+	for b in beds:
+		if b.room not in rooms_arr:
+			rooms_arr.append(b.room_id)
+		if b.floor not in rooms_arr:
+			floors_arr.append(b.floor_id)
+		if b.block not in rooms_arr:
+			blocks_arr.append(b.block_id)
+	
+	rooms = Room.objects.filter(room_id__in = rooms_arr)
+	floors = Floor.objects.filter(floor_id__in = floors_arr)
+	blocks = Block.objects.filter(block_id__in = blocks_arr)
+	
+	return { 'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks }
 	
