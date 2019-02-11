@@ -58,14 +58,10 @@ def get_addr_pin_city_state(request):
 
 
 @csrf_exempt
-def validate_address(request):
-	ipin_code = request.POST.get('pin_code', None)
-	icity = request.POST.get('city', None)
-	icstate = request.POST.get('cstate', None)
-	icountry = request.POST.get('country', None)
+def validate_address(ipin_code, icity, icstate, icountry):
 
 	msg = []
-	err_flag = False
+	valid = True
 
 	if ipin_code is None or ipin_code == '':
 		msg.append("Pin code cannot be empty")
@@ -73,13 +69,13 @@ def validate_address(request):
 		
 	if icity is None or icity == '':
 		msg.append("City cannot be empty")
-		err_flag = True
+		valid = False
 	if icstate is None or icstate == '':
 		msg.append("State cannot be empty")
-		err_flag = True
+		valid = False
 	if icountry is None or icountry == '':
 		msg.append("Country cannot be empty")
-		err_flag = True
+		valid = False
 	
 	q = Pin_city_state_country.objects.all()
 	
@@ -90,14 +86,14 @@ def validate_address(request):
 	if icstate:
 		q = q.filter(state_id = icstate)
 	if icity:
-		cnt = Country.objects.filter(country_name = icountry).first()
+		cnt = Country.objects.filter(country_code = icountry).first()
 		q = q.filter(country = cnt)
 	
 	if q is None or q.count() == 0:
 		msg.append("Entered Pin code, City, State is invalid. Please correct and then proceed.")
-		err_flag = True
+		valid = False
 
-	if not err_flag:
+	if valid:
 		msg.append("SUCCESS")
 	
-	return JsonResponse({'msg':msg})
+	return ({'valid': valid, 'msg':msg})

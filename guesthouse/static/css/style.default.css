@@ -1410,8 +1410,7 @@ STYLE SWITCHER FOR DEMO
 
 .btn-primary:hover {
   color: #fff;
-  background-color: #3eaa94;
-  border-color: #3aa18c;
+  background-color: #000;
 }
 
 .btn-primary:focus, .btn-primary.focus {

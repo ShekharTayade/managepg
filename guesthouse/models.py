@@ -150,13 +150,17 @@ class Guest (models.Model):
 	current_city = models.CharField(max_length=600, blank=True, default='')
 	current_state = models.ForeignKey(State, on_delete = models.DO_NOTHING, blank=True, null=True,  related_name='current_addr_state')
 	current_pin_code = models.ForeignKey(Pin_code, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='current_addr_pin_code')
-	current_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='current_addr_country')	
+	current_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, 
+		default = 'IND', blank=True, null=True, 
+		related_name='current_addr_country')	
 	permanent_address_1 = models.CharField(max_length=600, blank=True, default='')
 	permanent_address_2 = models.CharField(max_length=600, blank=True, default='')
 	permanent_city = models.CharField(max_length=600, blank=True, default='')
 	permanent_state = models.ForeignKey(State, on_delete = models.DO_NOTHING, blank=True, null=True,  related_name='permanent_addr_state')
 	permanent_pin_code = models.ForeignKey(Pin_code, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='permanent_addr_pin_code')
-	permanent_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='permanent_addr_country')	
+	permanent_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, 
+		default = 'IND', blank=True, null=True, 
+		related_name='permanent_addr_country')	
 	occupation = models.CharField(
         max_length=2,
         choices=OCCUPATION_CHOICES,
@@ -170,7 +174,9 @@ class Guest (models.Model):
 	company_city = models.CharField(max_length=600, blank=True, default='')
 	company_state = models.ForeignKey(State, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='company_addr_state')
 	company_pin_code = models.ForeignKey(Pin_code, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='company_addr_pin_code')
-	company_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, blank=True, null=True, related_name='company_addr_country')
+	company_country = models.ForeignKey(Country, on_delete = models.DO_NOTHING, 
+		default = 'IND', blank=True, null=True, 
+		related_name='company_addr_country')
 	guest_photo = models.ImageField(upload_to='uploads/%Y/%m/%d/', blank=True, default="")
 	blood_group = models.CharField(max_length=10, blank=True, default='')
 	allergy_details = models.CharField(max_length=2000, blank=True, default='')
@@ -212,7 +218,7 @@ class Booking (models.Model):
 
 	FOOD_PREF = (
 		('VEG', 'Vegetarian'),
-		('NOV-VEG', 'None-Vegetarian'),
+		('NOV-VEG', 'Non-Vegetarian'),
 	)	
 	
 	ONE_MONTH = 'ST'

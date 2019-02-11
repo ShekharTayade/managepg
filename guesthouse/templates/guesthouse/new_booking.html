@@ -13,7 +13,7 @@
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-								<li aria-current="page" class="breadcrumb-item active">Booking</li>
+								<li aria-current="page" class="breadcrumb-item active">New Booking</li>
 							</ol>
 						</nav>
 					</div>
@@ -90,7 +90,7 @@
 
 											</div>
 											<div class = "col-sm-4">
-												<img class="img-thumbnail img-display pull-right" src="{{guest.guest_photo.url}}" alt="Photo">
+												<img class="img-thumbnail img-display pull-right" src="{% if guest.guest_photo %} {{guest.guest_photo.url}} {% endif %}" alt="Photo">
 
 											</div>
 										</div>
@@ -243,19 +243,27 @@
 					if (source == 'CURR_ADDR') {
 
 						curr_city = document.getElementById("id_guest-current_city").value;
-						if (curr_city == '' || curr_city == null){
-							document.getElementById("id_guest-current_city").value = city_arr[0];
+						if ( (curr_city == '' || curr_city == null) && (curr_city != 'undefined' )){
+							if ( typeof city_arr[0] !== 'undefined' ){
+								document.getElementById("id_guest-current_city").value = city_arr[0];
+							}
 						} else {
 							if (city_arr.indexOf(curr_city) == -1 ){
-								document.getElementById("id_guest-current_city").value = city_arr[0];
+								if ( typeof city_arr[0] !== 'undefined' ){
+									document.getElementById("id_guest-current_city").value = city_arr[0];
+								}
 							}
 						}
 						curr_state = document.getElementById("id_guest-current_state").value;
 						if (curr_state == '' || curr_state == null){
-							document.getElementById("id_guest-current_state").value = cstate_arr[0];
+							if ( typeof cstate_arr[0] !== 'undefined' ){
+								document.getElementById("id_guest-current_state").value = cstate_arr[0];
+							}
 						} else {
 							if (cstate_arr.indexOf(curr_state) == -1 ){
-								document.getElementById("id_guest-current_state").value = cstate_arr[0];
+								if ( typeof cstate_arr[0] !== 'undefined' ){
+									document.getElementById("id_guest-current_state").value = cstate_arr[0];
+								}
 							}
 						}
 					}
@@ -263,18 +271,26 @@
 
 						perm_city = document.getElementById("id_guest-permanent_city").value;
 						if (perm_city == '' || perm_city == null){
-							document.getElementById("id_guest-permanent_city").value = city_arr[0];
+							if ( typeof city_arr[0] !== 'undefined' ){
+								document.getElementById("id_guest-permanent_city").value = city_arr[0];
+							}
 						} else {
 							if (city_arr.indexOf(perm_city) == -1 ){
-								document.getElementById("id_guest-permanent_city").value = city_arr[0];
+								if ( typeof city_arr[0] !== 'undefined' ){
+									document.getElementById("id_guest-permanent_city").value = city_arr[0];
+								}
 							}
 						}
 						perm_state = document.getElementById("id_guest-permanent_state").value;
 						if (perm_state == '' || perm_state == null){
-							document.getElementById("id_guest-permanent_state").value = cstate_arr[0];
+							if ( typeof cstate_arr[0] !== 'undefined' ){
+								document.getElementById("id_guest-permanent_state").value = cstate_arr[0];
+							}
 						} else {
 							if (cstate_arr.indexOf(perm_state) == -1 ){
-								document.getElementById("id_guest-permanent_state").value = cstate_arr[0];
+								if ( typeof cstate_arr[0] !== 'undefined' ){
+									document.getElementById("id_guest-permanent_state").value = cstate_arr[0];
+								}
 							}
 						}
 
@@ -284,18 +300,26 @@
 
 						perm_city = document.getElementById("id_guest-company_city").value;
 						if (perm_city == '' || perm_city == null){
-							document.getElementById("id_guest-company_city").value = city_arr[0];
+							if ( typeof city_arr[0] !== 'undefined' ){
+								document.getElementById("id_guest-company_city").value = city_arr[0];
+							}
 						} else {
 							if (city_arr.indexOf(perm_city) == -1 ){
-								document.getElementById("id_guest-company_city").value = city_arr[0];
+								if ( typeof city_arr[0] !== 'undefined' ){
+									document.getElementById("id_guest-company_city").value = city_arr[0];
+								}
 							}
 						}
 						perm_state = document.getElementById("id_guest-company_state").value;
 						if (perm_state == '' || perm_state == null){
-							document.getElementById("id_guest-company_state").value = cstate_arr[0];
+							if ( typeof cstate_arr[0] !== 'undefined' ){
+								document.getElementById("id_guest-company_state").value = cstate_arr[0];
+							}
 						} else {
 							if (cstate_arr.indexOf(perm_state) == -1 ){
-								document.getElementById("id_guest-company_state").value = cstate_arr[0];
+								if ( typeof cstate_arr[0] !== 'undefined' ){
+									document.getElementById("id_guest-company_state").value = cstate_arr[0];
+								}
 							}
 						}
 

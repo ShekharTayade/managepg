@@ -30,8 +30,11 @@ urlpatterns =[
 	   auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
 	   name='password_reset_complete'), 
 
-	url(r'^booking/$', views.booking_form_new, name='booking'),
+	url(r'^new_booking/$', views.new_booking, name='new_booking'),
 	url(r'^ajax/get_addr_pin_city_state/$', views.get_addr_pin_city_state, name='get_addr_pin_city_state'),
+
+	url(r'^manage_booking/$', views.manage_booking, name='manage_booking'),
+	
 ]
 	
 if settings.DEBUG:

@@ -7,6 +7,8 @@ from django.conf import settings
 
 from datetime import datetime
 import datetime
+
+import datetime
 import json
 
 from .views import *
@@ -15,9 +17,9 @@ from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
 
 today = datetime.date.today()
-def booking_form_new(request):
+def new_booking(request):
 
- 
+	validation_msg = []
 	if request.method == 'POST':
 
 		#booking = Booking.objects.get(booking_number = form.booking_number)	
@@ -126,7 +128,6 @@ def booking_form_new(request):
 	rooms = room_availability['rooms']
 	beds = room_availability['beds']
 
-	validation_msg = []
 	if beds is None:
 		validation_msg.append['There is no availability currently!!']
 
@@ -209,6 +210,26 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 
 	result = True
 	msg = []
+
+	
+	if guest_form:
+		validation = validate_address(guest_form.data['guest-current_pin_code'],
+				guest_form.data['guest-current_city'],
+				guest_form.data['guest-current_state'],
+				guest_form.data['guest-current_country'])
+		if not validation['valid']:
+			msg.append( validation['msg'])
+			result = False
+	
+	if booking_form:
+		if booking_form.data['booking-check_in_date'] is not None and  booking_form.data['booking-check_out_date'] is not None :
+			check_in = datetime.datetime.strptime( booking_form.data['booking-check_in_date'], '%Y-%m-%d' )
+			check_out = datetime.datetime.strptime( booking_form.data['booking-check_out_date'], '%Y-%m-%d')
+			if check_out <= check_in:
+				msg.append("Room Allocation -> Check-out should be later than check-in")
+				result = False
+		
+		
 	return {'result':result, 'msg':msg}
 	
 def get_availablity(request, from_date):
@@ -236,4 +257,7 @@ def get_availablity(request, from_date):
 	blocks = Block.objects.filter(block_id__in = blocks_arr)
 	
 	return { 'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks }
+
+def manage_booking(request):
 	
+	return render(request, 'guesthouse/manage_booking.html', {} )	
