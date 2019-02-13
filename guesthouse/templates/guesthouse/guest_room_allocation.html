@@ -1,4 +1,15 @@
 {% load widget_tweaks %}
+										{% if not beds %}
+										<div class = "row">
+											<div id="errors" class="alert alert-warning alert-dismissable">
+												<button type="button" class="close" data-dismiss="alert">&times;</button>
+												<div class="inner">										
+													<p> There is no availability currently!</p>
+													<p> Booking can be done, but you can allocate room/bed after it is available</p>
+												</div>
+											</div>
+										</div>
+										{% endif %}
 										<div class = "row">
 											<div class = "col-md-6">
 												<div class="form-group">
@@ -257,7 +268,7 @@
 													{% if room_allocation_form.is_bound %}
 														{% if room_allocation_form.bed.errors %}
 												
-															{% render_field room_allocation_form.bed    class="form-control is-invalid" %}
+															{% render_field room_allocation_form.bed class="form-control is-invalid" %}
 															{% for error in room_allocation_form.bed.errors %}
 																<div class="invalid-feedback">
 																  {{ error }}
@@ -265,10 +276,10 @@
 															{% endfor %}
 												
 														{% else %}
-															{% render_field room_allocation_form.bed    class="form-control is-valid" %}
+															{% render_field room_allocation_form.bed class="form-control is-valid" %}
 														{% endif %}
 													{% else %}
-														{% render_field room_allocation_form.bed    class="form-control" %}
+														{% render_field room_allocation_form.bed class="form-control" %}
 													{% endif %}
 												
 													{% if room_allocation_form.bed.help_text %}

@@ -1,0 +1,78 @@
+						<form method="post" >
+							{% csrf_token %}
+							<h1>Bookings</h1>
+							<p class="text-muted">{% if count > 0 %} {{ count }} bookings found {% endif %}</p>
+							<div class="table table-responsive">
+								<table id = "bookingsTbl" class="table table-responsive">
+									<thead>
+										<tr>
+											<th width="15%">Booking No.</th>
+											<th width="30%">Name</th>
+											<th width="15%">Check-in/out</th>
+											<th width="15%">Contact</th>
+											<th width="15%">Allocation</th>
+											<th width="10%"></th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for i in bookings %}
+										<tr>
+											<td>{{i.booking_number}}</td>
+											<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}</td>
+											<td><small>
+												{{i.check_in_date|default:''}}
+												{% if i.check_out_date %}<br /> {{i.check_out_date|default:'' }} {% endif %}
+												</small>
+											</td>
+											<td><small>
+												{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
+												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
+												</small>
+											</td>
+											<td>{{i.room_id}}</td>
+											<td>
+												<a href="" data-toggle="tooltip" title="Edit!" >
+													<i class= "fa fa-edit fa-lg"></i>
+												</a>
+												<a style = "cursor: pointer; color:red;"
+													data-toggle="tooltip" title="Delete Booking!" 
+													onclick="">
+													<i class="fa fa-trash-o fa-lg"></i>
+												</a>											
+											</td>
+										</tr>
+										{% endfor bookings %}
+										
+										
+									</tbody>
+									<tfoot>
+										<tr>
+											<th colspan="4">Total</th>
+											<th colspan="2" style = "text-align:right">{{count}}</th>
+											<th></th>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+							{% if bookings.has_other_pages %}
+							  <ul class="pagination">
+								{% if bookings.has_previous %}
+								  <li><a href="?page={{ bookings.previous_page_number }}"><i class = "fa fa-chevron-left"></i></a></li>
+								{% else %}
+								  <li class="disabled"><span>&laquo;</span></li>
+								{% endif %}
+								{% for i in bookings.paginator.page_range %}
+								  {% if bookings.number == i %}
+									<li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+								  {% else %}
+									<li><a href="?page={{ i }}">{{ i }}</a></li>
+								  {% endif %}
+								{% endfor %}
+								{% if bookings.has_next %}
+								  <li><a href="?page={{ bookings.next_page_number }}">&raquo;</a></li>
+								{% else %}
+								  <li class="disabled"><span>&raquo;</span></li>
+								{% endif %}
+							  </ul>
+							{% endif %}
+						</form>

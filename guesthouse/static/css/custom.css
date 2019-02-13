@@ -33,3 +33,7 @@
 	height:10vw;
 	object-fit:scale-down;
 }
+
+#bookingsTbl{
+	font-size: 0.8rem;
+}

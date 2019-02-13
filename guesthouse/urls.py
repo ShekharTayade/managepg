@@ -33,8 +33,9 @@ urlpatterns =[
 	url(r'^new_booking/$', views.new_booking, name='new_booking'),
 	url(r'^ajax/get_addr_pin_city_state/$', views.get_addr_pin_city_state, name='get_addr_pin_city_state'),
 
-	url(r'^manage_booking/$', views.manage_booking, name='manage_booking'),
 	
+	url(r'^manage_booking/$', views.manage_booking, name='manage_booking'),
+	url(r'^ajax/get_bookings/$', views.get_bookings, name='get_bookings'),
 ]
 	
 if settings.DEBUG:

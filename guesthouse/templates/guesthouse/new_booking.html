@@ -391,47 +391,51 @@
 
 		//Update the drop-downs according to the current room/bed availability
 		// Blocks
-		{% if blocks %}
-			var txt = "<select id='id_room-block' name ='room-block' class='form-control' >";
-			{% for b in blocks %}
-				txt += "<option value = '{{b.block_id}}'>" + " {{b.block_name}} " + "</option>";
-			{% endfor %}
-			txt += "</select>"; 
-			
-			$("#blocks-div").html(txt);
+		var txt = "<select id='id_room-block' name ='room-block' class='form-control' >";
+		{% for b in blocks %}
+			txt += "<option value = '{{b.block_id}}'>" + " {{b.block_name}} " + "</option>";
+		{% endfor %}
+		txt += "<option selected value = ''>" + "" + "</option>";
+		txt += "</select>"; 
+		$("#blocks-div").html(txt);
+		{% if not blocks %}
+			$("#id_room-block").prop("disabled", true);
 		{% endif %}
-
+		
 		// Floors
-		{% if floors %}
-			var txt = "<select id='id_room-floor' name ='room-floor' class='form-control' >";
-			{% for b in floors %}
-				txt += "<option value = '{{b.floor_id}}'>" + " {{b.floor_name}} " + "</option>";
-			{% endfor %}
-			txt += "</select>"; 
-			
-			$("#floors-div").html(txt);
+		var txt = "<select id='id_room-floor' name ='room-floor' class='form-control' >";
+		{% for b in floors %}
+			txt += "<option value = '{{b.floor_id}}'>" + " {{b.floor_name}} " + "</option>";
+		{% endfor %}
+		txt += "<option selected value = ''>" + "" + "</option>";
+		txt += "</select>"; 
+		$("#floors-div").html(txt);
+		{% if not blocks %}
+			$("#id_room-floor").prop("disabled", true);
 		{% endif %}
 
 		// Rooms
-		{% if rooms %}
-			var txt = "<select id='id_room-room' name ='room-room' class='form-control' >";
-			{% for b in rooms %}
-				txt += "<option value = '{{b.room_id}}'>" + " {{b.room_name}} " + "</option>";
-			{% endfor %}
-			txt += "</select>"; 
-			
-			$("#rooms-div").html(txt);
+		var txt = "<select id='id_room-room' name ='room-room' class='form-control' >";
+		{% for b in rooms %}
+			txt += "<option value = '{{b.room_id}}'>" + " {{b.room_name}} " + "</option>";
+		{% endfor %}
+		txt += "<option selected value = ''>" + "" + "</option>";
+		txt += "</select>"; 
+		$("#rooms-div").html(txt);
+		{% if not blocks %}
+			$("#id_room-room").prop("disabled", true);
 		{% endif %}
 
 		// Beds
-		{% if beds %}
-			txt = "<select id='id_bed-bed' name ='bed-bed' class='form-control' >";
-			{% for b in beds %}
-				txt += "<option value = '{{b.bed_id}}'>" + " {{b.bed_name}} " + "</option>";
-			{% endfor %}
-			txt += "</select>"; 
-			
-			$("#beds-div").html(txt);
+		txt = "<select id='id_room-bed' name ='room-bed' class='form-control' >";
+		{% for b in beds %}
+			txt += "<option value = '{{b.bed_id}}'>" + " {{b.bed_name}} " + "</option>";
+		{% endfor %}
+		txt += "<option selected value = ''>" + "" + "</option>";
+		txt += "</select>"; 
+		$("#beds-div").html(txt);
+		{% if not blocks %}
+			$("#id_room-bed").prop("disabled", true);
 		{% endif %}
 	</script>
 	

@@ -91,7 +91,6 @@ class Floor(models.Model):
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
 
-
 	
 class Room(models.Model):
 	room_id = models.AutoField(primary_key=True)
@@ -100,6 +99,9 @@ class Room(models.Model):
 	block = models.ForeignKey(Block, models.CASCADE, null=False)
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
+	room_rent = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	max_beds = models.IntegerField(null=False)
+	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 
 class Bed(models.Model):
 	bed_id = models.AutoField(primary_key=True)
@@ -110,6 +112,15 @@ class Bed(models.Model):
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
 
+class Food_price(models.Model):
+	FOOD_PREF = (
+		('VEG', 'Vegetarian'),
+		('NOV-VEG', 'Non-Vegetarian'),
+	)	
+	type = models.CharField(max_length = 7, primary_key=True, null=False, choices=FOOD_PREF, default = "VEG")
+	price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	
+	
 class Guest (models.Model):
 	SERVICE = 'SR'
 	STUDENT = 'ST'

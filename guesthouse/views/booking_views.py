@@ -5,8 +5,11 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db.models import Count, Q
 from django.conf import settings
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from datetime import datetime
 import datetime
+from dateutil.relativedelta import relativedelta
 
 import datetime
 import json
@@ -85,7 +88,6 @@ def new_booking(request):
 					booking_form.data['booking-guest'] = booking.guest
 					booking_form.data['booking-guesthouse'] = booking.guesthouse
 					
-					
 					# Create, Update room allocation, only if check_in_date is present
 					if booking.check_in_date is not None:
 						if room_allocation_form.is_valid():
@@ -104,7 +106,7 @@ def new_booking(request):
 							if room.bed :
 								validation_msg.append("Room/Bed allocation is done.")
 							else:
-								validation_msg.append("Please allocated Room/Bed.")
+								validation_msg.append("Please allocate Room/Bed.")
 							
 							
 							room_allocation_form = Room_allocationForm(request.POST.copy(), instance = room, prefix="room")
@@ -113,14 +115,15 @@ def new_booking(request):
 							room_allocation_form.data['room-guest'] = room.guest
 							
 	else:
+
 		booking_form = BookingForm(prefix="booking",)
 
 		guest_form = GuestForm(prefix="guest",
 				initial={'current_state': 'KARNATAKA', 'permanent_state':'KARNATAKA',
 				'company_state':'KARNATAKA'})
 		guest = {} # passing an empty guest instance, it's used in POST to dsiplay the photo in the browser
-		room_allocation_form = Room_allocationForm(prefix="room",)
-
+		room_allocation_form = Room_allocationForm(prefix="room")
+	
 	# Get available beds, and pass to front end
 	room_availability = get_availablity(request, today)
 	blocks = room_availability['blocks']
@@ -152,7 +155,7 @@ def new_booking(request):
 	for p in pin_code_list:
 		pin_code_arr.append(p.pin_code)		
 		
-	
+	print(beds)
 	return render(request, 'guesthouse/new_booking.html', {
 		'booking_form': booking_form, 'guest_form':guest_form, 'room_allocation_form':room_allocation_form,
 		'country_arr':country_arr, 'state_arr':state_arr, 'city_arr':city_arr, 'pin_code_arr':pin_code_arr, 
@@ -220,14 +223,28 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 		if not validation['valid']:
 			msg.append( validation['msg'])
 			result = False
-	
+
 	if booking_form:
-		if booking_form.data['booking-check_in_date'] is not None and  booking_form.data['booking-check_out_date'] is not None :
+		if booking_form.data['booking-check_in_date'] != '' and  booking_form.data['booking-check_out_date'] != '' :
 			check_in = datetime.datetime.strptime( booking_form.data['booking-check_in_date'], '%Y-%m-%d' )
 			check_out = datetime.datetime.strptime( booking_form.data['booking-check_out_date'], '%Y-%m-%d')
 			if check_out <= check_in:
 				msg.append("Room Allocation -> Check-out should be later than check-in")
 				result = False
+			
+			import pdb
+			pdb.set_trace()
+			
+			diff = (check_out.year - check_in.year) * 12 + check_out.month - check_in.month
+			if booking_form.data['booking-tenure'] == 'LT':
+				if diff < 12:
+					msg.append("Room Allocation -> Long Term stay can't be less than 1 year")
+					result = False
+					
+			if booking_form.data['booking-tenure'] == 'ST':
+				if diff > 1:
+					msg.append("Room Allocation -> Short Term stay can't be more than 1 month")
+					result = False
 		
 		
 	return {'result':result, 'msg':msg}
@@ -260,4 +277,37 @@ def get_availablity(request, from_date):
 
 def manage_booking(request):
 	
-	return render(request, 'guesthouse/manage_booking.html', {} )	
+	return render(request, 'guesthouse/manage_booking.html', {} )
+
+@csrf_exempt
+def get_bookings(request):
+	
+	from_date = request.POST.get("fromdate", '')
+	startDt = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()	
+	to_date = request.POST.get("todate", '')
+	endDt = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()	
+
+	bookings_list = Booking.objects.all().select_related('guest')
+	
+	if startDt:
+		bookings_list = bookings_list.filter(created_date__gte = startDt)
+		
+	if endDt:
+		bookings_list = bookings_list.filter(created_date__lte = endDt)
+	
+	count = bookings_list.count()
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(bookings_list, 5)
+	try:
+		bookings = paginator.page(page)
+	except PageNotAnInteger:
+		bookings = paginator.page(1)
+	except EmptyPage:
+		bookings = paginator.page(paginator.num_pages)
+	
+	return render(request, 'guesthouse/bookings_table.html', {'count':count, 
+		'bookings': bookings})		
+	
+	

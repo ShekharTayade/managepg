@@ -85,8 +85,8 @@
 							<!-- end tab-->
 						</div>
 						<div class="box info-bar">
-							<div id = "booking_table">
-								
+							<div id = "bookings_table">
+								{% include 'guesthouse/bookings_table.html' %}
 							</div>
 						</div>						
 					</div>
@@ -95,11 +95,118 @@
 			</div>
         </div>
     </div>
-	
+	{% include 'guesthouse/message-modal_ok.html' %}
 		
 	{% endblock sitecontent %}
 
 
 	{% block jscripts %}
+	<script>
+		$( document ).ready(function() {
+			var today = new Date();
+
+			var from_dt = new Date();
+			from_dt.setDate( from_dt.getDate() - 7) 
+			var fm_dt = from_dt.getDate();
+			var fm_mn = from_dt.getMonth();
+			var fm_mn = fm_mn + 1; //Javascript month start from 0
+			var fm_yy = from_dt.getFullYear();			
+			document.getElementById("fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
+			document.getElementById("alloc_fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
+
+			var to_dt = today.getDate();
+			var to_mn = today.getMonth();
+			var to_mn = fm_mn; //Javascript month start from 0
+			var to_yy = today.getFullYear();			
+			
+			document.getElementById("todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
+			document.getElementById("alloc_todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
+		
+		});
 	
+		function date_query(){
+			//Get the from, to dates
+			var fm_d = new Date(document.getElementById("fromdate").value);
+			if (fm_d > new Date()) {
+				$("#msg").html("From Date can't be greatrer than today");
+				$("#msg-modal").modal("show");
+				return;
+			}
+			var fm_dt = fm_d.getDate();
+			var fm_mn = fm_d.getMonth();
+			var fm_mn = fm_mn + 1; //Javascript month start from 0
+			var fm_yy = fm_d.getFullYear();			
+			var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
+			  
+			var to_d = new Date(document.getElementById("todate").value);
+			var to_dt = to_d.getDate();
+			var to_mn = to_d.getMonth();
+			var to_mn = to_mn + 1; //Javascript month start from 0
+			var to_yy = to_d.getFullYear();			
+			var to_date = to_yy + "-" + to_mn + "-" + to_dt;
+			
+			if ( to_d < fm_d ) {
+				$("#msg").html("To Date can't be earlier than From Date");
+				$("#msg-modal").modal("show");
+				return;
+			}
+			
+			// Let's update the cart view
+			$.ajax({
+				url: '{% url "get_bookings" %}', 
+				dataType: 'text',
+				data: {'fromdate':from_date, 'todate':to_date},
+				type: 'POST',
+				success: function (data) {
+					$("#bookings_table").html(data);
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please let us know the details and we will be happy to help sort it out."); 
+					return;
+				}
+			});				
+			
+		}
+
+		
+		function alloc_query(){
+			//Get the from, to dates
+			var fm_d = new Date(document.getElementById("alloc_fromdate").value);
+			
+			if (fm_d > new Date()) {
+				$("#msg").html("From Date can't be greatrer than today");
+				$("#msg-modal").modal("show");
+				return;
+			}
+				
+			var fm_dt = fm_d.getDate();
+			var fm_mn = fm_d.getMonth();
+			var fm_mn = fm_mn + 1; //Javascript month start from 0
+			var fm_yy = fm_d.getFullYear();			
+			var from_date = new Date( fm_yy, fm_mn, fm_dt );
+			  
+			var to_d = new Date(document.getElementById("alloc_todate").value);
+			var to_dt = to_d.getDate();
+			var to_mn = to_d.getMonth();
+			var to_mn = to_mn + 1; //Javascript month start from 0
+			var to_yy = to_d.getFullYear();			
+			var to_date = new Date(parseInt(fm_yy), parseInt(fm_mn), parseInt(fm_dt));
+			
+			if ( to_d < fm_d ) {
+				$("#msg").html("To Date can't be earlier than From Date");
+				$("#msg-modal").modal("show");
+				return;
+			}
+		}		
+		
+		
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}
+	</script>
 	{% endblock jscripts %}
