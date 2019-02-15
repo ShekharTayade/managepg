@@ -319,6 +319,7 @@ def get_bookings(request):
 	endDt = ''
 	noalloc_startDt = ''
 	noalloc_endDt = ''
+	booking_number = ''
 	
 	page = request.POST.get('page', 1)
 	
@@ -336,6 +337,9 @@ def get_bookings(request):
 	email_id = request.POST.get("email_id", '')
 	phone_number = request.POST.get("phone_number", '')
 
+	booking_number = request.POST.get("booking_number", '')
+	
+	
 	noalloc_fromdate = request.POST.get("noalloc_fromdate", '')
 	if noalloc_fromdate != '' :
 		noalloc_startDt = datetime.datetime.strptime(noalloc_fromdate, "%Y-%m-%d").date()	
@@ -371,7 +375,9 @@ def get_bookings(request):
 		bookings_list = bookings_list.filter(created_date__lte = noalloc_endDt,
 					room_allocation__isnull = True)
 
-		
+	if booking_number:
+		bookings_list = bookings_list.filter(booking_number__iexact = booking_number)
+	
 	
 	count = bookings_list.count()
 

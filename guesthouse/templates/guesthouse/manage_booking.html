@@ -46,6 +46,9 @@
 												<a class="nav-link" data-toggle="tab" href="#name_search" role="tab" aria-controls="Personal Details">Guest Name</a>
 											</li>
 											<li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#booking_number_search" role="tab" aria-controls="Personal Details">Booking Number</a>
+											</li>
+											<li class="nav-item">
 												<a class="nav-link" data-toggle="tab" href="#allocation_search" role="tab" aria-controls="Medical Details">Bookings without Room Allocation</a>
 											</li>
 											<li class="nav-item">
@@ -71,6 +74,13 @@
 										{% include 'guesthouse/manage_booking_by_name.html' %}
 									</div>
 								</div>
+								<div class="tab-pane fade show " id="booking_number_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/manage_booking_by_number.html' %}
+									</div>
+								</div>
+								
+								
 								<div class="tab-pane fade show " id="allocation_search" role="tabpanel">
 									<div class="col-md-12">
 										{% include 'guesthouse/manage_booking_by_allocation.html' %}
@@ -181,6 +191,18 @@
 
 						query_data = {'f_name':f_name, 'm_name':m_name, 'l_name':l_name, 'page':page}
 						break;
+					case 'booking_number_search':
+						execute_ajax = true;
+						var b_num = document.getElementById("booking_num").value;
+						
+						if (b_num == '' ) {
+							$("#msg").html("Please enter booking number");
+							$("#msg-modal").modal("show");
+							return;
+						}							
+
+						query_data = {'booking_number':b_num, 'page':page}
+						break;
 					case 'allocation_search':
 						execute_ajax = true;
 						//Get the from, to dates
@@ -218,6 +240,10 @@
 						var phone_number = document.getElementById("phone_number").value;
 
 						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page}
+						break;
+					case 'booking_number_search':
+						execute_ajax = true;
+
 						break;
 						
 				} // End switch

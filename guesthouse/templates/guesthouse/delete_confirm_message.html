@@ -9,7 +9,9 @@
 			<div class="modal-body">
 				<div >
 					<div class = "mb-4">
-						<h4>Booking Number: {{booking.booking_number}}</h4>
+						<div class = "col-sm-12">
+							<h4>Booking Number: {{booking.booking_number}}</h4>
+						</div>
 					</div>
 					
 					<div class="container">
@@ -17,13 +19,15 @@
 							<div class = "col-sm-6">
 								<div class="card">
 									<div class = "row">
-										<div class = "col-sm-5">
+										{% if booking.guest.guest_photo %}
+										<div class = "col-sm-4">
 											<br />
-											{% if booking.guest.guest_photo %}
 											<img id = "modal-photo" class="card-img-top img-display" src="{{ booking.guest.guest_photo.url }}" alt="Photo" style="width:100%">
-											{% endif %}
 										</div>
-										<div class = "col-sm-7">
+										<div class = "col-sm-8">
+										{% else %}
+										<div class = "col-sm-12">
+										{% endif %}
 											<div class="card-body">
 												  <h4 id = "modal-name" class="card-title">{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}</h4>
 												  <div class="card-text">
@@ -43,15 +47,16 @@
 										<h4 class="card-title">Booking Details</h4>
 										<div class="card-text">
 											Booking Date : {{booking.created_date}} <br />
-											Tenure : {{booking.tenure}} <br />
-											Check-in/out: {{booking.check_in_date}}  - {{booking.check_out_date}}<br />
+											Tenure : {% if booking.tenure == 'LT' %} Long Term {% elif booking.tenure == 'ST'%} Short Term {% endif %}<br />
+											Check-in/out: {{booking.check_in_date | date:"d-M-Y"}}  / {{booking.check_out_date | date:"d-M-Y"}}<br />
 										</div>
 									</div>
 								</div>
 								
 							</div>
 						</div>
-					</div>					
+					</div>	
+					<br />
 					<div class = "pull-left">
 						<a href="" class="btn btn-primary pull-left"><i class="fa fa-trash-o"></i> Delete</a>
 					</div>
