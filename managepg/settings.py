@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.instagram',
     'allauth.socialaccount.providers.twitter',
-	'django_bootstrap_breadcrumbs'
     ]
 
 MIDDLEWARE = [

@@ -398,9 +398,17 @@
 		txt += "<option selected value = ''>" + "" + "</option>";
 		txt += "</select>"; 
 		$("#blocks-div").html(txt);
+		{% if room %}
+			jQuery("#id_room-block option").filter(function(){
+				return $.trim($(this).text()) ==  '{{room.block}}'
+			}).prop('selected', true);		
+		{% endif %}
+
 		{% if not blocks %}
 			$("#id_room-block").prop("disabled", true);
 		{% endif %}
+		
+		
 		
 		// Floors
 		var txt = "<select id='id_room-floor' name ='room-floor' class='form-control' >";

@@ -82,6 +82,9 @@ class Block(models.Model):
 	guesthouse = models.ForeignKey(Guesthouse, models.CASCADE, null=False)
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
+
+	def __str__(self):
+		return self.block_name
 	
 	
 class Floor(models.Model):
@@ -90,6 +93,9 @@ class Floor(models.Model):
 	block = models.ForeignKey(Block, models.CASCADE, null=False)
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
+
+	def __str__(self):
+		return self.floor_name
 
 	
 class Room(models.Model):
@@ -103,6 +109,10 @@ class Room(models.Model):
 	max_beds = models.IntegerField(null=False)
 	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 
+	def __str__(self):
+		return self.room_name
+	
+	
 class Bed(models.Model):
 	bed_id = models.AutoField(primary_key=True)
 	bed_name = models.CharField(max_length = 100, blank=False, null=False, unique=True)
@@ -112,6 +122,10 @@ class Bed(models.Model):
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
 
+	def __str__(self):
+		return self.bed_name
+
+	
 class Food_price(models.Model):
 	FOOD_PREF = (
 		('VEG', 'Vegetarian'),

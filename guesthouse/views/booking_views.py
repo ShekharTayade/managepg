@@ -27,18 +27,20 @@ def new_booking(request):
 	validation_msg = []
 	if request.method == 'POST':
 
-		#booking = Booking.objects.get(booking_number = form.booking_number)	
-		
+		# these two blanks are used here as they are passed with actual instances for display
+		# in the GET request.
+		guest = {}
+		room = {}
+
 		# Parse request into the three forms
 		guest_form = GuestForm(request.POST.copy(), request.FILES, prefix = "guest")
-		guest = {}
 		booking_form = BookingForm(request.POST.copy(), prefix="booking")
 		room_allocation_form = Room_allocationForm(request.POST.copy(), prefix="room")
 		
 		validations = applyBookingValidations(guest_form, booking_form, room_allocation_form)
 		validation_result = validations['result']
 		validation_msg = validations['msg']
-
+	
 		if validation_result:
 			if guest_form.is_valid():
 				guest = guest_form.save(commit=False)
@@ -117,10 +119,11 @@ def new_booking(request):
 							room_allocation_form.data['room-guest'] = room.guest
 							
 	else:
-	
+		room = {}
 		# Check it's an existing booking is to be edited, 
 		# if not render empty forms for new booking
 		booking_number = request.GET.get('booking_number', '')
+		
 		if booking_number == '' :
 
 			booking_form = BookingForm(prefix="booking",)
@@ -132,7 +135,8 @@ def new_booking(request):
 			room_allocation_form = Room_allocationForm(prefix="room")
 		else :
 			booking = Booking.objects.get(booking_number = booking_number)
-			booking_form = BookingForm(instance = booking, prefix="booking")
+			booking_form = BookingForm(instance = booking, prefix="booking", initial={'guest' : booking.guest_id,
+					'guesthouse':booking.guesthouse_id, 'booking_number':booking.booking_number})
 			guest_form = GuestForm(instance = booking.guest, prefix="guest")
 			guest = booking.guest #passing the guest instance, it's used in POST to display the photo in the browser
 			
@@ -148,7 +152,10 @@ def new_booking(request):
 				room = Room_allocation.objects.filter(booking_id = 
 					booking_number).first()
 			if room :
-				room_allocation_form = Room_allocationForm(instance = room, prefix="room")
+				room_allocation_form = Room_allocationForm(instance = room, prefix="room",
+						initial={'booking' : booking.booking_number,
+					'guesthouse':booking.guesthouse_id, 'guest':booking.guest_id, 
+					'block':room.block_id, 'floor':room.floor_id, 'room':room.room, 'bed':room.bed_id})
 			else:
 				room_allocation_form = Room_allocationForm(prefix="room")
 		
@@ -188,7 +195,7 @@ def new_booking(request):
 		'booking_form': booking_form, 'guest_form':guest_form, 'room_allocation_form':room_allocation_form,
 		'country_arr':country_arr, 'state_arr':state_arr, 'city_arr':city_arr, 'pin_code_arr':pin_code_arr, 
 		'validation_msg':validation_msg, 'guest':guest, 'beds':beds, 'rooms':rooms, 
-		'floors':floors, 'blocks':blocks
+		'floors':floors, 'blocks':blocks, 'room' : room
 		})
 
 	

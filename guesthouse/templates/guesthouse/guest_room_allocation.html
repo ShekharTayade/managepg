@@ -292,3 +292,31 @@
 												
 											</div>											
 										</div>
+										{% if room %}
+										<div class = "row box" style = "background-color:lightgrey;">
+											<div class = "col-sm-12">
+												Current Allocation:
+											</div>
+												
+											<div class = "col-sm-3">
+												<div class="form-group">
+													<input disabled class = "form-control" value = "{{room.block}}" />
+												</div>
+											</div>
+											<div class = "col-sm-3">
+												<div class="form-group">
+													<input disabled class = "form-control" value = "{{room.floor}}" />
+												</div>
+											</div>
+											<div class = "col-sm-3">
+												<div class="form-group">
+													<input disabled class = "form-control" value = "{{room.room}}" />
+												</div>
+											</div>
+											<div class = "col-sm-3">
+												<div class="form-group">
+													<input disabled class = "form-control" value = "{{room.bed}}" />
+												</div>
+											</div>
+										</div>
+										{% endif %}
