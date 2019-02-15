@@ -2,15 +2,15 @@
 							<div class = "row">
 								<div class = "col-sm-5 col-lg-3">
 									<div class="form-group">
-										<label>From:</label>
-										<input name = "alloc_fromdate" id = "alloc_fromdate" 
+										<label>Booking From:</label>
+										<input name = "alloc_fromdate" id = "noalloc_fromdate" 
 											class = "form-control" type="date" />
 									</div>
 								</div>
 								<div class = "col-sm-5 col-lg-3">
 									<div class="form-group">
-										<label>To:</label>
-										<input name = "alloc_todate" id = "alloc_todate" 
+										<label>Booking To:</label>
+										<input name = "alloc_todate" id = "noalloc_todate" 
 											class = "form-control" type="date" />
 									</div>
 								</div>
@@ -18,8 +18,8 @@
 									<div class="form-group">
 										<label>&nbsp;</label>
 										<input type="submit" 
-										class = "btn btn-primary"
-										onclick = "alloc_query();">
+											class = "btn btn-primary"
+											onclick = "get_bookings('1');">
 									</div>
 								</div>
 							</div>

@@ -120,19 +120,6 @@ class GuestForm(forms.ModelForm):
 		model = Guest
 		exclude = ('current_pin_code', 'permanent_pin_code', 'company_pin_code')
 
-	#def __init__(self, data=None, *args, **kwargs):
-	#	super(GuestForm, self).__init__(*args, **kwargs)
-	#	import pdb
-	#	pdb.set_trace()
-	#	if data is not None:
-	#		data = data.copy() # make it mutable
-	#		if data['guest-current_pin_code']:
-	#			try: 
-	#				obj = Pin_code.objects.get(pin_code=data['guest-current_pin_code'])
-	#				data['guest-current_pin_code'] = obj
-	#			except Pin_code.DoesNotExists:
-	#				None
-
 		
 class Room_allocationForm(forms.ModelForm):
 	

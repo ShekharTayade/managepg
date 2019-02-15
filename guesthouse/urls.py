@@ -31,11 +31,11 @@ urlpatterns =[
 	   name='password_reset_complete'), 
 
 	url(r'^new_booking/$', views.new_booking, name='new_booking'),
-	url(r'^ajax/get_addr_pin_city_state/$', views.get_addr_pin_city_state, name='get_addr_pin_city_state'),
-
-	
+	url(r'^ajax/get_addr_pin_city_state/$', views.get_addr_pin_city_state, name='get_addr_pin_city_state'),	
 	url(r'^manage_booking/$', views.manage_booking, name='manage_booking'),
 	url(r'^ajax/get_bookings/$', views.get_bookings, name='get_bookings'),
+	url(r'^ajax/get_booking_by_number/$', views.get_booking_by_number, name='get_booking_by_number'),
+	
 ]
 	
 if settings.DEBUG:

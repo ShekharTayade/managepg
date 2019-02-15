@@ -95,8 +95,10 @@
 			</div>
         </div>
     </div>
+	<div id = "delete-confirm">
+		{% include 'guesthouse/delete_confirm_message.html' %}	
+	</div>
 	{% include 'guesthouse/message-modal_ok.html' %}
-		
 	{% endblock sitecontent %}
 
 
@@ -112,7 +114,7 @@
 			var fm_mn = fm_mn + 1; //Javascript month start from 0
 			var fm_yy = from_dt.getFullYear();			
 			document.getElementById("fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
-			document.getElementById("alloc_fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
+			document.getElementById("noalloc_fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
 
 			var to_dt = today.getDate();
 			var to_mn = today.getMonth();
@@ -120,84 +122,125 @@
 			var to_yy = today.getFullYear();			
 			
 			document.getElementById("todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
-			document.getElementById("alloc_todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
+			document.getElementById("noalloc_todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
 		
 		});
 	
-		function date_query(){
-			//Get the from, to dates
-			var fm_d = new Date(document.getElementById("fromdate").value);
-			if (fm_d > new Date()) {
-				$("#msg").html("From Date can't be greatrer than today");
-				$("#msg-modal").modal("show");
-				return;
-			}
-			var fm_dt = fm_d.getDate();
-			var fm_mn = fm_d.getMonth();
-			var fm_mn = fm_mn + 1; //Javascript month start from 0
-			var fm_yy = fm_d.getFullYear();			
-			var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
-			  
-			var to_d = new Date(document.getElementById("todate").value);
-			var to_dt = to_d.getDate();
-			var to_mn = to_d.getMonth();
-			var to_mn = to_mn + 1; //Javascript month start from 0
-			var to_yy = to_d.getFullYear();			
-			var to_date = to_yy + "-" + to_mn + "-" + to_dt;
-			
-			if ( to_d < fm_d ) {
-				$("#msg").html("To Date can't be earlier than From Date");
-				$("#msg-modal").modal("show");
-				return;
-			}
-			
-			// Let's update the cart view
-			$.ajax({
-				url: '{% url "get_bookings" %}', 
-				dataType: 'text',
-				data: {'fromdate':from_date, 'todate':to_date},
-				type: 'POST',
-				success: function (data) {
-					$("#bookings_table").html(data);
-				},
-				error: function(xhr){
-					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please let us know the details and we will be happy to help sort it out."); 
-					return;
-				}
-			});				
-			
-		}
-
+		function get_bookings(page){
 		
-		function alloc_query(){
-			//Get the from, to dates
-			var fm_d = new Date(document.getElementById("alloc_fromdate").value);
+			var execute_ajax = false;
+			var query_data = {};
 			
-			if (fm_d > new Date()) {
-				$("#msg").html("From Date can't be greatrer than today");
-				$("#msg-modal").modal("show");
-				return;
-			}
+			var activeTab= document.getElementsByClassName('active');		
+			for (i = 0; i < activeTab.length; i++) {
+
+				id = activeTab[i].id;
 				
-			var fm_dt = fm_d.getDate();
-			var fm_mn = fm_d.getMonth();
-			var fm_mn = fm_mn + 1; //Javascript month start from 0
-			var fm_yy = fm_d.getFullYear();			
-			var from_date = new Date( fm_yy, fm_mn, fm_dt );
-			  
-			var to_d = new Date(document.getElementById("alloc_todate").value);
-			var to_dt = to_d.getDate();
-			var to_mn = to_d.getMonth();
-			var to_mn = to_mn + 1; //Javascript month start from 0
-			var to_yy = to_d.getFullYear();			
-			var to_date = new Date(parseInt(fm_yy), parseInt(fm_mn), parseInt(fm_dt));
+				switch(id) {
+					case 'date_search':
+						execute_ajax = true;
+
+						//Get the from, to dates
+						var fm_d = new Date(document.getElementById("fromdate").value);
+						if (fm_d > new Date()) {
+							$("#msg").html("From Date can't be greatrer than today");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						var fm_dt = fm_d.getDate();
+						var fm_mn = fm_d.getMonth();
+						var fm_mn = fm_mn + 1; //Javascript month start from 0
+						var fm_yy = fm_d.getFullYear();			
+						var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
+						  
+						var to_d = new Date(document.getElementById("todate").value);
+						var to_dt = to_d.getDate();
+						var to_mn = to_d.getMonth();
+						var to_mn = to_mn + 1; //Javascript month start from 0
+						var to_yy = to_d.getFullYear();			
+						var to_date = to_yy + "-" + to_mn + "-" + to_dt;
+						
+						if ( to_d < fm_d ) {
+							$("#msg").html("To Date can't be earlier than From Date");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						query_data = {'fromdate':from_date, 'todate':to_date, 'page':page}
+						break;
+					case 'name_search':
+						execute_ajax = true;
+						var f_name = document.getElementById("first_name").value;
+						var m_name = document.getElementById("middle_name").value;
+						var l_name = document.getElementById("last_name").value;
+						
+						if (f_name == '' && m_name == '' && l_name == '') {
+							$("#msg").html("Please enter name");
+							$("#msg-modal").modal("show");
+							return;
+						}							
+
+						query_data = {'f_name':f_name, 'm_name':m_name, 'l_name':l_name, 'page':page}
+						break;
+					case 'allocation_search':
+						execute_ajax = true;
+						//Get the from, to dates
+						var fm_d = new Date(document.getElementById("noalloc_fromdate").value);
+						if (fm_d > new Date()) {
+							$("#msg").html("From Date can't be greatrer than today");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						var fm_dt = fm_d.getDate();
+						var fm_mn = fm_d.getMonth();
+						var fm_mn = fm_mn + 1; //Javascript month start from 0
+						var fm_yy = fm_d.getFullYear();			
+						var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
+						  
+						var to_d = new Date(document.getElementById("noalloc_todate").value);
+						var to_dt = to_d.getDate();
+						var to_mn = to_d.getMonth();
+						var to_mn = to_mn + 1; //Javascript month start from 0
+						var to_yy = to_d.getFullYear();			
+						var to_date = to_yy + "-" + to_mn + "-" + to_dt;
+						
+						if ( to_d < fm_d ) {
+							$("#msg").html("To Date can't be earlier than From Date");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						query_data = {'noalloc_fromdate':from_date, 'noalloc_todate':to_date, 'page':page}
+						break;
+
+						break;
+					case 'email_phone_search':
+						execute_ajax = true;
+						var email_id = document.getElementById("email_id").value;
+						var phone_number = document.getElementById("phone_number").value;
+
+						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page}
+						break;
+						
+				} // End switch
+
+			} // End for
 			
-			if ( to_d < fm_d ) {
-				$("#msg").html("To Date can't be earlier than From Date");
-				$("#msg-modal").modal("show");
-				return;
+			if (execute_ajax) {
+
+				$.ajax({
+					url: '{% url "get_bookings" %}', 
+					dataType: 'text',
+					data: query_data,
+					type: 'POST',
+					success: function (data) {
+						$("#bookings_table").html(data);
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please let us know the details and we will be happy to help sort it out."); 
+						return;
+					}
+				});	
 			}
-		}		
+		}
 		
 		
 		function zeroPad(val){
@@ -209,4 +252,29 @@
 			return ret;
 		}
 	</script>
+	
+	<script>
+		function confirm_booking_delete(booking_number) {
+			if ( booking_number == '' ) {
+				return;
+			}
+
+			$.ajax({
+				url: '{% url "get_booking_by_number" %}', 
+				dataType: 'text',
+				data: {'booking_number':booking_number} ,
+				type: 'POST',
+				success: function (data) {
+					$("#delete-confirm").html(data);
+					
+					$('#delete-modal').modal('show');
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
+					return;
+				}
+			});			
+		}
+	</script>
+	
 	{% endblock jscripts %}

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Max
 from django.conf import settings
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -13,6 +13,8 @@ from dateutil.relativedelta import relativedelta
 
 import datetime
 import json
+
+from django.http import JsonResponse
 
 from .views import *
 from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
@@ -115,15 +117,41 @@ def new_booking(request):
 							room_allocation_form.data['room-guest'] = room.guest
 							
 	else:
-
-		booking_form = BookingForm(prefix="booking",)
-
-		guest_form = GuestForm(prefix="guest",
-				initial={'current_state': 'KARNATAKA', 'permanent_state':'KARNATAKA',
-				'company_state':'KARNATAKA'})
-		guest = {} # passing an empty guest instance, it's used in POST to dsiplay the photo in the browser
-		room_allocation_form = Room_allocationForm(prefix="room")
 	
+		# Check it's an existing booking is to be edited, 
+		# if not render empty forms for new booking
+		booking_number = request.GET.get('booking_number', '')
+		if booking_number == '' :
+
+			booking_form = BookingForm(prefix="booking",)
+
+			guest_form = GuestForm(prefix="guest",
+					initial={'current_state': 'KARNATAKA', 'permanent_state':'KARNATAKA',
+					'company_state':'KARNATAKA'})
+			guest = {} # passing an empty guest instance, it's used in POST to display the photo in the browser
+			room_allocation_form = Room_allocationForm(prefix="room")
+		else :
+			booking = Booking.objects.get(booking_number = booking_number)
+			booking_form = BookingForm(instance = booking, prefix="booking")
+			guest_form = GuestForm(instance = booking.guest, prefix="guest")
+			guest = booking.guest #passing the guest instance, it's used in POST to display the photo in the browser
+			
+			# Get latest record from room_allocation
+			max_dt = Room_allocation.objects.filter(booking_id = 
+					booking_number).aggregate(Max('updated_date'))
+			
+			if max_dt['updated_date__max']:
+				room = Room_allocation.objects.filter(booking_id = 
+					booking_number, updated_date = max_dt['updated_date__max']).first()
+			else:
+				# if there is no updated_date, then there will be only one row with a crated_date
+				room = Room_allocation.objects.filter(booking_id = 
+					booking_number).first()
+			if room :
+				room_allocation_form = Room_allocationForm(instance = room, prefix="room")
+			else:
+				room_allocation_form = Room_allocationForm(prefix="room")
+		
 	# Get available beds, and pass to front end
 	room_availability = get_availablity(request, today)
 	blocks = room_availability['blocks']
@@ -231,10 +259,7 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 			if check_out <= check_in:
 				msg.append("Room Allocation -> Check-out should be later than check-in")
 				result = False
-			
-			import pdb
-			pdb.set_trace()
-			
+
 			diff = (check_out.year - check_in.year) * 12 + check_out.month - check_in.month
 			if booking_form.data['booking-tenure'] == 'LT':
 				if diff < 12:
@@ -245,7 +270,16 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 				if diff > 1:
 					msg.append("Room Allocation -> Short Term stay can't be more than 1 month")
 					result = False
-		
+	
+	if room_allocation_form:
+		if booking_form:
+			if booking_form.data['booking-check_in_date'] != '' and room_allocation_form.data['room-bed'] == '':
+				msg.append("Room Allocation -> Check-in date is saved, but room allocation is not done.")
+				
+			if booking_form.data['booking-check_in_date'] == '' and room_allocation_form.data['room-bed'] != '':
+				msg.append("Room Allocation -> Check-in date is required if Room allocation is done.")
+				result = False
+				
 		
 	return {'result':result, 'msg':msg}
 	
@@ -281,25 +315,68 @@ def manage_booking(request):
 
 @csrf_exempt
 def get_bookings(request):
+	startDt = ''
+	endDt = ''
+	noalloc_startDt = ''
+	noalloc_endDt = ''
+	
+	page = request.POST.get('page', 1)
 	
 	from_date = request.POST.get("fromdate", '')
-	startDt = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()	
+	if from_date != '' :
+		startDt = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()	
 	to_date = request.POST.get("todate", '')
-	endDt = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()	
+	if to_date != '' :
+		endDt = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()	
 
-	bookings_list = Booking.objects.all().select_related('guest')
+	f_name = request.POST.get("f_name", '')
+	m_name = request.POST.get("m_name", '')
+	l_name = request.POST.get("l_name", '')
+	
+	email_id = request.POST.get("email_id", '')
+	phone_number = request.POST.get("phone_number", '')
+
+	noalloc_fromdate = request.POST.get("noalloc_fromdate", '')
+	if noalloc_fromdate != '' :
+		noalloc_startDt = datetime.datetime.strptime(noalloc_fromdate, "%Y-%m-%d").date()	
+	noalloc_todate = request.POST.get("noalloc_todate", '')
+	if noalloc_todate != '' :
+		noalloc_endDt = datetime.datetime.strptime(noalloc_todate, "%Y-%m-%d").date()	
+
+	
+	bookings_list = Booking.objects.all().select_related('guest').order_by('created_date')
 	
 	if startDt:
 		bookings_list = bookings_list.filter(created_date__gte = startDt)
-		
 	if endDt:
 		bookings_list = bookings_list.filter(created_date__lte = endDt)
+
+	if f_name:
+		bookings_list = bookings_list.filter(guest__first_name__iexact = f_name)
+	if m_name:
+		bookings_list = bookings_list.filter(guest__middle_name__iexact = m_name)
+	if l_name:
+		bookings_list = bookings_list.filter(guest__last_name__iexact = l_name)
+
+	
+	if email_id:
+		bookings_list = bookings_list.filter(guest__email_id__iexact = email_id)
+	if phone_number:
+		bookings_list = bookings_list.filter(guest__phone_number__iexact = phone_number)
+
+	if noalloc_startDt:
+		bookings_list = bookings_list.filter(created_date__gte = noalloc_startDt, 
+					room_allocation__isnull = True)
+	if noalloc_endDt:
+		bookings_list = bookings_list.filter(created_date__lte = noalloc_endDt,
+					room_allocation__isnull = True)
+
+		
 	
 	count = bookings_list.count()
 
-	page = request.GET.get('page', 1)
-
 	paginator = Paginator(bookings_list, 5)
+	bookings = paginator.get_page(page)
 	try:
 		bookings = paginator.page(page)
 	except PageNotAnInteger:
@@ -310,4 +387,20 @@ def get_bookings(request):
 	return render(request, 'guesthouse/bookings_table.html', {'count':count, 
 		'bookings': bookings})		
 	
+@csrf_exempt
+def get_booking_by_number( request ):
+	
+	booking_number = request.POST.get('booking_number', '')
+	
+	booking = {}
+	print(booking_number)
+	
+	if booking_number != '' :
+	
+		booking = Booking.objects.get(booking_number = booking_number)
+	
+	return render( request, 'guesthouse/delete_confirm_message.html', {'booking': booking } )
+	
+	
+
 	
