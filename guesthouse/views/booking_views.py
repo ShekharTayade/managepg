@@ -11,7 +11,6 @@ from datetime import datetime
 import datetime
 from dateutil.relativedelta import relativedelta
 
-import datetime
 import json
 
 from django.http import JsonResponse
@@ -21,7 +20,8 @@ from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation 
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
 
-today = datetime.date.today()
+today = datetime.datetime.today()
+
 def new_booking(request):
 
 	validation_msg = []
@@ -85,13 +85,13 @@ def new_booking(request):
 						booking.created_date = b_obj.created_date
 
 					booking.save()
-					
+
 					validation_msg.append("Booking is saved.")
 					booking_form = BookingForm(request.POST.copy(), instance = booking, prefix="booking")
 					booking_form.data['booking-booking_number'] = booking.booking_number
 					booking_form.data['booking-guest'] = booking.guest
 					booking_form.data['booking-guesthouse'] = booking.guesthouse
-					
+
 					# Create, Update room allocation, only if check_in_date is present
 					if booking.check_in_date is not None:
 						if room_allocation_form.is_valid():
@@ -134,6 +134,7 @@ def new_booking(request):
 			guest = {} # passing an empty guest instance, it's used in POST to display the photo in the browser
 			room_allocation_form = Room_allocationForm(prefix="room")
 		else :
+
 			booking = Booking.objects.get(booking_number = booking_number)
 			booking_form = BookingForm(instance = booking, prefix="booking", initial={'guest' : booking.guest_id,
 					'guesthouse':booking.guesthouse_id, 'booking_number':booking.booking_number})
@@ -158,13 +159,14 @@ def new_booking(request):
 					'block':room.block_id, 'floor':room.floor_id, 'room':room.room, 'bed':room.bed_id})
 			else:
 				room_allocation_form = Room_allocationForm(prefix="room")
-		
+	
 	# Get available beds, and pass to front end
 	room_availability = get_availablity(request, today)
 	blocks = room_availability['blocks']
 	floors = room_availability['floors']
 	rooms = room_availability['rooms']
 	beds = room_availability['beds']
+	
 
 	if beds is None:
 		validation_msg.append['There is no availability currently!!']
@@ -190,12 +192,12 @@ def new_booking(request):
 	for p in pin_code_list:
 		pin_code_arr.append(p.pin_code)		
 		
-	print(beds)
+
 	return render(request, 'guesthouse/new_booking.html', {
 		'booking_form': booking_form, 'guest_form':guest_form, 'room_allocation_form':room_allocation_form,
 		'country_arr':country_arr, 'state_arr':state_arr, 'city_arr':city_arr, 'pin_code_arr':pin_code_arr, 
-		'validation_msg':validation_msg, 'guest':guest, 'beds':beds, 'rooms':rooms, 
-		'floors':floors, 'blocks':blocks, 'room' : room
+		'validation_msg':validation_msg, 'guest':guest, 'room' : room, 
+		'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks, 
 		})
 
 	
@@ -293,8 +295,10 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 def get_availablity(request, from_date):
 
 	# Get all beds currently allocated
-	bed_alloc = Room_allocation.objects.filter(
-		allocation_end_date__gt = from_date, bed_id__isnull = False).values('bed_id')
+	bed_alloc = Room_allocation.objects.filter( Q(
+		allocation_end_date__gt = from_date, bed_id__isnull = False) |
+		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
+		).values('bed_id')
 
 	# Get the currently available beds (exclude allocated beds)
 	beds = Bed.objects.exclude(bed_id__in=bed_alloc)
@@ -305,9 +309,9 @@ def get_availablity(request, from_date):
 	for b in beds:
 		if b.room not in rooms_arr:
 			rooms_arr.append(b.room_id)
-		if b.floor not in rooms_arr:
+		if b.floor not in floors_arr:
 			floors_arr.append(b.floor_id)
-		if b.block not in rooms_arr:
+		if b.block not in blocks_arr:
 			blocks_arr.append(b.block_id)
 	
 	rooms = Room.objects.filter(room_id__in = rooms_arr)
@@ -315,10 +319,6 @@ def get_availablity(request, from_date):
 	blocks = Block.objects.filter(block_id__in = blocks_arr)
 	
 	return { 'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks }
-
-def manage_booking(request):
-	
-	return render(request, 'guesthouse/manage_booking.html', {} )
 
 @csrf_exempt
 def get_bookings(request):
@@ -329,13 +329,13 @@ def get_bookings(request):
 	booking_number = ''
 	
 	page = request.POST.get('page', 1)
-	
+
 	from_date = request.POST.get("fromdate", '')
 	if from_date != '' :
-		startDt = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()	
+		startDt = datetime.datetime.strptime(from_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")	
 	to_date = request.POST.get("todate", '')
 	if to_date != '' :
-		endDt = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()	
+		endDt = datetime.datetime.strptime(to_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
 
 	f_name = request.POST.get("f_name", '')
 	m_name = request.POST.get("m_name", '')
@@ -344,15 +344,14 @@ def get_bookings(request):
 	email_id = request.POST.get("email_id", '')
 	phone_number = request.POST.get("phone_number", '')
 
-	booking_number = request.POST.get("booking_number", '')
-	
+	booking_number = request.POST.get("booking_number", '')	
 	
 	noalloc_fromdate = request.POST.get("noalloc_fromdate", '')
 	if noalloc_fromdate != '' :
-		noalloc_startDt = datetime.datetime.strptime(noalloc_fromdate, "%Y-%m-%d").date()	
+		noalloc_startDt = datetime.datetime.strptime(noalloc_fromdate + " 23:59:59", "%Y-%m-%d %H:%M:%S")
 	noalloc_todate = request.POST.get("noalloc_todate", '')
 	if noalloc_todate != '' :
-		noalloc_endDt = datetime.datetime.strptime(noalloc_todate, "%Y-%m-%d").date()	
+		noalloc_endDt = datetime.datetime.strptime(noalloc_todate + " 23:59:59", "%Y-%m-%d %H:%M:%S")
 
 	
 	bookings_list = Booking.objects.all().select_related('guest').order_by('created_date')
@@ -409,11 +408,295 @@ def get_booking_by_number( request ):
 	print(booking_number)
 	
 	if booking_number != '' :
-	
-		booking = Booking.objects.get(booking_number = booking_number)
+		try:
+			booking = Booking.objects.get(booking_number = booking_number)
+		except Booking.DoesNotExist:
+			None
 	
 	return render( request, 'guesthouse/delete_confirm_message.html', {'booking': booking } )
 	
+@csrf_exempt
+def get_availablity_by_element(request):
+
+	element = request.POST.get('element', '')
+	ele_value = request.POST.get('value', '')
+	check_in_date = request.POST.get('check_in_date', '')
+
+	beds = {}
+	rooms = {}
+	floors = {} 
+	blocks = {}
 	
+	if element == '' or check_in_date == '' or ele_value == '' :
+		return JsonResponse({ 'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks })
+	
+	from_date = datetime.datetime.strptime(check_in_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	if not from_date:
+		return JsonResponse({ 'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks })
+	
+	# Apply filter based on component
+	if element == "BED":
+		bed_alloc = Room_allocation.objects.filter( bed_id = ele_value) 
+	if element == "ROOM":
+		bed_alloc = Room_allocation.objects.filter( room_id = ele_value) 
+	if element == "FLOOR":
+		bed_alloc = Room_allocation.objects.filter( floor_id = ele_value) 
+	if element == "BLOCK":
+		bed_alloc = Room_allocation.objects.filter( block_id = ele_value) 
+	
+	# Get all beds currently allocated
+	bed_alloc = Room_allocation.objects.filter( Q(
+		allocation_end_date__gt = from_date, bed_id__isnull = False) |
+		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
+		).values('bed_id')
+
+	# Get the currently available beds (exclude allocated beds)
+	beds = Bed.objects.exclude(bed_id__in=bed_alloc)
+
+	rooms_arr = []
+	floors_arr = [] 
+	blocks_arr = []
+	for b in beds:
+		if b.room not in rooms_arr:
+			rooms_arr.append(b.room_id)
+		if b.floor not in floors_arr:
+			floors_arr.append(b.floor_id)
+		if b.block not in block_arr:
+			blocks_arr.append(b.block_id)
+	
+	rooms = Room.objects.filter(room_id__in = rooms_arr)
+	floors = Floor.objects.filter(floor_id__in = floors_arr)
+	blocks = Block.objects.filter(block_id__in = blocks_arr)
+	
+	return JsonResponse({ 'beds':list(beds), 'rooms':list(rooms), 
+		'floors':list(floors), 'blocks':list(blocks) })
+
+@csrf_exempt
+def get_block_availablity(request):	
+	check_in_date = request.POST.get('check_in_date', '')
+	blocks = {}
+	if check_in_date == '' :
+		return JsonResponse({'blocks':blocks })
+	
+	from_date = datetime.datetime.strptime(check_in_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	if not from_date:
+		return JsonResponse({'blocks':blocks })
+	
+	# Get all beds currently allocated
+	bed_alloc = Room_allocation.objects.filter( Q(
+		allocation_end_date__gt = from_date, bed_id__isnull = False) |
+		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
+		).values('bed_id')	
+
+	# Get the currently available floors (by excluding allocated beds)
+	blocks = Bed.objects.exclude(
+		bed_id__in = bed_alloc).select_related('floor').values(
+		'block_id', 'block__block_name').distinct()
+				
+	return JsonResponse({'blocks':list(blocks) })
+
+
+@csrf_exempt
+def get_floor_availablity(request):	
+	check_in_date = request.POST.get('check_in_date', '')
+	block_id = request.POST.get('block_id', '')
+	
+	floors = {}
+	if check_in_date == '' :
+		return JsonResponse({'floors':floors })
+	
+	from_date = datetime.datetime.strptime(check_in_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	if not from_date:
+		return JsonResponse({'floors':floors })
+	
+	# Get all beds currently allocated
+	bed_alloc = Room_allocation.objects.filter( Q(
+		allocation_end_date__gt = from_date, bed_id__isnull = False) |
+		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
+		).values('bed_id')	
+	
+	# Get the currently available floors (by excluding allocated beds)
+	floors = Bed.objects.filter(block_id = block_id).exclude(
+		bed_id__in = bed_alloc).select_related('floor').values(
+		'floor_id', 'floor__floor_name').distinct()
+			
+	return JsonResponse({'floors':list(floors)}, safe=False)
 
 	
+@csrf_exempt
+def get_room_availablity(request):	
+	check_in_date = request.POST.get('check_in_date', '')
+	floor_id = request.POST.get('floor_id', '')
+	
+	rooms = {}
+	if check_in_date == '' :
+		return JsonResponse({'rooms':rooms })
+	
+	from_date = datetime.datetime.strptime(check_in_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	if not from_date:
+		return JsonResponse({'rooms':rooms })
+	
+	# Get all beds currently allocated
+	bed_alloc = Room_allocation.objects.filter( Q(
+		allocation_end_date__gt = from_date, bed_id__isnull = False) |
+		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
+		).values('bed_id')	
+	
+	# Get the currently available floors (by excluding allocated beds)
+	rooms = Bed.objects.filter(floor_id = floor_id).exclude(
+		bed_id__in = bed_alloc).select_related('room').values(
+		'room_id', 'room__room_name').distinct()
+	
+	print(list(rooms))
+			
+	return JsonResponse({'rooms':list(rooms)}, safe=False)
+
+@csrf_exempt
+def get_bed_availablity(request):	
+	check_in_date = request.POST.get('check_in_date', '')
+	room_id = request.POST.get('room_id', '')
+	
+	beds = {}
+	if check_in_date == '' :
+		return JsonResponse({'beds':beds })
+	
+	from_date = datetime.datetime.strptime(check_in_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	if not from_date:
+		return JsonResponse({'beds':beds })
+	
+	# Get all beds currently allocated
+	bed_alloc = Room_allocation.objects.filter( Q(
+		allocation_end_date__gt = from_date, bed_id__isnull = False) |
+		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
+		).values('bed_id')	
+	
+	# Get the currently available floors (by excluding allocated beds)
+	beds = Bed.objects.filter(room_id = room_id).exclude(
+		bed_id__in = bed_alloc).values(
+		'bed_id', 'bed_name').distinct()
+	
+	print(list(beds))
+			
+	return JsonResponse({'beds':list(beds)}, safe=False)
+
+
+def manage_booking(request):
+	
+	return render(request, 'guesthouse/manage_booking.html', {} )
+
+@csrf_exempt
+def delete_booking(request):
+	booking_number = request.POST.get('booking_number', '')
+	status = ''
+	if booking_number == '':
+		return JsonResponse({'status':"NO-BOOKING"})
+
+	# Get the room allocation, booking
+	booking = Booking.objects.filter(booking_number = booking_number)
+
+	alloc = {}
+	if booking:
+		alloc = Room_allocation.objects.filter(booking_id = booking_number, bed__isnull = False)
+
+	if alloc:
+		return JsonResponse({'status':"ALLOC-DONE"})
+	else:
+		if booking:
+			booking = Booking.objects.filter(booking_number = booking_number)
+			booking.delete()
+			# Delete any room that has no allocation done
+			room = Room_allocation.objects.filter(booking_id = booking_number, bed__isnull = True)
+			room.delete()
+
+	return JsonResponse({'status':"SUCCESS"})
+
+
+def change_room_bed(request):
+
+	booking_number = request.GET.get('booking_number', '')
+	msg = ''
+	err_flag = False
+	
+	# Get the room allocation, booking
+	room_allocation = Room_allocation.objects.filter(
+		booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
+			'block', 'floor','room','bed').order_by('-updated_date').first()
+	
+	if request.method == 'POST':	
+		check_in_str = request.GET.get('check_in_date', '')
+		check_out_str = request.GET.get('check_out_date', '')
+		block_id = request.GET.getlist('block', '[]')
+		floor_id = request.GET.getlist('floor', '[]')
+		room_id = request.GET.getlist('room', '[]')
+		bed_id = request.GET.getlist('bed', '[]')
+
+		if check_in_str == '':
+			msg = "Check-in date is required"
+			err_flag = True
+		
+		check_in_date = datetime.datetime.strptime(check_in_str, '%Y-%m-%d' )
+		check_out_date = datetime.datetime.strptime(check_out_str, '%Y-%m-%d' )
+		if not check_in_date:
+			msg = "Check-in date is required"
+			err_flag = True
+		
+		if check_out_date:
+			if check_in_date >= check_out_date:
+				msg = "Check-out should be greater than check-in date"
+				err_flag = True
+		# Allocate new room, bed only if there are no errors.
+		if err_flag == False:
+			# End existing allocation
+			curr_booking = Booking.objects.get(pk = booking_number)
+			b = Booking(
+					booking_number = booking_number,
+					guest = curr_booking.guest,
+					guesthouse = curr_booking.guesthouse,
+					check_in_date = curr_booking.check_in_date,
+					check_in_time = curr_booking.check_in_time,
+					check_out_date = check_in_date - 1,
+					check_out_time = curr_booking.check_out_time,
+					food_option = curr_booking.food_option,
+					food_preference = curr_booking.food_preference,
+					tenure = curr_booking.tenure,
+					created_date = curr_booking.created_date	
+			)
+			b.save()
+			
+			r = Room_allocation (
+				alloc_id = room_allocation.alloc_id,
+				booking = room_allocation.booking,
+				guest = room_allocation.guest,
+				bed_id = bed_id[0],
+				room_id = room_id[0],
+				floor_id = floor[0],
+				block = block[0],
+				allocation_start_date = check_in_date,
+				allocation_end_date = check_out_date,
+				created_date = room_allocation.created_date	
+			)
+			r.save()
+		
+			# Create now booking
+			ri = Room_allocation (
+				booking = room_allocation.booking,
+				guest = room_allocation.guest,
+				bed_id = bed_id[0],
+				room_id = room_id[0],
+				floor_id = floor[0],
+				block = block[0],
+				allocation_start_date = check_in_date,
+				allocation_end_date = check_out_date,
+				created_date = room_allocation.created_date	
+			)
+			ri.save()
+			msg = "Check-out should be greater than check-in date"
+			
+			# Get the new room allocation, booking
+			room_allocation = Room_allocation.objects.filter(
+				booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
+					'block', 'floor','room','bed').order_by('-updated_date').first()			
+			
+	return render(request, 'guesthouse/change_room_bed.html', 
+		{'room_allocation':room_allocation, 'msg':msg} )	
+

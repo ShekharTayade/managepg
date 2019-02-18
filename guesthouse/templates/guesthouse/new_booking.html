@@ -191,7 +191,7 @@
 			</div>
         </div>
     </div>
-	
+	{% include 'guesthouse/message-modal_ok.html' %}
 		
 	{% endblock sitecontent %}
 
@@ -391,27 +391,22 @@
 
 		//Update the drop-downs according to the current room/bed availability
 		// Blocks
-		var txt = "<select id='id_room-block' name ='room-block' class='form-control' >";
+		var txt = "<select id='id_room-block_show' name ='room-block_show' class='form-control' >";
 		{% for b in blocks %}
 			txt += "<option value = '{{b.block_id}}'>" + " {{b.block_name}} " + "</option>";
 		{% endfor %}
 		txt += "<option selected value = ''>" + "" + "</option>";
 		txt += "</select>"; 
 		$("#blocks-div").html(txt);
-		{% if room %}
-			jQuery("#id_room-block option").filter(function(){
-				return $.trim($(this).text()) ==  '{{room.block}}'
-			}).prop('selected', true);		
-		{% endif %}
 
 		{% if not blocks %}
-			$("#id_room-block").prop("disabled", true);
+			$("#id_room-block_show").prop("disabled", true);
 		{% endif %}
 		
 		
 		
 		// Floors
-		var txt = "<select id='id_room-floor' name ='room-floor' class='form-control' >";
+/*		var txt = "<select id='id_room-floor_show' name ='room-floor_show' class='form-control' >";
 		{% for b in floors %}
 			txt += "<option value = '{{b.floor_id}}'>" + " {{b.floor_name}} " + "</option>";
 		{% endfor %}
@@ -419,11 +414,11 @@
 		txt += "</select>"; 
 		$("#floors-div").html(txt);
 		{% if not blocks %}
-			$("#id_room-floor").prop("disabled", true);
+			$("#id_room-floor_show").prop("disabled", true);
 		{% endif %}
 
 		// Rooms
-		var txt = "<select id='id_room-room' name ='room-room' class='form-control' >";
+		var txt = "<select id='id_room-room_show' name ='room-room_show' class='form-control' >";
 		{% for b in rooms %}
 			txt += "<option value = '{{b.room_id}}'>" + " {{b.room_name}} " + "</option>";
 		{% endfor %}
@@ -431,11 +426,11 @@
 		txt += "</select>"; 
 		$("#rooms-div").html(txt);
 		{% if not blocks %}
-			$("#id_room-room").prop("disabled", true);
+			$("#id_room-room_show").prop("disabled", true);
 		{% endif %}
 
 		// Beds
-		txt = "<select id='id_room-bed' name ='room-bed' class='form-control' >";
+		txt = "<select id='id_room-bed_show' name ='room-bed_show' class='form-control' >";
 		{% for b in beds %}
 			txt += "<option value = '{{b.bed_id}}'>" + " {{b.bed_name}} " + "</option>";
 		{% endfor %}
@@ -443,8 +438,127 @@
 		txt += "</select>"; 
 		$("#beds-div").html(txt);
 		{% if not blocks %}
-			$("#id_room-bed").prop("disabled", true);
+			$("#id_room-bed_show").prop("disabled", true);
 		{% endif %}
+		
+*/		
 	</script>
 	
+	<script>
+		function get_beds(room_id) {
+			// Get the values for floor, room and bed dropdowns...
+			check_in_date = $("#id_booking-check_in_date").val()
+			if ( check_in_date != '' ){
+				$.ajax({
+					url: '{% url "get_bed_availablity" %}', 
+					data: {'check_in_date': check_in_date, 'room_id':room_id},
+					dataType: 'text', 
+					type: 'POST',
+					success: function (data) {
+						elements = JSON.parse(data);
+						beds = elements.beds;
+						var txt = "<select id='id_room-bed_show' name ='room-bed_show' class='form-control' >";
+						for (i = 0; i < beds.length; i++) {
+							txt += "<option value = '" + beds[i].bed_id + "'>" + beds[i].bed_name + "</option>";
+						};
+						txt += "<option selected value = ''>" + "</option>";
+						txt += "</select>"; 
+						$("#beds-div").html(txt);
+						$("#id_room-bed_show").on('change', function() {
+							$("#id_room-bed").val(this.value);
+						});
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+						return;
+					}					
+				});
+			}
+			
+		}
+		
+		function get_rooms(floor_id) {
+
+			// Get the values for floor, room and bed dropdowns...
+			check_in_date = $("#id_booking-check_in_date").val()
+			if ( check_in_date != '' ){
+				$.ajax({
+					url: '{% url "get_room_availablity" %}', 
+					data: {'check_in_date': check_in_date, 'floor_id':floor_id},
+					dataType: 'text', 
+					type: 'POST',
+					success: function (data) {
+						elements = JSON.parse(data);
+						rooms = elements.rooms;
+						var txt = "<select onchange= 'get_beds(this.value);' id='id_room-room_show' name ='room-room_show' class='form-control' >";
+						for (i = 0; i < rooms.length; i++) {
+							txt += "<option value = '" + rooms[i].room_id + "'>" + rooms[i].room__room_name + "</option>";
+						};
+						txt += "<option selected value = ''>" + "</option>";
+						txt += "</select>"; 
+						$("#rooms-div").html(txt);
+						$("#id_room-room_show").on('change', function() {
+							$("#id_room-room").val(this.value);
+						});
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+						return;
+					}					
+				});
+			}
+			
+		}
+		$("#id_room-bed_show").on('change', function() {
+			$("#id_room-bed").val(this.value);
+		});
+		$("#id_room-room_show").on('change', function() {
+			$("#id_room-room").val(this.value);
+		});
+		
+		$("#id_room-floor_show").on('change', function() {
+			$("#id_room-floor").val(this.value);
+		});
+		
+		$("#id_room-block_show").on('change', function() {
+			$("#id_room-block").val(this.value);
+			
+			// Get the values for floor, room and bed dropdowns...
+			check_in_date = $("#id_booking-check_in_date").val()
+			if ( check_in_date != '' ){
+				$.ajax({
+					url: '{% url "get_floor_availablity" %}', 
+					data: {'check_in_date': check_in_date, 'block_id':this.value},
+					dataType: 'text', 
+					type: 'POST',
+					success: function (data) {
+						elements = JSON.parse(data);
+						floors = elements.floors;
+						var txt = "<select onchange= 'get_rooms(this.value);' id='id_room-floor_show' name ='room-floor_show' class='form-control' >";
+						for (i = 0; i < floors.length; i++) {
+							txt += "<option value = '" + floors[i].floor_id + "'>" + floors[i].floor__floor_name + "</option>";
+						};
+						txt += "<option selected value = ''>" + "</option>";
+						txt += "</select>"; 
+						$("#floors-div").html(txt);
+						$("#id_room-floor_show").on('change', function() {
+							$("#id_room-floor").val(this.value);
+						});						
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+						return;
+					}					
+				});
+			} else {
+				$("#id_room-block_show").val('');
+				$("#id_room-block").val('');
+				$("#msg").html("Please enter check-in date before allocating room/bed");
+				$("#msg-modal").modal("show");				
+			}
+		});
+	</script>
+
+		
+
 	{% endblock jscripts %}

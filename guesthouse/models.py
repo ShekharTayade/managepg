@@ -22,7 +22,6 @@ class City(models.Model):
 
 	def __str__(self):
 		return self.city
-
 	
 class Pin_code(models.Model):
 	pin_code = models.CharField(primary_key = True, max_length=10, null=False)
@@ -39,7 +38,6 @@ class Pin_city_state_country(models.Model):
 	
 	class Meta:
 		unique_together = ("pin_code", "city", "taluk", "state", "country")
-
 
 class Guesthouse (models.Model):
 	gh_id = models.AutoField(primary_key=True, null=False)
@@ -71,11 +69,22 @@ class Guesthouse (models.Model):
 	number_of_featured_slides = models.IntegerField(null=True, blank=True)
 	month_year_suffix = models.CharField(max_length = 6, null=True) # For generating booking numbers
 
-
 	def __str__(self):
 		return self.gh_name
 
 
+class Tax (models.Model):
+	guesthouse = models.ForeignKey(Guesthouse, models.CASCADE)
+	tax_id = models.AutoField(primary_key=True, null=False)
+	name = models.CharField(max_length = 128, null=False)
+	effective_from = models.DateField(blank=True, null=True)
+	effective_to = models.DateField(blank=True, null=True)
+	tax_rate = models.DecimalField(max_digits=5, decimal_places=2, blank=False, null=False)
+
+	def __str__(self):
+		return self.name 
+		
+		
 class Block(models.Model):
 	block_id = models.AutoField(primary_key=True)
 	block_name = models.CharField(max_length = 100, blank=False, null=False, unique=True)
@@ -115,7 +124,7 @@ class Room(models.Model):
 	
 class Bed(models.Model):
 	bed_id = models.AutoField(primary_key=True)
-	bed_name = models.CharField(max_length = 100, blank=False, null=False, unique=True)
+	bed_name = models.CharField(max_length = 100, blank=False, null=False)
 	room = models.ForeignKey(Room, models.CASCADE, null=False)
 	floor = models.ForeignKey(Floor, models.CASCADE, null=False)
 	block = models.ForeignKey(Block, models.CASCADE, null=False)
@@ -266,7 +275,21 @@ class Booking (models.Model):
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
-
+# This stores history of food choices made by Guest under the same booking
+class Booking_food(models.Model):
+	FOOD_PREF = (
+		('VEG', 'Vegetarian'),
+		('NOV-VEG', 'Non-Vegetarian'),
+	)	
+	booking_number = models.ForeignKey(Booking, models.CASCADE, null=False)
+	food_option = models.BooleanField(default=False)
+	food_preference = models.CharField(max_length = 7, blank=True, choices=FOOD_PREF, default = "VEG")
+	price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	start_date = models.DateTimeField(null=True, blank=True)
+	end_date = models.DateTimeField(null=True, blank=True)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)		
+	
 class Room_allocation(models.Model):
 	alloc_id = models.AutoField(primary_key=True)
 	booking = models.ForeignKey(Booking, models.CASCADE, null=False)

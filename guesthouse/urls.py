@@ -35,7 +35,14 @@ urlpatterns =[
 	url(r'^manage_booking/$', views.manage_booking, name='manage_booking'),
 	url(r'^ajax/get_bookings/$', views.get_bookings, name='get_bookings'),
 	url(r'^ajax/get_booking_by_number/$', views.get_booking_by_number, name='get_booking_by_number'),
-	
+	url(r'^ajax/get_availablity_by_element/$', views.get_availablity_by_element, name='get_availablity_by_element'),
+	url(r'^ajax/get_block_availablity/$', views.get_block_availablity, name='get_block_availablity'),
+	url(r'^ajax/get_floor_availablity/$', views.get_floor_availablity, name='get_floor_availablity'),
+	url(r'^ajax/get_room_availablity/$', views.get_room_availablity, name='get_room_availablity'),
+	url(r'^ajax/get_bed_availablity/$', views.get_bed_availablity, name='get_bed_availablity'),
+	url(r'^ajax/delete_booking/$', views.delete_booking, name='delete_booking'),
+	url(r'^change_room_bed/$', views.change_room_bed, name='change_room_bed'),
+		
 ]
 	
 if settings.DEBUG:

@@ -10,10 +10,10 @@
 				<div >
 					<div class = "mb-4">
 						<div class = "col-sm-12">
-							<h4>Booking Number: {{booking.booking_number}}</h4>
+							<h4>Booking Number: {% if booking %} {{booking.booking_number}} {% else %} Booking does not exist!!{% endif %}</h4>
 						</div>
 					</div>
-					
+					{% if booking %}
 					<div class="container">
 						<div class = "row">
 							<div class = "col-sm-6">
@@ -26,13 +26,13 @@
 										</div>
 										<div class = "col-sm-8">
 										{% else %}
-										<div class = "col-sm-12">
-										{% endif %}
+											<div class = "col-sm-12">
+											{% endif %}
 											<div class="card-body">
 												  <h4 id = "modal-name" class="card-title">{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}</h4>
 												  <div class="card-text">
 													{{booking.guest.current_address_1}} {{booking.guest.current_address_2}}<br />
-													{{booking.guest.current_city}} {{booking.guest.current_state}} {{booking.guest.current_pin_code}}
+													{{booking.guest.current_city}} {{booking.guest.current_state}} {{booking.guest.current_pin_code|default:''}}<br />
 													{{booking.guest.email_id}} <br />
 													{{booking.guest.phone_number}} <br />
 												  </div>
@@ -52,17 +52,23 @@
 										</div>
 									</div>
 								</div>
-								
 							</div>
 						</div>
 					</div>	
 					<br />
 					<div class = "pull-left">
-						<a href="" class="btn btn-primary pull-left"><i class="fa fa-trash-o"></i> Delete</a>
+						<button class="btn btn-primary pull-left" 
+							onclick="delete_booking('{{ booking.booking_number }}');">
+							<i class="fa fa-trash-o"></i> Delete
+						</button>
 					</div>
 					<div class = "pull-right">
-						<button class="btn btn-primary pull-right" onclick="$('#delete-modal').modal('hide');"><i class="fa fa-close"></i>Cancel</button>
-					</div>					
+						<button class="btn btn-primary pull-right" 
+							onclick="$('#delete-modal').modal('hide');">
+							<i class="fa fa-close"></i>Cancel
+						</button>
+					</div>	
+					{% endif %}
 				</div>
 
 			</div>
