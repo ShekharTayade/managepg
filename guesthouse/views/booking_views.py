@@ -138,7 +138,9 @@ def new_booking(request):
 			booking = Booking.objects.get(booking_number = booking_number)
 			booking_form = BookingForm(instance = booking, prefix="booking", initial={'guest' : booking.guest_id,
 					'guesthouse':booking.guesthouse_id, 'booking_number':booking.booking_number})
-			guest_form = GuestForm(instance = booking.guest, prefix="guest")
+			guest_form = GuestForm(instance = booking.guest, prefix="guest", initial={
+					'current_pin_code':booking.guest.current_pin_code, 
+					'permanent_pin_code':booking.guest.permanent_pin_code})
 			guest = booking.guest #passing the guest instance, it's used in POST to display the photo in the browser
 			
 			# Get latest record from room_allocation
@@ -156,7 +158,7 @@ def new_booking(request):
 				room_allocation_form = Room_allocationForm(instance = room, prefix="room",
 						initial={'booking' : booking.booking_number,
 					'guesthouse':booking.guesthouse_id, 'guest':booking.guest_id, 
-					'block':room.block_id, 'floor':room.floor_id, 'room':room.room, 'bed':room.bed_id})
+					'block':room.block_id, 'floor':room.floor_id, 'room':room.room_id, 'bed':room.bed_id})
 			else:
 				room_allocation_form = Room_allocationForm(prefix="room")
 	
@@ -613,89 +615,111 @@ def delete_booking(request):
 
 def change_room_bed(request):
 
-	booking_number = request.GET.get('booking_number', '')
 	msg = ''
 	err_flag = False
 	
-	# Get the room allocation, booking
-	room_allocation = Room_allocation.objects.filter(
-		booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
-			'block', 'floor','room','bed').order_by('-updated_date').first()
+	if request.method == 'GET':
+		booking_number = request.GET.get('booking_number', '')
+		
+		# Get the room allocation, booking
+		room_allocation = Room_allocation.objects.filter(
+			booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
+				'block', 'floor','room','bed').order_by('-updated_date').first()
 	
-	if request.method == 'POST':	
-		check_in_str = request.GET.get('check_in_date', '')
-		check_out_str = request.GET.get('check_out_date', '')
-		block_id = request.GET.getlist('block', '[]')
-		floor_id = request.GET.getlist('floor', '[]')
-		room_id = request.GET.getlist('room', '[]')
-		bed_id = request.GET.getlist('bed', '[]')
+	elif request.method == 'POST':	
+		booking_number = request.POST.get('booking_number', '')
+		check_in_str = request.POST.get('check_in_date', '')
+		check_out_str = request.POST.get('check_out_date', '')
+		check_in_time = request.POST.get('check_in_time', '00:00')
+		if check_in_time == '':
+			check_in_time ='00:00'
+		check_out_time = request.POST.get('check_out_time', '00:00')
+		if check_out_time == '':
+			check_out_time ='00:00'
+		block_id = request.POST.getlist('block', '[]')
+		floor_id = request.POST.getlist('floor', '[]')
+		room_id = request.POST.getlist('room', '[]')
+		bed_id = request.POST.getlist('bed', '[]')
+
+		# Get the room allocation, booking
+		room_allocation = Room_allocation.objects.filter(
+			booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
+				'block', 'floor','room','bed').order_by('-updated_date').first()
+
+		if block_id == [''] or floor_id == [''] or room_id == [''] or bed_id == ['']:
+			msg = "Block, Floor, Room and Bed are required"
+			err_flag = True
 
 		if check_in_str == '':
 			msg = "Check-in date is required"
 			err_flag = True
-		
-		check_in_date = datetime.datetime.strptime(check_in_str, '%Y-%m-%d' )
-		check_out_date = datetime.datetime.strptime(check_out_str, '%Y-%m-%d' )
-		if not check_in_date:
-			msg = "Check-in date is required"
-			err_flag = True
-		
-		if check_out_date:
-			if check_in_date >= check_out_date:
-				msg = "Check-out should be greater than check-in date"
+		else:	
+			check_in_date = datetime.datetime.strptime(check_in_str, '%Y-%m-%d' )
+			if check_out_str == '':
+				check_out_date = None
+			else:
+				check_out_date = datetime.datetime.strptime(check_out_str, '%Y-%m-%d' )
+			if not check_in_date:
+				msg = "Check-in date is required"
 				err_flag = True
-		# Allocate new room, bed only if there are no errors.
-		if err_flag == False:
-			# End existing allocation
-			curr_booking = Booking.objects.get(pk = booking_number)
-			b = Booking(
-					booking_number = booking_number,
-					guest = curr_booking.guest,
-					guesthouse = curr_booking.guesthouse,
-					check_in_date = curr_booking.check_in_date,
-					check_in_time = curr_booking.check_in_time,
-					check_out_date = check_in_date - 1,
-					check_out_time = curr_booking.check_out_time,
-					food_option = curr_booking.food_option,
-					food_preference = curr_booking.food_preference,
-					tenure = curr_booking.tenure,
-					created_date = curr_booking.created_date	
-			)
-			b.save()
-			
-			r = Room_allocation (
-				alloc_id = room_allocation.alloc_id,
-				booking = room_allocation.booking,
-				guest = room_allocation.guest,
-				bed_id = bed_id[0],
-				room_id = room_id[0],
-				floor_id = floor[0],
-				block = block[0],
-				allocation_start_date = check_in_date,
-				allocation_end_date = check_out_date,
-				created_date = room_allocation.created_date	
-			)
-			r.save()
-		
-			# Create now booking
-			ri = Room_allocation (
-				booking = room_allocation.booking,
-				guest = room_allocation.guest,
-				bed_id = bed_id[0],
-				room_id = room_id[0],
-				floor_id = floor[0],
-				block = block[0],
-				allocation_start_date = check_in_date,
-				allocation_end_date = check_out_date,
-				created_date = room_allocation.created_date	
-			)
-			ri.save()
-			msg = "Check-out should be greater than check-in date"
-			
-			# Get the new room allocation, booking
-			room_allocation = Room_allocation.objects.filter(
-				booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
-					'block', 'floor','room','bed').order_by('-updated_date').first()			
+			else:
+				if check_out_date:
+					if check_in_date >= check_out_date:
+						msg = "Check-out should be greater than check-in date"
+						err_flag = True
+						
+				# Allocate new room, bed only if there are no errors.
+				if err_flag == False:
+					# End existing allocation
+					curr_booking = Booking.objects.get(pk = booking_number)
+					b = Booking(
+							booking_number = booking_number,
+							guest = curr_booking.guest,
+							guesthouse = curr_booking.guesthouse,
+							check_in_date = curr_booking.check_in_date,
+							check_in_time = check_in_time,
+							check_out_date = check_in_date - datetime.timedelta(days = 1),
+							check_out_time = check_out_time,
+							food_option = curr_booking.food_option,
+							food_preference = curr_booking.food_preference,
+							tenure = curr_booking.tenure,
+							created_date = curr_booking.created_date	
+					)
+					b.save()
+					
+					r = Room_allocation (
+						alloc_id = room_allocation.alloc_id,
+						booking = room_allocation.booking,
+						guest = room_allocation.guest,
+						bed_id = bed_id[0],
+						room_id = room_id[0],
+						floor_id = floor_id[0],
+						block_id = block_id[0],
+						allocation_start_date = b.check_in_date,
+						allocation_end_date = b.check_out_date,
+						created_date = room_allocation.created_date	
+					)
+					r.save()
+				
+					# Create now booking
+					ri = Room_allocation (
+						booking = room_allocation.booking,
+						guest = room_allocation.guest,
+						bed_id = bed_id[0],
+						room_id = room_id[0],
+						floor_id = floor_id[0],
+						block_id = block_id[0],
+						allocation_start_date = check_in_date,
+						allocation_end_date = check_out_date,
+						created_date = room_allocation.created_date	
+					)
+					ri.save()
+					msg = "Change Complete"
+					
+					# Get the new room allocation, booking
+					room_allocation = Room_allocation.objects.filter(
+						booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
+							'block', 'floor','room','bed').order_by('-updated_date').first()			
 			
 	return render(request, 'guesthouse/change_room_bed.html', 
 		{'room_allocation':room_allocation, 'msg':msg} )	

@@ -64,39 +64,59 @@
 								<div class = "col-sm-6">
 									<div class="form-group">
 										Block
-										<input disabled class = "form-control" value = "{{room_allocation.block.block_name}}" />
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.block.block_name}}" />
 									</div>
 								</div>
 								<div class = "col-sm-6">
 									<div class="form-group">
 										Floor
-										<input disabled class = "form-control" value = "{{room_allocation.floor.floor_name}}" />
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.floor.floor_name}}" />
 									</div>
 								</div>
 								<div class = "col-sm-6">
 									<div class="form-group">
 										Room
-										<input disabled class = "form-control" value = "{{room_allocation.room.room_name}}" />
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.room.room_name}}" />
 									</div>
 								</div>
 								<div class = "col-sm-6">
 									<div class="form-group">
 										Bed
-										<input disabled class = "form-control" value = "{{room_allocation.bed.bed_name}}" />
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.bed.bed_name}}" />
 									</div>
 								</div>													
 							</div>
 							<div class = "row ">
-								<div class = "col-sm-4">
+								<div class = "col-sm-3">
 									<div class="form-group">
 										Check-in Date
-										<input disabled class = "form-control" value = "{{room_allocation.booking.check_in_date|date:'d-m-Y'}}" />
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.allocation_start_date|date:'d-m-Y'}}" />
 									</div>
 								</div>
-								<div class = "col-sm-4">
+								<div class = "col-sm-3">
+									<div class="form-group">
+										Check-in Time
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.booking.check_in_time|time:'H:i'}}" />
+									</div>
+								</div>
+								<div class = "col-sm-3">
 									<div class="form-group">
 										Check-out Date
-										<input disabled class = "form-control" value = "{{room_allocation.booking.check_out_date|date:'d-m-Y'}}" />
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.allocation_end_date|date:'d-m-Y'}}" />
+									</div>
+								</div>
+								<div class = "col-sm-3">
+									<div class="form-group">
+										Check-out Time
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.booking.check_out_time|time:'H:i'}}" />
 									</div>
 								</div>
 							</div>
@@ -111,19 +131,37 @@
 							<input hidden name = "booking_number" value = "{{room_allocation.booking_id}}">
 							<div class = "box info-bar">
 								<div class = "row">
-									<div class = "col-sm-4">
+									<div class = "col-sm-3">
 										<div class="form-group">
 											Check-in Date
 											<input id="check_in_date" name="check_in_date" 
 											class = "form-control" type = "date" 
 											onchange = "get_blocks(this.value);"
-											value = "{{room.check_in_date}}" />
+											value = "{{room_allocation.allocation_start_date|date:'Y-m-d'}}" />
 										</div>
 									</div>
-									<div class = "col-sm-4">
+									<div class = "col-sm-3">
+										<div class="form-group">
+											Check-in Time
+											<input id="check_in_time" name="check_in_time" 
+											class = "form-control clockpicker" type = "time" 
+											value = "{{room_allocation.booking.check_in_time|time:'H:i'}}" />
+										</div>
+									</div>
+									<div class = "col-sm-3">
 										<div class="form-group">
 											Check-out Date
-											<input id="check_out_date" name="check_out_date" class = "form-control" type = "date" value = "{{room.check_out_date}}" />
+											<input id="check_out_date" name="check_out_date" 
+											class = "form-control" type = "date" 
+											value = "{{room_allocation.allocation_end_date|date:'Y-m-d'}}" />
+										</div>
+									</div>
+									<div class = "col-sm-3">
+										<div class="form-group">
+											Check-out Time
+											<input id="check_out_time" name="check_out_time" 
+											class = "form-control clockpicker" type = "time" 
+											value = "{{room_allocation.booking.check_out_time|time:'H:i'}}" />
 										</div>
 									</div>
 								</div>
@@ -132,7 +170,8 @@
 										<div class="form-group">
 											Block
 											<div id = "blocks-div">
-												<select onchange= 'get_floors(this.value);' id='block' name ='block' class='form-control' >
+												<select onchange= 'get_floors(this.value);' id='block' 
+														name ='block' class='form-control' >
 													<option></option>
 												</select>
 											</div>													
@@ -143,7 +182,8 @@
 										<div class="form-group">
 											Floor
 											<div id = "floors-div">
-												<select onchange= 'get_rooms(this.value);' id='floor' name ='floor' class='form-control' >
+												<select onchange= 'get_rooms(this.value);' id='floor' 
+														name ='floor' class='form-control' >
 													<option></option>
 												</select>
 
@@ -155,7 +195,8 @@
 										<div class="form-group">
 											Room
 											<div id = "rooms-div">
-												<select onchange= 'get_beds(this.value);' id='room' name ='room' class='form-control' >
+												<select onchange= 'get_beds(this.value);' id='room' 
+														name ='room' class='form-control' >
 													<option></option>
 												</select>
 											</div>
@@ -176,8 +217,7 @@
 								<div class = "row">
 									<div class = "col-sm-12">
 										<div class = "text-center">
-											<button class="btn btn-primary text-center"
-												onclick="reallocate_room_bed('{{ booking.booking_number }}');">
+											<button class="btn btn-primary text-center" type="submit">
 												<i class="fa fa-bed fa-lg"></i> Confirm Re-allocation
 											</button>
 										</div>
