@@ -1,0 +1,3 @@
+block_id	block_name	available_from	available_to	guesthouse_id
+2	Block 2	2019-01-01	2020-01-31	1
+1	Block 1	2019-01-01	2020-01-31	1

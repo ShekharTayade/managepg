@@ -1,0 +1,659 @@
+city	state_id
+South Andaman	ANDAMAN & NICOBAR ISLANDS
+North And Middle Andaman	ANDAMAN & NICOBAR ISLANDS
+Nicobar	ANDAMAN & NICOBAR ISLANDS
+Kurnool	ANDHRA PRADESH
+Krishna	ANDHRA PRADESH
+Guntur	ANDHRA PRADESH
+East Godavari	ANDHRA PRADESH
+Cuddapah	ANDHRA PRADESH
+Visakhapatnam	ANDHRA PRADESH
+Ananthapur	ANDHRA PRADESH
+Srikakulam	ANDHRA PRADESH
+Vizianagaram	ANDHRA PRADESH
+Chittoor	ANDHRA PRADESH
+Nellore	ANDHRA PRADESH
+Prakasam	ANDHRA PRADESH
+West Godavari	ANDHRA PRADESH
+Peddapalli	ANDHRA PRADESH
+West Siang	ARUNACHAL PRADESH
+Papum Pare	ARUNACHAL PRADESH
+Dibang Valley	ARUNACHAL PRADESH
+West Kameng	ARUNACHAL PRADESH
+Changlang	ARUNACHAL PRADESH
+Lohit	ARUNACHAL PRADESH
+Upper Subansiri	ARUNACHAL PRADESH
+Tirap	ARUNACHAL PRADESH
+East Siang	ARUNACHAL PRADESH
+Upper Siang	ARUNACHAL PRADESH
+Lower Subansiri	ARUNACHAL PRADESH
+Tawang	ARUNACHAL PRADESH
+Kurung Kumey	ARUNACHAL PRADESH
+East Kameng	ARUNACHAL PRADESH
+Lower Dibang Valley	ARUNACHAL PRADESH
+Longding	ARUNACHAL PRADESH
+Namsai	ARUNACHAL PRADESH
+Karimganj	ASSAM
+Hailakandi	ASSAM
+Cachar	ASSAM
+North Cachar Hills	ASSAM
+Sonitpur	ASSAM
+Dhubri	ASSAM
+Kamrup	ASSAM
+Sibsagar	ASSAM
+Tinsukia	ASSAM
+Golaghat	ASSAM
+Jorhat	ASSAM
+Barpeta	ASSAM
+Lakhimpur	ASSAM
+Dhemaji	ASSAM
+Darrang	ASSAM
+Dibrugarh	ASSAM
+Kokrajhar	ASSAM
+Nagaon	ASSAM
+Karbi Anglong	ASSAM
+Nalbari	ASSAM
+Bongaigaon	ASSAM
+Goalpara	ASSAM
+Marigaon	ASSAM
+Araria	BIHAR
+Katihar	BIHAR
+Purnia	BIHAR
+Kishanganj	BIHAR
+Buxar	BIHAR
+Muzaffarpur	BIHAR
+Patna	BIHAR
+Nawada	BIHAR
+Nalanda	BIHAR
+Gaya	BIHAR
+Arwal	BIHAR
+Siwan	BIHAR
+Jehanabad	BIHAR
+Madhubani	BIHAR
+Vaishali	BIHAR
+Begusarai	BIHAR
+Darbhanga	BIHAR
+Madhepura	BIHAR
+Bhojpur	BIHAR
+Bhagalpur	BIHAR
+Munger	BIHAR
+Samastipur	BIHAR
+Sitamarhi	BIHAR
+Sheohar	BIHAR
+Saharsa	BIHAR
+Supaul	BIHAR
+Banka	BIHAR
+Khagaria	BIHAR
+Aurangabad(BH)	BIHAR
+East Champaran	BIHAR
+Jamui	BIHAR
+West Champaran	BIHAR
+Rohtas	BIHAR
+Saran	BIHAR
+Gopalganj	BIHAR
+Lakhisarai	BIHAR
+Sheikhpura	BIHAR
+Kaimur (Bhabua)	BIHAR
+Chandigarh	CHANDIGARH
+Durg	CHATTISGARH
+Bilaspur(CGH)	CHATTISGARH
+Raigarh	CHATTISGARH
+Surguja	CHATTISGARH
+Bastar	CHATTISGARH
+Kabirdham	CHATTISGARH
+Raipur	CHATTISGARH
+Mahasamund	CHATTISGARH
+Dhamtari	CHATTISGARH
+Janjgir-champa	CHATTISGARH
+Korba	CHATTISGARH
+Kawardha	CHATTISGARH
+Bijapur(CGH)	CHATTISGARH
+Gariaband	CHATTISGARH
+Kanker	CHATTISGARH
+Koriya	CHATTISGARH
+Rajnandgaon	CHATTISGARH
+Jashpur	CHATTISGARH
+Dantewada	CHATTISGARH
+Narayanpur	CHATTISGARH
+Dadra & Nagar Haveli	DADRA & NAGAR HAVELI
+Daman	DAMAN & DIU
+Diu	DAMAN & DIU
+East Delhi	DELHI
+North West Delhi	DELHI
+South West Delhi	DELHI
+South Delhi	DELHI
+North East Delhi	DELHI
+North Delhi	DELHI
+West Delhi	DELHI
+Central Delhi	DELHI
+New Delhi	DELHI
+North Goa	GOA
+South Goa	GOA
+Ahmedabad	GUJARAT
+Vadodara	GUJARAT
+Kheda	GUJARAT
+Anand	GUJARAT
+Jamnagar	GUJARAT
+Rajkot	GUJARAT
+Bharuch	GUJARAT
+Panch Mahals	GUJARAT
+Junagadh	GUJARAT
+Porbandar	GUJARAT
+Amreli	GUJARAT
+Tapi	GUJARAT
+Gandhi Nagar	GUJARAT
+Valsad	GUJARAT
+Mahesana	GUJARAT
+Dahod	GUJARAT
+Narmada	GUJARAT
+Kachchh	GUJARAT
+Surat	GUJARAT
+MORBI	GUJARAT
+Banaskantha	GUJARAT
+Bhavnagar	GUJARAT
+Navsari	GUJARAT
+Patan	GUJARAT
+Sabarkantha	GUJARAT
+Surendra Nagar	GUJARAT
+The Dangs	GUJARAT
+Sonipat	HARYANA
+Faridabad	HARYANA
+Gurgaon	HARYANA
+Rohtak	HARYANA
+Ambala	HARYANA
+Kaithal	HARYANA
+Jhajjar	HARYANA
+Hisar	HARYANA
+Yamuna Nagar	HARYANA
+Panchkula	HARYANA
+Karnal	HARYANA
+Kurukshetra	HARYANA
+Bhiwani	HARYANA
+Mahendragarh	HARYANA
+Panipat	HARYANA
+Fatehabad	HARYANA
+Sirsa	HARYANA
+Jind	HARYANA
+Rewari	HARYANA
+Solan	HIMACHAL PRADESH
+Kangra	HIMACHAL PRADESH
+Bilaspur (HP)	HIMACHAL PRADESH
+Sirmaur	HIMACHAL PRADESH
+Chamba	HIMACHAL PRADESH
+Una	HIMACHAL PRADESH
+Shimla	HIMACHAL PRADESH
+Mandi	HIMACHAL PRADESH
+Hamirpur(HP)	HIMACHAL PRADESH
+Kullu	HIMACHAL PRADESH
+Lahul & Spiti	HIMACHAL PRADESH
+Kinnaur	HIMACHAL PRADESH
+Leh	JAMMU & KASHMIR
+Jammu	JAMMU & KASHMIR
+Rajauri	JAMMU & KASHMIR
+Poonch	JAMMU & KASHMIR
+Kargil	JAMMU & KASHMIR
+Udhampur	JAMMU & KASHMIR
+Doda	JAMMU & KASHMIR
+Kathua	JAMMU & KASHMIR
+Pulwama	JAMMU & KASHMIR
+Srinagar	JAMMU & KASHMIR
+Ananthnag	JAMMU & KASHMIR
+Baramulla	JAMMU & KASHMIR
+Kulgam	JAMMU & KASHMIR
+Budgam	JAMMU & KASHMIR
+Reasi	JAMMU & KASHMIR
+Bandipur	JAMMU & KASHMIR
+Kupwara	JAMMU & KASHMIR
+Ganderbal	JAMMU & KASHMIR
+Shopian	JAMMU & KASHMIR
+Samba	JAMMU & KASHMIR
+Koderma	JHARKHAND
+Ramgarh	JHARKHAND
+Ranchi	JHARKHAND
+Bokaro	JHARKHAND
+Dumka	JHARKHAND
+Palamau	JHARKHAND
+Garhwa	JHARKHAND
+Latehar	JHARKHAND
+Dhanbad	JHARKHAND
+East Singhbhum	JHARKHAND
+Seraikela-kharsawan	JHARKHAND
+West Singhbhum	JHARKHAND
+Deoghar	JHARKHAND
+Sahibganj	JHARKHAND
+Jamtara	JHARKHAND
+Lohardaga	JHARKHAND
+Chatra	JHARKHAND
+Giridh	JHARKHAND
+Hazaribag	JHARKHAND
+Gumla	JHARKHAND
+Simdega	JHARKHAND
+Pakur	JHARKHAND
+Godda	JHARKHAND
+Khunti	JHARKHAND
+Dharwad	KARNATAKA
+Tumakuru	KARNATAKA
+Shivamogga	KARNATAKA
+Uttara Kannada	KARNATAKA
+Hassan	KARNATAKA
+Bengaluru	KARNATAKA
+Dakshina Kannada	KARNATAKA
+Mysuru	KARNATAKA
+Belagavi	KARNATAKA
+Bangalore Rural	KARNATAKA
+Kolar	KARNATAKA
+Ballari	KARNATAKA
+Davangere	KARNATAKA
+Chikkamagaluru	KARNATAKA
+Bagalkot	KARNATAKA
+Chamrajnagar	KARNATAKA
+Mandya	KARNATAKA
+Bidar	KARNATAKA
+Vijayapura	KARNATAKA
+Ramanagar	KARNATAKA
+Haveri	KARNATAKA
+Kodagu	KARNATAKA
+Chikkaballapur	KARNATAKA
+Udupi	KARNATAKA
+Raichur	KARNATAKA
+Chitradurga	KARNATAKA
+Gadag	KARNATAKA
+Koppal	KARNATAKA
+Yadgir	KARNATAKA
+Kalaburagi	KARNATAKA
+Palakkad	KERALA
+Kannur	KERALA
+Malappuram	KERALA
+Pathanamthitta	KERALA
+Alappuzha	KERALA
+Thiruvananthapuram	KERALA
+Thrissur	KERALA
+Ernakulam	KERALA
+Kozhikode	KERALA
+Idukki	KERALA
+Kollam	KERALA
+Wayanad	KERALA
+Kottayam	KERALA
+Kasargod	KERALA
+Lakshadweep	LAKSHADWEEP
+Jabalpur	MADHYA PRADESH
+Katni	MADHYA PRADESH
+Ujjain	MADHYA PRADESH
+Shajapur	MADHYA PRADESH
+Mandsaur	MADHYA PRADESH
+Neemuch	MADHYA PRADESH
+Satna	MADHYA PRADESH
+Rewa	MADHYA PRADESH
+Anuppur	MADHYA PRADESH
+Shahdol	MADHYA PRADESH
+Umaria	MADHYA PRADESH
+Singrauli	MADHYA PRADESH
+Sidhi	MADHYA PRADESH
+Vidisha	MADHYA PRADESH
+Raisen	MADHYA PRADESH
+Sagar	MADHYA PRADESH
+Damoh	MADHYA PRADESH
+Ratlam	MADHYA PRADESH
+Alirajpur	MADHYA PRADESH
+Jhabua	MADHYA PRADESH
+Burhanpur	MADHYA PRADESH
+Barwani	MADHYA PRADESH
+West Nimar	MADHYA PRADESH
+East Nimar	MADHYA PRADESH
+Khandwa	MADHYA PRADESH
+Shivpuri	MADHYA PRADESH
+Guna	MADHYA PRADESH
+Ashok Nagar	MADHYA PRADESH
+Bhopal	MADHYA PRADESH
+Gwalior	MADHYA PRADESH
+Datia	MADHYA PRADESH
+Indore	MADHYA PRADESH
+Hoshangabad	MADHYA PRADESH
+Panna	MADHYA PRADESH
+Mandla	MADHYA PRADESH
+Narsinghpur	MADHYA PRADESH
+Chhatarpur	MADHYA PRADESH
+Sehore	MADHYA PRADESH
+Rajgarh	MADHYA PRADESH
+Chhindwara	MADHYA PRADESH
+Dindori	MADHYA PRADESH
+Balaghat	MADHYA PRADESH
+Seoni	MADHYA PRADESH
+Morena	MADHYA PRADESH
+Bhind	MADHYA PRADESH
+Tikamgarh	MADHYA PRADESH
+Betul	MADHYA PRADESH
+Dhar	MADHYA PRADESH
+Dewas	MADHYA PRADESH
+Sainkheda	MADHYA PRADESH
+Harda	MADHYA PRADESH
+Sheopur	MADHYA PRADESH
+Khargone	MADHYA PRADESH
+Washim	MAHARASHTRA
+Akola	MAHARASHTRA
+Ahmed Nagar	MAHARASHTRA
+Amravati	MAHARASHTRA
+Jalgaon	MAHARASHTRA
+Buldhana	MAHARASHTRA
+Chandrapur	MAHARASHTRA
+Gadchiroli	MAHARASHTRA
+Nandurbar	MAHARASHTRA
+Dhule	MAHARASHTRA
+Kolhapur	MAHARASHTRA
+Nashik	MAHARASHTRA
+Nagpur	MAHARASHTRA
+Gondia	MAHARASHTRA
+Bhandara	MAHARASHTRA
+Nanded	MAHARASHTRA
+Thane	MAHARASHTRA
+Raigarh(MH)	MAHARASHTRA
+Latur	MAHARASHTRA
+Jalna	MAHARASHTRA
+Parbhani	MAHARASHTRA
+Hingoli	MAHARASHTRA
+Pune	MAHARASHTRA
+Ratnagiri	MAHARASHTRA
+Satara	MAHARASHTRA
+Sindhudurg	MAHARASHTRA
+Solapur	MAHARASHTRA
+Mumbai	MAHARASHTRA
+Osmanabad	MAHARASHTRA
+Aurangabad	MAHARASHTRA
+Wardha	MAHARASHTRA
+Beed	MAHARASHTRA
+Sangli	MAHARASHTRA
+Yavatmal	MAHARASHTRA
+Bishnupur	MANIPUR
+Churachandpur	MANIPUR
+Imphal West	MANIPUR
+Imphal East	MANIPUR
+Senapati	MANIPUR
+Thoubal	MANIPUR
+Chandel	MANIPUR
+Tamenglong	MANIPUR
+Ukhrul	MANIPUR
+Tengnoupal	MANIPUR
+Kangpokpi	MANIPUR
+Jaribam	MANIPUR
+Kakching	MANIPUR
+East Khasi Hills	MEGHALAYA
+West Garo Hills	MEGHALAYA
+East Garo Hills	MEGHALAYA
+South Garo Hills	MEGHALAYA
+West Khasi Hills	MEGHALAYA
+Ri Bhoi	MEGHALAYA
+Jaintia Hills	MEGHALAYA
+Serchhip	MIZORAM
+Champhai	MIZORAM
+Aizawl	MIZORAM
+Kolasib	MIZORAM
+Lunglei	MIZORAM
+Lawngtlai	MIZORAM
+Mammit	MIZORAM
+Saiha	MIZORAM
+Dimapur	NAGALAND
+Mon	NAGALAND
+Mokokchung	NAGALAND
+Kohima	NAGALAND
+Phek	NAGALAND
+Kiphire	NAGALAND
+Tuensang	NAGALAND
+Longleng	NAGALAND
+Wokha	NAGALAND
+Peren	NAGALAND
+Zunhebotto	NAGALAND
+Cuttack	ODISHA
+Khorda	ODISHA
+Ganjam	ODISHA
+Balangir	ODISHA
+Sonapur	ODISHA
+Baleswar	ODISHA
+Gajapati	ODISHA
+Bhadrak	ODISHA
+Jajapur	ODISHA
+Kendrapara	ODISHA
+Jagatsinghapur	ODISHA
+Kendujhar	ODISHA
+Nabarangapur	ODISHA
+Koraput	ODISHA
+Malkangiri	ODISHA
+Rayagada	ODISHA
+Mayurbhanj	ODISHA
+Kandhamal	ODISHA
+Boudh	ODISHA
+Puri	ODISHA
+Nayagarh	ODISHA
+Sambalpur	ODISHA
+Bargarh	ODISHA
+Debagarh	ODISHA
+Jharsuguda	ODISHA
+Dhenkanal	ODISHA
+Angul	ODISHA
+Kalahandi	ODISHA
+Nuapada	ODISHA
+Sundergarh	ODISHA
+Keonjhargarh	ODISHA
+Pondicherry	PONDICHERRY
+Karaikal	PONDICHERRY
+Mahe	PONDICHERRY
+Amritsar	PUNJAB
+Tarn Taran	PUNJAB
+Bathinda	PUNJAB
+Mansa	PUNJAB
+Moga	PUNJAB
+Muktsar	PUNJAB
+Faridkot	PUNJAB
+Firozpur	PUNJAB
+Gurdaspur	PUNJAB
+Pathankot	PUNJAB
+Hoshiarpur	PUNJAB
+Nawanshahr	PUNJAB
+Jalandhar	PUNJAB
+Kapurthala	PUNJAB
+Ludhiana	PUNJAB
+Mohali	PUNJAB
+Sangrur	PUNJAB
+Barnala	PUNJAB
+Rupnagar	PUNJAB
+Ropar	PUNJAB
+Fatehgarh Sahib	PUNJAB
+Patiala	PUNJAB
+Fazilka	PUNJAB
+Bharatpur	RAJASTHAN
+Bhilwara	RAJASTHAN
+Dungarpur	RAJASTHAN
+Banswara	RAJASTHAN
+Jaipur	RAJASTHAN
+Dausa	RAJASTHAN
+Kota	RAJASTHAN
+Baran	RAJASTHAN
+Jhalawar	RAJASTHAN
+Chittorgarh	RAJASTHAN
+Tonk	RAJASTHAN
+Bundi	RAJASTHAN
+Alwar	RAJASTHAN
+Barmer	RAJASTHAN
+Ajmer	RAJASTHAN
+Bikaner	RAJASTHAN
+Churu	RAJASTHAN
+Dholpur	RAJASTHAN
+Jhujhunu	RAJASTHAN
+Jodhpur	RAJASTHAN
+Jaisalmer	RAJASTHAN
+Pali	RAJASTHAN
+Karauli	RAJASTHAN
+Sawai Madhopur	RAJASTHAN
+Sikar	RAJASTHAN
+Sirohi	RAJASTHAN
+Jalor	RAJASTHAN
+Ganganagar	RAJASTHAN
+Hanumangarh	RAJASTHAN
+Udaipur	RAJASTHAN
+Rajsamand	RAJASTHAN
+Nagaur	RAJASTHAN
+East Sikkim	SIKKIM
+North Sikkim	SIKKIM
+West Sikkim	SIKKIM
+South Sikkim	SIKKIM
+Dindigul	TAMIL NADU
+Coimbatore	TAMIL NADU
+Erode	TAMIL NADU
+Namakkal	TAMIL NADU
+Karur	TAMIL NADU
+Tirunelveli	TAMIL NADU
+Tuticorin	TAMIL NADU
+Ramanathapuram	TAMIL NADU
+Sivaganga	TAMIL NADU
+Vellore	TAMIL NADU
+Kanchipuram	TAMIL NADU
+Cuddalore	TAMIL NADU
+Villupuram	TAMIL NADU
+Krishnagiri	TAMIL NADU
+Kanyakumari	TAMIL NADU
+Tiruchirappalli	TAMIL NADU
+Nagapattinam	TAMIL NADU
+Tiruvarur	TAMIL NADU
+Nilgiris	TAMIL NADU
+Thanjavur	TAMIL NADU
+Tiruvannamalai	TAMIL NADU
+Perambalur	TAMIL NADU
+Chennai	TAMIL NADU
+Tiruvallur	TAMIL NADU
+Pudukkottai	TAMIL NADU
+Virudhunagar	TAMIL NADU
+Salem	TAMIL NADU
+Ariyalur	TAMIL NADU
+TIRUPPUR	TAMIL NADU
+Dharmapuri	TAMIL NADU
+Madurai	TAMIL NADU
+Theni	TAMIL NADU
+K.V.Rangareddy	TELANGANA
+Hyderabad	TELANGANA
+Nalgonda	TELANGANA
+Nizamabad	TELANGANA
+Mahabub Nagar	TELANGANA
+Karim Nagar	TELANGANA
+Khammam	TELANGANA
+Warangal	TELANGANA
+Medak	TELANGANA
+Adilabad	TELANGANA
+Mahabubabad	TELANGANA
+Suryapet	TELANGANA
+Siddipet	TELANGANA
+Rajanna Sircilla	TELANGANA
+Jayashankar	TELANGANA
+North Tripura	TRIPURA
+Dhalai	TRIPURA
+West Tripura	TRIPURA
+South Tripura	TRIPURA
+Gomti	TRIPURA
+Sepahijala	TRIPURA
+Khowai	TRIPURA
+Kannauj	UTTAR PRADESH
+Farrukhabad	UTTAR PRADESH
+Fatehpur	UTTAR PRADESH
+Jaunpur	UTTAR PRADESH
+Bareilly	UTTAR PRADESH
+Meerut	UTTAR PRADESH
+Ghaziabad	UTTAR PRADESH
+Gautam Buddha Nagar	UTTAR PRADESH
+Ghazipur	UTTAR PRADESH
+Varanasi	UTTAR PRADESH
+Raebareli	UTTAR PRADESH
+Faizabad	UTTAR PRADESH
+Lucknow	UTTAR PRADESH
+Budaun	UTTAR PRADESH
+Saharanpur	UTTAR PRADESH
+Aligarh	UTTAR PRADESH
+Kheri	UTTAR PRADESH
+Banda	UTTAR PRADESH
+Hamirpur	UTTAR PRADESH
+Mahoba	UTTAR PRADESH
+Hathras	UTTAR PRADESH
+Shrawasti	UTTAR PRADESH
+Gorakhpur	UTTAR PRADESH
+Hardoi	UTTAR PRADESH
+Bijnor	UTTAR PRADESH
+Shahjahanpur	UTTAR PRADESH
+Muzaffarnagar	UTTAR PRADESH
+Kanpur Nagar	UTTAR PRADESH
+Allahabad	UTTAR PRADESH
+Mathura	UTTAR PRADESH
+Kushinagar	UTTAR PRADESH
+Hapur	UTTAR PRADESH
+Sultanpur	UTTAR PRADESH
+Kaushambi	UTTAR PRADESH
+Barabanki	UTTAR PRADESH
+Mirzapur	UTTAR PRADESH
+Sonbhadra	UTTAR PRADESH
+Sitapur	UTTAR PRADESH
+Unnao	UTTAR PRADESH
+Agra	UTTAR PRADESH
+Bahraich	UTTAR PRADESH
+Deoria	UTTAR PRADESH
+Maharajganj	UTTAR PRADESH
+Pratapgarh	UTTAR PRADESH
+Mau	UTTAR PRADESH
+Moradabad	UTTAR PRADESH
+Jhansi	UTTAR PRADESH
+Chitrakoot	UTTAR PRADESH
+Azamgarh	UTTAR PRADESH
+Siddharthnagar	UTTAR PRADESH
+Ballia	UTTAR PRADESH
+Pilibhit	UTTAR PRADESH
+Basti	UTTAR PRADESH
+Bulandshahr	UTTAR PRADESH
+Etah	UTTAR PRADESH
+Etawah	UTTAR PRADESH
+Auraiya	UTTAR PRADESH
+Ambedkar Nagar	UTTAR PRADESH
+Gonda	UTTAR PRADESH
+Balrampur	UTTAR PRADESH
+Jalaun	UTTAR PRADESH
+Lalitpur	UTTAR PRADESH
+Mainpuri	UTTAR PRADESH
+Firozabad	UTTAR PRADESH
+Bagpat	UTTAR PRADESH
+Rampur	UTTAR PRADESH
+Jyotiba Phule Nagar	UTTAR PRADESH
+Sant Kabir Nagar	UTTAR PRADESH
+Kanpur Dehat	UTTAR PRADESH
+Chandauli	UTTAR PRADESH
+Sant Ravidas Nagar	UTTAR PRADESH
+Bageshwar	UTTARAKHAND
+Almora	UTTARAKHAND
+Chamoli	UTTARAKHAND
+Rudraprayag	UTTARAKHAND
+Dehradun	UTTARAKHAND
+Haridwar	UTTARAKHAND
+Tehri Garhwal	UTTARAKHAND
+Uttarkashi	UTTARAKHAND
+Udham Singh Nagar	UTTARAKHAND
+Nainital	UTTARAKHAND
+Champawat	UTTARAKHAND
+Pauri Garhwal	UTTARAKHAND
+Pithoragarh	UTTARAKHAND
+Nadia	WEST BENGAL
+Purba Bardhaman	WEST BENGAL
+Bankura	WEST BENGAL
+North 24 Parganas	WEST BENGAL
+Kolkata	WEST BENGAL
+Howrah	WEST BENGAL
+Paschim Bardhaman	WEST BENGAL
+Murshidabad	WEST BENGAL
+Birbhum	WEST BENGAL
+South 24 Parganas	WEST BENGAL
+Alipurduar	WEST BENGAL
+Burdwan	WEST BENGAL
+East Midnapore	WEST BENGAL
+West Midnapore	WEST BENGAL
+Malda	WEST BENGAL
+Darjiling	WEST BENGAL
+Hooghly	WEST BENGAL
+Medinipur	WEST BENGAL
+Cooch Behar	WEST BENGAL
+South Dinajpur	WEST BENGAL
+Jalpaiguri	WEST BENGAL
+Purulia	WEST BENGAL
+Kalimpong	WEST BENGAL
+North Dinajpur	WEST BENGAL

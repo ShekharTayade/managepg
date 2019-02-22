@@ -1,0 +1,10 @@
+floor_id	floor_name	available_from	available_to	block_id
+2	B1 - First Floor	2019-01-01	2099-12-31	1
+1	B1 - Ground Floor	2019-01-01	2099-12-31	1
+4	B1 - Third Floor	2019-01-01	2099-12-31	1
+3	B1 - Second Floor	2019-01-01	2099-12-31	1
+5	B1 - Fourth Floor	2019-01-01	2099-12-31	1
+8	B2 - Third Floor	2019-01-01	2099-12-31	2
+9	B2 - Fourth Floor	2019-01-01	2099-12-31	2
+6	B2 - First Floor	2019-01-01	2099-12-31	2
+7	B2 - Second Floor	2019-01-01	2099-12-31	2
