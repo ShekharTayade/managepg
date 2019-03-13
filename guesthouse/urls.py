@@ -42,7 +42,18 @@ urlpatterns =[
 	url(r'^ajax/get_bed_availablity/$', views.get_bed_availablity, name='get_bed_availablity'),
 	url(r'^ajax/delete_booking/$', views.delete_booking, name='delete_booking'),
 	url(r'^change_room_bed/$', views.change_room_bed, name='change_room_bed'),
-		
+
+	#path('booking_form/<str:booking_number>/', views.booking_form, name='booking_form'),
+	
+	
+	path('booking_details_for_payment/<str:receipt_type>', views.booking_details_for_payment, name='booking_details_for_payment'),
+	url(r'^payment_receipt/$', views.payment_receipt, name='payment_receipt'),
+	url(r'^ajax/choose_booking_for_payment/$', views.choose_booking_for_payment, name='choose_booking_for_payment'),
+	path('payment_confirmation/<int:rct_id>/', views.payment_confirmation, name='payment_confirmation'),
+	path('payment_confirmation_pdf/<int:rct_id>/', views.payment_confirmation_pdf, name='payment_confirmation_pdf'),
+	url(r'^print_receipts/$', views.print_receipts, name='print_receipts'),
+	url(r'^ajax/get_receipts/$', views.get_receipts, name='get_receipts'),
+	
 ]
 	
 if settings.DEBUG:

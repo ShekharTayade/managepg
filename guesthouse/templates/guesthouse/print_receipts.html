@@ -13,7 +13,7 @@
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-								<li aria-current="page" class="breadcrumb-item active">Manage Booking</li>
+								<li aria-current="page" class="breadcrumb-item active">Receipts</li>
 							</ol>
 						</nav>
 					</div>
@@ -21,8 +21,7 @@
 				<div class = "row">
 					<div class = "col-sm-12">
 						<div class="box">
-							<h3>Edit/Delete Booking</h3>
-							<p>Search bookings and edit or delete a booking.</p>
+							<h3>Search & Print Receipts</h3>
 						</div>
 					</div>				
 					<div class="col-lg-3">
@@ -33,7 +32,7 @@
 						<div id = "tab_navigation" class="collapse show navbar-collapse">
 							<div class="card sidebar-menu mb-4">
 								<div class="card-header">
-									<h3 class="h4 card-title">Search Booking By</h3>
+									<h3 class="h4 card-title">Search Receipts By</h3>
 								</div>
 								<div class="card-body">
 								
@@ -46,10 +45,7 @@
 												<a class="nav-link" data-toggle="tab" href="#name_search" role="tab" aria-controls="Personal Details">Guest Name</a>
 											</li>
 											<li class="nav-item">
-												<a class="nav-link" data-toggle="tab" href="#booking_number_search" role="tab" aria-controls="Personal Details">Booking Number</a>
-											</li>
-											<li class="nav-item">
-												<a class="nav-link" data-toggle="tab" href="#allocation_search" role="tab" aria-controls="Medical Details">Bookings without Room Allocation</a>
+												<a class="nav-link" data-toggle="tab" href="#receipt_number_search" role="tab" aria-controls="Personal Details">Receipts Number</a>
 											</li>
 											<li class="nav-item">
 												<a class="nav-link" data-toggle="tab" href="#email_phone_search" role="tab" aria-controls="Parents/Guardians">Email/Phone Number</a>
@@ -66,37 +62,30 @@
 							<div class="tab-content">
 								<div class="tab-pane fade show active" id="date_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/manage_booking_by_date.html' %}
+										{% include 'guesthouse/receipts_by_date.html' %}
 									</div>
 								</div>
 								<div class="tab-pane fade show " id="name_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/manage_booking_by_name.html' %}
+										{% include 'guesthouse/receipts_by_name.html' %}
 									</div>
 								</div>
-								<div class="tab-pane fade show " id="booking_number_search" role="tabpanel">
+								<div class="tab-pane fade show " id="receipt_number_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/manage_booking_by_number.html' %}
-									</div>
-								</div>
-								
-								
-								<div class="tab-pane fade show " id="allocation_search" role="tabpanel">
-									<div class="col-md-12">
-										{% include 'guesthouse/manage_booking_by_allocation.html' %}
+										{% include 'guesthouse/receipts_by_number.html' %}
 									</div>
 								</div>
 								<div class="tab-pane fade show " id="email_phone_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/manage_booking_by_email_phone.html' %}
+										{% include 'guesthouse/receipts_by_email_phone.html' %}
 									</div>
 								</div>
 							</div>
 							<!-- end tab-->
 						</div>
 						<div class="box info-bar">
-							<div id = "bookings_table">
-								{% include 'guesthouse/bookings_table.html' %}
+							<div id = "receipts_table">
+								{% include 'guesthouse/receipts_table.html' %}
 							</div>
 						</div>						
 					</div>
@@ -105,9 +94,6 @@
 			</div>
         </div>
     </div>
-	<div id = "delete-confirm">
-		{% include 'guesthouse/delete_confirm_message.html' %}	
-	</div>
 	{% include 'guesthouse/message-modal_ok.html' %}
 	{% endblock sitecontent %}
 
@@ -124,7 +110,6 @@
 			var fm_mn = fm_mn + 1; //Javascript month start from 0
 			var fm_yy = from_dt.getFullYear();			
 			document.getElementById("fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
-			document.getElementById("noalloc_fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
 
 			var to_dt = today.getDate();
 			var to_mn = today.getMonth();
@@ -132,13 +117,12 @@
 			var to_yy = today.getFullYear();			
 			
 			document.getElementById("todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
-			document.getElementById("noalloc_todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
 
 			// Trigger the inital fetch of orders
 			document.getElementById("date-submit").click();		
 		});
 	
-		function get_bookings(page){
+		function get_receipts(page){
 		
 			var execute_ajax = false;
 			var query_data = {};
@@ -193,48 +177,17 @@
 
 						query_data = {'f_name':f_name, 'm_name':m_name, 'l_name':l_name, 'page':page}
 						break;
-					case 'booking_number_search':
+					case 'receipt_number_search':
 						execute_ajax = true;
-						var b_num = document.getElementById("booking_num").value;
+						var b_num = document.getElementById("receipt_num").value;
 						
 						if (b_num == '' ) {
-							$("#msg").html("Please enter booking number");
+							$("#msg").html("Please enter receipt number");
 							$("#msg-modal").modal("show");
 							return;
 						}							
 
-						query_data = {'booking_number':b_num, 'page':page}
-						break;
-					case 'allocation_search':
-						execute_ajax = true;
-						//Get the from, to dates
-						var fm_d = new Date(document.getElementById("noalloc_fromdate").value);
-						if (fm_d > new Date()) {
-							$("#msg").html("From Date can't be greatrer than today");
-							$("#msg-modal").modal("show");
-							return;
-						}
-						var fm_dt = fm_d.getDate();
-						var fm_mn = fm_d.getMonth();
-						var fm_mn = fm_mn + 1; //Javascript month start from 0
-						var fm_yy = fm_d.getFullYear();			
-						var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
-						  
-						var to_d = new Date(document.getElementById("noalloc_todate").value);
-						var to_dt = to_d.getDate();
-						var to_mn = to_d.getMonth();
-						var to_mn = to_mn + 1; //Javascript month start from 0
-						var to_yy = to_d.getFullYear();			
-						var to_date = to_yy + "-" + to_mn + "-" + to_dt;
-						
-						if ( to_d < fm_d ) {
-							$("#msg").html("To Date can't be earlier than From Date");
-							$("#msg-modal").modal("show");
-							return;
-						}
-						query_data = {'noalloc_fromdate':from_date, 'noalloc_todate':to_date, 'page':page}
-						break;
-
+						query_data = {'receipt_number':b_num, 'page':page}
 						break;
 					case 'email_phone_search':
 						execute_ajax = true;
@@ -242,10 +195,6 @@
 						var phone_number = document.getElementById("phone_number").value;
 
 						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page}
-						break;
-					case 'booking_number_search':
-						execute_ajax = true;
-
 						break;
 						
 				} // End switch
@@ -255,12 +204,12 @@
 			if (execute_ajax) {
 
 				$.ajax({
-					url: '{% url "get_bookings" %}', 
+					url: '{% url "get_receipts" %}', 
 					dataType: 'text',
 					data: query_data,
 					type: 'POST',
 					success: function (data) {
-						$("#bookings_table").html(data);
+						$("#receipts_table").html(data);
 					},
 					error: function(xhr){
 						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please let us know the details and we will be happy to help sort it out."); 
@@ -281,61 +230,4 @@
 		}
 	</script>
 
-	<script>
-		function confirm_booking_delete(booking_number) {
-			if ( booking_number == '' ) {
-				return;
-			}
-			$.ajax({
-				url: '{% url "get_booking_by_number" %}', 
-				dataType: 'text',
-				data: {'booking_number':booking_number} ,
-				type: 'POST',
-				success: function (data) {
-					$("#delete-confirm").html(data);
-					$('#delete-modal').modal('show');
-				},
-				error: function(xhr){
-					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
-					return;
-				}
-			});			
-		}
-	</script>	
-	
-	<script>
-		function delete_booking(booking_number) {
-			
-			$.ajax({
-				url: '{% url "delete_booking" %}', 
-				dataType: 'text',
-				data: {'booking_number':booking_number} ,
-				type: 'POST',
-				success: function (data) {
-					status = JSON.parse(data).status
-					switch (status) {
-						case 'NO-BOOKING':
-							$("#msg").html("Booking Number is invalid");
-							$("#msg-modal").modal("show");				
-							break;
-						case 'ALLOC-DONE':
-							$("#msg").html("Cannot delete as the room, bed is already allocated. Please use 'Menu -> Vacate(Check-out)' in case this room/bed is being vacated.");
-							$("#msg-modal").modal("show");				
-							break;
-						case 'SUCCESS':
-							$("#msg").html("Booking number " + booking_number + " is sucessfully deleted");
-							$("#msg-modal").modal("show");
-							$('#delete-modal').modal('hide');
-							break;
-					}
-				},
-				error: function(xhr){
-					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
-					return;
-				}
-			});			
-		
-		}
-	</script>
-	
 	{% endblock jscripts %}

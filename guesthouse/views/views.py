@@ -58,40 +58,42 @@ def get_addr_pin_city_state(request):
 
 
 @csrf_exempt
-def validate_address(ipin_code, icity, icstate, icountry):
+def validate_address(ipin_code, icity, icstate, icountry, source):
 
 	msg = []
 	valid = True
 
+	'''
 	if ipin_code is None or ipin_code == '':
-		msg.append("Pin code cannot be empty")
-		# Pin Code can be left null
+		msg.append(source + ": Pin code cannot be empty")
+
 		
 	if icity is None or icity == '':
-		msg.append("City cannot be empty")
+		msg.append(source + ": City cannot be empty")
 		valid = False
 	if icstate is None or icstate == '':
-		msg.append("State cannot be empty")
+		msg.append(source + ": State cannot be empty")
 		valid = False
 	if icountry is None or icountry == '':
-		msg.append("Country cannot be empty")
+		msg.append(source + ": Country cannot be empty")
 		valid = False
-	
-	q = Pin_city_state_country.objects.all()
-	
-	if ipin_code:
-		q = q.filter(pin_code_id = ipin_code)
-	if icity:
-		q = q.filter(city_id = icity)
-	if icstate:
-		q = q.filter(state_id = icstate)
-	if icity:
-		cnt = Country.objects.filter(country_code = icountry).first()
-		q = q.filter(country = cnt)
-	
-	if q is None or q.count() == 0:
-		msg.append("Entered Pin code, City, State is invalid. Please correct and then proceed.")
-		valid = False
+	'''
+	if ipin_code != '' and icity!= '' and icstate != '' and icountry != '':
+		q = Pin_city_state_country.objects.all()
+		
+		if ipin_code:
+			q = q.filter(pin_code_id = ipin_code)
+		if icity:
+			q = q.filter(city_id = icity)
+		if icstate:
+			q = q.filter(state_id = icstate)
+		if icity:
+			cnt = Country.objects.filter(country_code = icountry).first()
+			q = q.filter(country = cnt)
+		
+		if q is None or q.count() == 0:
+			msg.append(source + ": Entered Pin code, City, State is invalid. Please correct and then proceed.")
+			valid = False
 
 	if valid:
 		msg.append("SUCCESS")

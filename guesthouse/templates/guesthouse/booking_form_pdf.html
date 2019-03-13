@@ -1,0 +1,351 @@
+{% load static %}
+
+				<div class = "row" style = "border-bottom: 2px solid #FF0000;">
+					<div class = "col-sm-10">
+					
+					</div>
+					
+					<div class = "col-sm-2">
+						<img src="{{gh.logo_website.url}}"class="rounded float-right" alt="Logo">
+					</div>
+				</div>
+
+				<div class = "row">
+					<div class = "col-sm-8">
+						<h4>Registration No.: 
+							<span style = "color:red">{{room.booking_id}}</span>
+						</h4>
+						<h3>P G Registration Form</h3>
+					</div>
+					<div class = "col-sm-4">
+						<img class="thumbnail float-right" src="{% if room.guest.guest_photo %} {{room.guest.guest_photo.url}} {% endif %}" style = "width:100px; height:120px;" alt="Photo N/A">
+					</div>
+				</div>
+
+				<div class = "row">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Candidate Name:&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.first_name}} {{room.guest.middle_name}} {{room.guest.last_name}}</strong></h5>
+					</div>
+				</div>
+						
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="table table-responsive">
+							<table id = "bookingsTbl" class="table table-responsive table-borderless">
+								<thead>
+									<tr>
+										<th width="25%"></th>
+										<th width="50%"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><h5>Room No.:</h5></td>
+										<td><h5>{{room.room.room_name }}</h5></td>
+									</tr>
+									<tr>
+										<td> <h5>File No.:</h5></td>
+										<td><h5>????</h5></td>
+									</tr>
+									<tr>
+										<td><h5>Block</h5></td>
+										<td><h5>{{room.block.block_name }}</h5></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="table table-responsive">
+							<table id = "Tbl" class="table table-responsive table-borderless">
+								<thead>
+									<tr>
+										<th width="60%"></th>
+										<th width="40%"></th>
+									</tr>
+								</thead>			
+								<tbody>
+									<tr>
+										<td></td>
+										<td>
+											<strong>SAM Chambers</strong><br />
+											#4140, 11th Cross, 2nd Main, 80 Feet Main Road<br />
+											Girinagar 4th Phase, Near Sita Circle<br />
+											Bengaluru<br /><br />
+											Phone: 080 – 26699988, 26699977, 26917009</i><br/>
+											Mobile: 7829572250, 9742655138, 9742615372, 8970550327</i><br />
+											Fax: 080 – 26698855</i><br />
+											Website: www.samatithipavathi.com</i><br />
+											Email ID: info@samatithipavathi.com</i>										
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+							
+				<div class = "row" style = "page-break-after: always;" >
+					<div class = "col-sm-12 hr-thin">
+					</div>
+				</div>
+
+				<div class = "row">
+					<div class = "col-sm-12 section-head">
+						<h4>Candidate Details</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>First Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.first_name}}</h5> 
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Middle Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.middle_name}}&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong>Last Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.last_name}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Date of Birth:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.date_of_birth|date:'d-M-Y'}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Phone Number:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.phone_number}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Mail ID:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.email_id}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Occupation:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{% if room.guest.occupation == 'ST' %} Studying {% else %} Working {% endif %}</h5>
+					</div>
+				</div>
+				
+				<div class = "row">
+					<div class = "col-sm-12 section-head">
+						<h4>Parent Details</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Father / Guardian Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_name}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Educational Qualifications:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_qualifications}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Occupation/Designation:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_occupation}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_company}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Phone:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_phone_number}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thick">
+						<h5><strong>Email:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_email_id}}</h5>
+					</div>
+				</div>
+
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Mother / Guardian Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_name}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Educational Qualifications:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_qualifications}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Occupation/Designation:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_occupation}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_company}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Phone:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_phone_number}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Email:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_email_id}}</h5>
+					</div>
+				</div>
+				
+				<div class = "row mt-5">
+					<div class = "col-sm-12 section-head">
+						<h4>Permanent Address</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12">
+						<h5>{{room.guest.permanent_address_1}} {{room.guest.permanent_address_2}}</h5>
+						<h5>{{room.guest.permanent_city}} {{room.guest.permanent_state}} {{room.guest.permanent_pin_code.pin_code}}</h5>
+					</div>
+				</div>				
+				<div class = "row" style = "page-break-after: always;">
+					<div class = "col-sm-10">
+					</div>
+					<div class = "col-sm-2">
+						<br>
+						<br>
+						<br>
+						<h5 class = "hr-thin"><strong>Applicant Signature</strong></h5>
+					</div>
+				</div>
+				
+				
+
+
+				<div class = "row">
+					<div class = "col-sm-12 section-head">
+						<h4>Vacant Details</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Date and Time of Check-in:</strong>&nbsp;&nbsp;&nbsp;&nbsp; {{room.booking.check_in_date|date:'d-M-Y'}} {{room.booking.check_in_time|time:'H:M'}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Date and Time of Check-out:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.booking.check_out_date|date:'d-M-Y'}} {{room.booking.check_out_time|time:'H:M'}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Food Arrangements:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{% if room.booking.food_preference == "VEG" %} Vegetarian {% else %} Non-Vegetarian {% endif %}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Referred By and Contact No.:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.referred_by}} {{room.guest.referred_by_contact_details}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Organization in which applicant is studying/working:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.company_name}} </h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Institution / Company Address:</strong> <br />
+						{{room.guest.company_address_1}} {{room.guest.company_address_2}}<br />
+						{{room.guest.company_city}} {{room.guest.company_state|title}} {{room.guest.company_pin_code.pin_code}}
+						</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Contact person and phone number of Institution / Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.company_contact_person}} {{room.guest.company_contact_number}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Emergency Contact 1)</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.emergency_contact_1_name}} {{room.guest.emergency_contact_1_phone_number}}</h5>
+						<h5><strong>Emergency Contact 2)</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.emergency_contact_2_name}} {{room.guest.emergency_contact_2_phone_number}}</h5>
+					</div>
+				</div>
+
+				<div class = "row">
+					<div class = "col-sm-12 section-head">
+						<h4>Personal Details</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Allergies, if any:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.allergy_details}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Any Other Details:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.other_details}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Blood Group:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.blood_group}}</h5>
+					</div>
+				</div>
+				
+
+				<div class = "row">
+					<div class = "col-sm-12 section-head">
+						<h4>Personal Doctor Details</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.doctor_to_call}}</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Contact Number:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.doctor_contact_number}}</h5>
+					</div>
+				</div>
+
+				<div class = "row">
+					<div class = "col-sm-12 section-head">
+						<h4>For Office Use only</h4>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>Allotment:</strong> &nbsp;&nbsp;&nbsp;&nbsp;Block- "{{room.block.block_name}}",&nbsp;&nbsp;&nbsp;&nbsp; Floor- "{{room.floor.floor_name}}",
+							&nbsp;&nbsp;&nbsp;&nbsp;Room- "{{room.room.room_name}}", &nbsp;&nbsp;&nbsp;&nbsp;Cot- "{{room.bed.bed_name}}"
+						</h5>
+					</div>
+				</div>
+				<div class = "row mt-2">
+					<div class = "col-sm-12 hr-thin">
+						<h5><strong>ID Number:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.id_card_number}}</h5>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12 hr-thin">
+						<h5>
+							<strong>Food Opted:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{% if room.booking.food_option == True %} YES {% else %} NO {% endif %}
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<strong>Type:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{% if room.booking.food_preference == "VEG" %} Vegetarian {% else %} Non-Vegetarian {% endif %}
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<strong>Tenure:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{% if room.booking.tenure == "ST"%} SHORT TERM {% else %} LONG TERM {% endif %}
+						</h5>
+					</div>
+				</div>
+				<div class = "row" style = "page-break-after: always;">
+					<div class = "col-sm-9">
+					</div>
+					<div class = "col-sm-3">
+						<br>
+						<br>
+						<br>
+						<h5 class =" hr-thin"><strong>Applicant Signature</strong></h5>
+					</div>
+				</div>
+			

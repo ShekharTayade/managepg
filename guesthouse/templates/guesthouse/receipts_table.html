@@ -1,0 +1,75 @@
+							{% csrf_token %}
+							<h1>Receipts</h1>
+							<p class="text-muted">{% if count > 0 %} {{ count }} receipts found {% else %} 0 receipts found{% endif %}</p>
+							<div class="table table-responsive">
+								<table id = "receiptsTbl" class="table table-responsive">
+									<thead>
+										<tr>
+											<th width="10%">Receipt No.</th>
+											<th width="10%">Amount</th>
+											<th width="25%">Name</th>
+											<th width="25%">Receipt Type</th>
+											<th width="15%">Contact</th>
+											<th width="5%"></th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for i in receipts %}
+										<tr>
+											<td>{{i.receipt_number}}</td>
+											<td>{{i.amount}}</td>
+											<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}</td>
+											<td><small>{{i.get_receipt_for_display}}<br/> {{i.receipt_date|date:'d-M-Y'}}</small></td>
+											<td><small>
+												{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
+												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
+												</small>
+											</td>
+											<td>	
+												<ul class = "list-inline">
+													<li class="list-inline-item">
+														<a href = "{% url 'payment_confirmation' i.id %}"
+															class = "btn btn-link" 
+															data-toggle="tooltip" title="Print Receipt" 
+															type = "submit">
+															<i class= "fa fa-print fa-lg"></i>
+														</a>
+													</li>
+												</ul>
+											</td>
+										</tr>
+										{% empty %}
+										<tr>
+											<td colspan = "5" ><strong>No Receipts Found!</strong></td>
+										</tr>
+										{% endfor receipts %}
+										
+										
+									</tbody>
+									<tfoot>
+									</tfoot>
+								</table>
+							</div>
+							<div class="box info-bar">
+								<div class="row">
+									<div class="col-md-12 col-lg-12 products-showing">
+										<div class = "text-center">
+											{% if receipts.has_previous %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_receipts('1');"><i class="fa fa-chevron-left"></i> First</button>  
+												<button type = "button" class="btn btn-sm btn-primary"  onclick="get_receipts('{{ receipts.previous_page_number }}');">Prev</button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled" href="#"><i class = "fa fa-chevron-left"></i> First</button>
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled"  href="#">Prev</button>
+											{% endif %}
+											Showing Page {{ receipts.number }} of {{ receipts.paginator.num_pages }}
+											{% if receipts.has_next %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_receipts('{{ receipts.next_page_number }}');">Next</button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_receipts('{{ receipts.paginator.num_pages }}');">Last <i class = "fa fa-chevron-right"></i></button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Next</button>
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Last <i class = "fa fa-chevron-right"></i></button>
+											{% endif %}				
+										</div>
+									</div>
+								</div>
+							</div>

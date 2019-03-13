@@ -14,6 +14,8 @@ from django.utils.safestring import mark_safe
 from django.forms import ImageField
 
 from guesthouse.models import Booking, Guest, Room_allocation, Pin_code
+from guesthouse.models import Receipt, Bill
+
 from guesthouse.validators import validate_image_size, validate_india_mobile_no
 
 class BookingForm(forms.ModelForm):
@@ -135,9 +137,47 @@ class Room_allocationForm(forms.ModelForm):
 	guest = forms.CharField(
 		widget=forms.TextInput(),
 		required=False
-	)	
+	)
 
 
 	class Meta:
 		model = Room_allocation
 		exclude = ('booking', 'guest')
+
+		
+class AdvReceiptForm(forms.ModelForm):
+	id = forms.CharField(
+		widget=forms.TextInput(),
+		required=False
+	)	
+	guest = forms.CharField(
+		widget=forms.TextInput(),
+		required=False
+	)	
+	booking = forms.CharField(
+		widget=forms.TextInput(),
+		required=False
+	)	
+	receipt_number = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='Auto Generated'
+	)
+	bill = forms.CharField(
+		widget=forms.Select(),
+		required=False,
+		help_text='Payment against bill'
+	)	
+	class Meta:
+		model = Receipt
+		exclude = ('guest', 'booking')
+		
+	def clean_bill(self):
+		bill = self.cleaned_data['bill']
+
+		try:
+			bill = Bill.objects.get(pk = bill)
+		except Bill.DoesNotExist:
+			billObj = None
+
+		return billObj		

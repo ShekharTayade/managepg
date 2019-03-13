@@ -37,3 +37,24 @@
 #bookingsTbl{
 	font-size: 0.8rem;
 }
+
+hr {
+    height: 1px;
+    border: 0;
+    border-top: 2px solid #FF0000;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.hr-thin {
+    border-bottom: 1px solid #ccc;
+}
+
+.hr-thick {
+    border-bottom: 2px solid #ccc;
+}
+
+.section-head {
+    background-color: #686868;   
+    color: #ffffff;
+}

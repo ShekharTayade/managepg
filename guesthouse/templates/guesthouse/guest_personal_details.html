@@ -7,7 +7,7 @@
 															{% if guest_form.date_of_birth.errors %}
 													
 																{% render_field guest_form.date_of_birth class="form-control is-invalid" %}
-																<input name="guest-date_of_birth" class="form-control  is-invalid" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value}}">
+																<input name="guest-date_of_birth" class="form-control  is-invalid" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value|date:'Y-m-d'}}">
 																{% for error in guest_form.date_of_birth.errors %}
 																	<div class="invalid-feedback">
 																	  {{ error }}
@@ -15,10 +15,10 @@
 																{% endfor %}
 													
 															{% else %}
-																<input name="guest-date_of_birth" class="form-control  is-valid" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value}}">
+																<input name="guest-date_of_birth" class="form-control  is-valid" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value|date:'Y-m-d'}}">
 															{% endif %}
 														{% else %}
-															<input name="guest-date_of_birth" class="form-control" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value}}">
+															<input name="guest-date_of_birth" class="form-control" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value|date:'Y-m-d'}}">
 														{% endif %}
 													
 														{% if guest_form.date_of_birth.help_text %}
@@ -176,7 +176,7 @@
 												</div>
 												<div class = "col-sm-6 pull-left">
 													<div class="form-group">
-														{{ guest_form.company_name.label_tag }}
+														Company/College Name:
 														{% if guest_form.is_bound %}
 															{% if guest_form.company_name.errors %}
 													
@@ -206,7 +206,7 @@
 											<div class = "row">
 												<div class = "col-sm-6">
 													<div class="form-group">
-														{{ guest_form.company_contact_person.label_tag }}
+														Company/College Contact Person:
 														{% if guest_form.is_bound %}
 															{% if guest_form.company_contact_person.errors %}
 													
@@ -233,7 +233,7 @@
 												</div>
 												<div class = "col-sm-6">
 													<div class="form-group">
-														{{ guest_form.company_contact_number.label_tag }}
+														Contact Number:
 														{% if guest_form.is_bound %}
 															{% if guest_form.company_contact_number.errors %}
 													
@@ -261,7 +261,7 @@
 											</div>
 											<div class = "row">
 												<div class = "col-sm-12 pull-left">
-													<label> Company Address:</label>
+													<label> Company/College Address:</label>
 												</div>											
 												<div class = "col-sm-6">
 													<div class="form-group">
@@ -346,7 +346,7 @@
 												</div>
 												<div class = "col-sm-5">
 													<div class="form-group">
-														{{ guest_form.company_city.label_tag }}
+														City
 														{% if guest_form.is_bound %}
 															{% if guest_form.company_city.errors %}
 													

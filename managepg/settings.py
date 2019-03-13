@@ -72,6 +72,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'managepg.urls'
+SITE_ID = 1
+
 
 TEMPLATES = [
     {
@@ -192,4 +194,8 @@ EMAIL_SUBJECT_PREFIX = ''
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+
+TMP_FILES = os.path.join(BASE_DIR, 'guesthouse/static/tmp/')
+CSS_FILES = os.path.join(BASE_DIR, 'guesthouse/static/css/')
+VENDOR_FILES = os.path.join(BASE_DIR, 'guesthouse/static/vendor/')
 

@@ -1,0 +1,89 @@
+							{% csrf_token %}
+							<h2>Bookings</h2>
+							<p class="text-muted">{% if count > 0 %} {{ count }} bookings found {% else %} 0 bookings found{% endif %}</p>
+							<div class="table table-responsive">
+								<table id = "bookingsTbl" class="table table-responsive">
+									<thead>
+										<tr>
+											<th width="15%">Booking No.</th>
+											<th width="30%">Name / Room Alloted</th>
+											<th width="15%">Check-in/out</th>
+											<th width="15%">Contact</th>
+											<th width="20%"></th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for i in bookings %}
+										<tr>
+											<td>
+												<form id = "ALLOC_{{i.alloc_id}}" method = "get" action = "{% url 'payment_receipt' %}">
+												
+												<input hidden name = "receipt_type" value = "{{receipt_type}}">
+												<input hidden name = "alloc_id" value = "{{i.alloc_id}}">
+												<input hidden name = "booking_number" value = "{{i.booking_id}}">
+												{{i.booking_id}}
+											</td>
+											<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}<br />
+												Block: {{i.block.block_name}}, Floor: {{i.floor.floor_name}}, {{i.room.room_name}}, Bed: {{i.bed.bed_name}}
+											
+											</td>
+											<td><small>
+												<strong>In:</strong> {{i.allocation_start_date|date:'d-M-Y'|default:'-'}}
+												<br /> <strong>Out:</strong> {{i.allocation_end_date|date:'d-M-Y'|default:'-' }}
+												</small>
+											</td>
+											<td><small>
+												{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
+												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
+												</small>
+											</td>
+											<td>	
+												<ul class = "list-inline">
+													<li class="list-inline-item">
+														
+														<button class = "btn btn-primary" form = "ALLOC_{{i.alloc_id}}"
+															style = "cursor: pointer; color:red;"
+															type = "submit">
+															<i class="fa fa-inr"> Accept Payment</i>
+														</button>											
+													</li>
+												</ul>
+												</form>
+											</td>
+											
+										</tr>
+										{% empty %}
+										<tr>
+											<td colspan = "5" ><strong>No Bookings Found!</strong></td>
+										</tr>
+										{% endfor bookings %}
+										
+										
+									</tbody>
+									<tfoot>
+									</tfoot>
+								</table>
+							</div>
+							<div class="box info-bar">
+								<div class="row">
+									<div class="col-md-12 col-lg-12 products-showing">
+										<div class = "text-center">
+											{% if bookings.has_previous %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('1');"><i class="fa fa-chevron-left"></i> First</button>  
+												<button type = "button" class="btn btn-sm btn-primary"  onclick="get_bookings('{{ bookings.previous_page_number }}');">Prev</button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled" href="#"><i class = "fa fa-chevron-left"></i> First</button>
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled"  href="#">Prev</button>
+											{% endif %}
+											Showing Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
+											{% if bookings.has_next %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('{{ bookings.next_page_number }}');">Next</button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('{{ bookings.paginator.num_pages }}');">Last <i class = "fa fa-chevron-right"></i></button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Next</button>
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Last <i class = "fa fa-chevron-right"></i></button>
+											{% endif %}				
+										</div>
+									</div>
+								</div>
+							</div>

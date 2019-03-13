@@ -1,0 +1,101 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}<!-- Message Modal -->
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Payment Receipt</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "box">
+					<div class = "row">
+						<div class = "col-sm-3">
+							<h4>Payment Receipt</h4>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-7">
+						<img src="{{gh.logo_website.url}}"class="rounded float-left" alt="Logo">
+					</div>
+					
+					<div class = "col-sm-5 float-right">
+						<strong>SAM Chambers</strong><br />
+						#4140, 11th Cross, 2nd Main, 80 Feet Main Road<br />
+						Girinagar 4th Phase, Near Sita Circle<br />
+						Bengaluru<br />
+						<i class = "fa fa-phone"> 080 – 26699988, 26699977, 26917009</i><br/>
+						<i class = "fa fa-mobile"> 7829572250, 9742655138, 9742615372, 8970550327</i><br />
+						<i class = "fa fa-fax"> 080 – 26698855</i><br />
+						<i class = "fa fa-globe"> www.samatithipavathi.com</i><br />
+						<i class = "fa fa-envelope"> info@samatithipavathi.com</i>
+					</div>						
+				</div>
+				<br />
+				<br />
+				<div class = "row">
+					<div class = "col-sm-4">
+						Receipt No.: {{rct.receipt_number}}
+					</div>
+					<div class = "col-sm-4">
+						<span style = "text-decoration:underline; font-size:20px;"><strong>{{receipt_type}}</strong></span>
+					</div>
+					<div class = "col-sm-4 pull-right">
+						<span >Date: {{rct.receipt_date|date:'d-M-Y'}}</SPAN>
+					</div>
+				</div>
+				<br />
+				<br />
+				<div class = "row">
+					<div class= "col-sm-12">
+						<span style = "font-size:20px;">
+						Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}}</span> <br />
+						from Mr/Miss/Mrs &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{rct.guest.first_name}} {{rct.guest.middle_name}} {{rct.guest.last_name}}</span> <br />
+						Residing at &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">Block: '{{room_alloc.block.block_name}}', floor: '{{room_alloc.floor.floor_name}}', Room: '{{room_alloc.room.room_name}}', Bed: '{{room_alloc.bed.bed_name}}'</span><br />
+						towards {{receipt_type}}.
+						</span>
+					</div>
+				</div>
+				<br />
+				<br />
+				<br />
+				<div class = "row">
+					<div class = "col-sm-4">
+						<span style = "font-size:20px; text-decoration:underline;"><strong><i class = "fa fa-inr fa-lg"> {{rct.amount}}</strong></i></span>
+					</div>
+					<div class = "col-sm-4">
+						Occupant Signature
+					</div>
+					<div class = "col-sm-4">
+						For SAM Atithi Pavathi
+					</div>
+				</div>
+				<br />
+				<br />
+				<div class = "row">
+					<div class = "col-sm-12 text-center">
+						<a href = "{% url 'payment_confirmation_pdf' rct.id %}" class = "btn btn-primary">Print</a>
+					</div>
+				</div>
+				<br />
+				<br />
+				<br />
+
+			</div>
+		</div>
+	</div>
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	{% endblock jscripts %}	

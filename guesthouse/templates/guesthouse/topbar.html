@@ -79,32 +79,35 @@
 											  <li class="nav-item"><a href="{% url 'manage_booking' %}" class="nav-link">Edit/Delete Existing Booking</a></li>
 											</ul>
 										</div>
-										<div class="col-md-6 col-lg-3">
-											<h5>Registration (Check-in)</h5>
-											<ul class="list-unstyled mb-3">
-												<li class="nav-item"><a href="booking.html" class="nav-link">Register</a></li>
-												<li class="nav-item"><a href="booking.html" class="nav-link">Edit Registration</a></li>
-												<li class="nav-item"><a href="booking.html" class="nav-link">Print Registration Form</a></li>
-											</ul>
-										</div>
+
 										<div class="col-md-6 col-lg-3">
 											<h5>Vacate (Check-out)</h5>
 											<ul class="list-unstyled mb-3">
-												<li class="nav-item"><a href="booking.html" class="nav-link">Vacate</a></li>
-												<li class="nav-item"><a href="booking.html" class="nav-link">Modify Check-out</a></li>
-												<li class="nav-item"><a href="booking.html" class="nav-link">Print</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Vacate</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Modify Check-out</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Print</a></li>
 											</ul>
 										</div>
 										<div class="col-md-6 col-lg-3">
-											<h5>Billing & Payments</h5>
+											<h5> Receipts & Billing</h5>
 											<ul class="list-unstyled mb-3">
-												<li class="nav-item"><a href="booking.html" class="nav-link">Receive Payment</a></li>
-												<li class="nav-item"><a href="booking.html" class="nav-link">Generate Bills</a></li>
+												<li class="nav-item"><a href="{% url 'booking_details_for_payment' 'RN' %}" class="nav-link">Receive Payment - Rent</a></li>
+												<li class="nav-item"><a href="{% url 'booking_details_for_payment' 'FD' %}" class="nav-link">Receive Payment - Food</a></li>
+												<li class="nav-item"><a href="{% url 'booking_details_for_payment' 'AD' %}" class="nav-link">Receive Payment - Advance</a></li>
+												<li class="nav-item"><a href="{% url 'booking_details_for_payment' 'AR' %}" class="nav-link">Receive Payment - Advance Rent</a></li>
+												<li class="nav-item"><a href="{% url 'booking_details_for_payment' 'BK' %}" class="nav-link">Receive Payment - Blocking Advance</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Bills</a></li>
+												<li class="dropdown-divider"></li>
+												<li class="nav-item"><a href="{% url 'print_receipts' %}" class="nav-link">Search & Print Payment Receipts</a></li>
+												<li class="dropdown-divider"></li>
+												<li class="nav-item"><a href="" class="nav-link">Cancel Blocking</a></li>
 											</ul>
+										</div>
+										<div class="col-md-6 col-lg-3">
 											<h5>Manage Rooms</h5>
 											<ul class="list-unstyled mb-3">
-												<li class="nav-item"><a href="booking.html" class="nav-link">Rooms</a></li>
-												<li class="nav-item"><a href="booking.html" class="nav-link">Rooms Conversions</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Rooms</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Room Conversion</a></li>
 											</ul>
 										</div>
 									</div>

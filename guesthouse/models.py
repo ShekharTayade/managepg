@@ -68,6 +68,8 @@ class Guesthouse (models.Model):
 	featured_header = models.CharField(max_length = 50, blank=True, default='')
 	number_of_featured_slides = models.IntegerField(null=True, blank=True)
 	month_year_suffix = models.CharField(max_length = 6, null=True) # For generating booking numbers
+	logo_website = models.ImageField(upload_to='logo/', null=True)
+	logo_small = models.ImageField(upload_to='logo/', null=True)
 
 	def __str__(self):
 		return self.gh_name
@@ -114,13 +116,29 @@ class Room(models.Model):
 	block = models.ForeignKey(Block, models.CASCADE, null=False)
 	available_from = models.DateField(null=True)
 	available_to = models.DateField(null=True)
-	room_rent = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	max_beds = models.IntegerField(null=False)
 	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 
 	def __str__(self):
 		return self.room_name
-	
+
+
+class Room_conversion(models.Model):
+	room_id = models.AutoField(primary_key=True)
+	room_name = models.CharField(max_length = 100, blank=False, null=False, unique=True)
+	floor = models.ForeignKey(Floor, models.CASCADE, null=False)
+	block = models.ForeignKey(Block, models.CASCADE, null=False)
+	available_from = models.DateField(null=True)
+	available_to = models.DateField(null=True)
+	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	max_beds = models.IntegerField(null=False)
+	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+
+	def __str__(self):
+		return self.room_name
+
+		
 	
 class Bed(models.Model):
 	bed_id = models.AutoField(primary_key=True)
@@ -134,7 +152,20 @@ class Bed(models.Model):
 	def __str__(self):
 		return self.bed_name
 
-	
+class Bed_conversion(models.Model):
+	bed_id = models.AutoField(primary_key=True)
+	bed_name = models.CharField(max_length = 100, blank=False, null=False)
+	room = models.ForeignKey(Room, models.CASCADE, null=False)
+	floor = models.ForeignKey(Floor, models.CASCADE, null=False)
+	block = models.ForeignKey(Block, models.CASCADE, null=False)
+	available_from = models.DateField(null=True)
+	available_to = models.DateField(null=True)
+
+	def __str__(self):
+		return self.bed_name
+
+
+		
 class Food_price(models.Model):
 	FOOD_PREF = (
 		('VEG', 'Vegetarian'),
@@ -142,7 +173,9 @@ class Food_price(models.Model):
 	)	
 	type = models.CharField(max_length = 7, primary_key=True, null=False, choices=FOOD_PREF, default = "VEG")
 	price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
-	
+
+	def __str__(self):
+		return self.type	
 	
 class Guest (models.Model):
 	SERVICE = 'SR'
@@ -246,7 +279,9 @@ class Guest (models.Model):
 	parent_guardian_3_email_id = models.EmailField(blank=True, default='')	
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
-	
+
+	def __str__(self):
+		return self.first_name + " " + self.middle_name + " " + self.last_name		
 
 class Booking (models.Model):
 
@@ -275,6 +310,9 @@ class Booking (models.Model):
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
+	def __str__(self):
+		return self.booking_number	
+	
 # This stores history of food choices made by Guest under the same booking
 class Booking_food(models.Model):
 	FOOD_PREF = (
@@ -289,11 +327,14 @@ class Booking_food(models.Model):
 	end_date = models.DateTimeField(null=True, blank=True)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)		
+
+	def __str__(self):
+		return self.booking_number_id
 	
 class Room_allocation(models.Model):
 	alloc_id = models.AutoField(primary_key=True)
 	booking = models.ForeignKey(Booking, models.CASCADE, null=False)
-	guest = models.ForeignKey(Guest, models.CASCADE, null=False)
+	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
 	bed = models.ForeignKey(Bed, models.PROTECT, null=True, blank=True)
 	room = models.ForeignKey(Room, models.PROTECT, null=True, blank=True)
 	floor = models.ForeignKey(Floor, models.PROTECT, null=True, blank=True)
@@ -309,6 +350,84 @@ class Generate_number_by_month(models.Model):
 	description = models.CharField(max_length = 1000, null=True)
 	month_year = models.CharField(max_length = 6, null=False)
 	current_number = models.IntegerField(null=False)
-	
 
+
+#############################################################################
+#   RECORd VACATION PERIOD
+#############################################################################
+class Vacation_period (models.Model):
+	id = models.AutoField(primary_key=True)
+	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
+	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
+	start_date = models.DateField(null = False)
+	end_date = models.DateField(null = False)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
+
+	
+#############################################################################
+#   BILING and RECEIPTS	
+#############################################################################
+
+
+class Bill(models.Model):
+	RENT = 'Monthly Rent'
+	ADV = 'Advance Payment'
+	ADVRENT = 'Advance Rent Payment'
+	FOOD = 'Food Service'
+	OTHERS = 'Other Services'
+
+	BILL_HEAD = (
+		(RENT, 'Monthly Rent'),
+		(ADV, 'Advance Payment'),
+		(ADVRENT, 'Advance Rent Payment'),
+		(FOOD, 'Food Service'),
+		(OTHERS, 'Other Services'),
+)
+
+	bill_number = models.CharField(max_length = 15, primary_key = True)
+	bill_date = models.DateField(null = False, blank = False)
+	bill_for_month = models.CharField(max_length = 6, null = False, blank=False) 
+	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
+	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
+	bill_for = models.CharField(max_length = 2, choices=BILL_HEAD, null=False, blank = False)
+	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
+
+	def __str__(self):
+		return self.bill_number
+	
+class Receipt(models.Model):
+	
+	PAYMENT_MODE = (
+		('CS', 'CASH'),
+		('ON', 'ONLINE'),
+		('CH', 'Cheque'),
+		('DD', 'Demand Draft'),
+	)
+	RECEIPT_HEAD = (
+		('RN', 'Monthly Rent'),
+		('AD', 'Advance Payment'),
+		('AR', 'Advance Rent Payment'),
+		('BK', 'Blocking Advance'),
+		('FD', 'Food Service'),
+		('OT', 'Other Services'),
+	)
+	id = models.AutoField(primary_key=True)  # Receipt_number is not the PK, as there can be multiple records with same receipt_number for AR case
+	receipt_number = models.CharField(max_length = 15, null = False, blank = False, help_text='Auto Generated')
+	receipt_date = models.DateField(null = False, blank = False)
+	receipt_for = models.CharField(max_length = 2, choices=RECEIPT_HEAD, blank=False, null=False)
+	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
+	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
+	bill = models.ForeignKey(Bill, models.PROTECT, null=True, blank=True, help_text='Payment againt bill')  ## Will be null, for "AD" and "AR"
+	receipt_for_month = models.CharField(max_length = 6, blank = True, default = '', help_text='Payment month (YYYY-MM)') ## Null in case of AD
+	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	mode_of_payment = models.CharField(max_length = 2, choices=PAYMENT_MODE, blank = False, null=False)
+	payment_reference = models.CharField(max_length = 100, blank = True, default = '')
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
+
+	def __str__(self):
+		return self.receipt_number
 	

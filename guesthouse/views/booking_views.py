@@ -3,7 +3,6 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db.models import Count, Q, Max
-from django.conf import settings
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -14,6 +13,9 @@ from dateutil.relativedelta import relativedelta
 import json
 
 from django.http import JsonResponse
+#from weasyprint import HTML, CSS
+#from django.template.loader import render_to_string
+#from django.core.files.storage import FileSystemStorage
 
 from .views import *
 from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
@@ -140,7 +142,8 @@ def new_booking(request):
 					'guesthouse':booking.guesthouse_id, 'booking_number':booking.booking_number})
 			guest_form = GuestForm(instance = booking.guest, prefix="guest", initial={
 					'current_pin_code':booking.guest.current_pin_code, 
-					'permanent_pin_code':booking.guest.permanent_pin_code})
+					'permanent_pin_code':booking.guest.permanent_pin_code,
+					'company_pin_code':booking.guest.company_pin_code})
 			guest = booking.guest #passing the guest instance, it's used in POST to display the photo in the browser
 			
 			# Get latest record from room_allocation
@@ -258,11 +261,25 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 		validation = validate_address(guest_form.data['guest-current_pin_code'],
 				guest_form.data['guest-current_city'],
 				guest_form.data['guest-current_state'],
-				guest_form.data['guest-current_country'])
+				guest_form.data['guest-current_country'], "Current Address")
 		if not validation['valid']:
 			msg.append( validation['msg'])
 			result = False
-
+		validation = validate_address(guest_form.data['guest-permanent_pin_code'],
+				guest_form.data['guest-permanent_city'],
+				guest_form.data['guest-permanent_state'],
+				guest_form.data['guest-permanent_country'], "Permanent Address")
+		if not validation['valid']:
+			msg.append( validation['msg'])
+			result = False
+		validation = validate_address(guest_form.data['guest-company_pin_code'],
+				guest_form.data['guest-company_city'],
+				guest_form.data['guest-company_state'],
+				guest_form.data['guest-company_country'], "Company/College Address")
+		if not validation['valid']:
+			msg.append( validation['msg'])
+			result = False
+			
 	if booking_form:
 		if booking_form.data['booking-check_in_date'] != '' and  booking_form.data['booking-check_out_date'] != '' :
 			check_in = datetime.datetime.strptime( booking_form.data['booking-check_in_date'], '%Y-%m-%d' )
@@ -724,3 +741,40 @@ def change_room_bed(request):
 	return render(request, 'guesthouse/change_room_bed.html', 
 		{'room_allocation':room_allocation, 'msg':msg} )	
 
+'''		
+def booking_form(request, booking_number):
+
+	gh = Guesthouse.objects.get(pk=settings.GH_ID)
+
+	print(gh.logo_website.url)
+	
+	printpdf = request.GET.get("printpdf", "NO")
+
+	room = Room_allocation.objects.filter( booking_id = booking_number, 
+				allocation_end_date__isnull = True).select_related(
+				'booking','guest', 'bed', 'room', 'floor','block').first()
+				
+	if printpdf == "YES":
+		
+		html_string = render_to_string('guesthouse/booking_form_pdf.html', {'room':room, 'gh':gh})
+
+		html = HTML(string=html_string, base_url=request.build_absolute_uri())
+		
+		html.write_pdf(target= settings.TMP_FILES + room.booking_id + '_pdf.pdf',
+			stylesheets=[CSS(settings.CSS_FILES +  'style.default.css'), 
+						CSS(settings.CSS_FILES +  'custom.css'),
+						CSS(settings.VENDOR_FILES + 'bootstrap/css/bootstrap.min.css') ],
+							presentational_hints=True);
+						
+		fs = FileSystemStorage(settings.TMP_FILES)
+		with fs.open(room.booking_id + '_pdf.pdf') as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="' + room.booking_id + '_pdf.pdf"'
+			return response
+
+		return response		
+	
+	
+	
+	return render(request, 'guesthouse/booking_form.html', {'room':room, 'gh':gh} )	
+'''	
