@@ -53,6 +53,7 @@ urlpatterns =[
 	path('payment_confirmation_pdf/<int:rct_id>/', views.payment_confirmation_pdf, name='payment_confirmation_pdf'),
 	url(r'^print_receipts/$', views.print_receipts, name='print_receipts'),
 	url(r'^ajax/get_receipts/$', views.get_receipts, name='get_receipts'),
+	url(r'^ajax/get_bills_for_month/$', views.get_bills_for_month, name='get_bills_for_month'),
 	
 ]
 	

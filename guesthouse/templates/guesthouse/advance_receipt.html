@@ -305,5 +305,37 @@
 		});
 	});
 
+	
+	</script>
+	
+	<script>
+		$("#id_receipt_for_month").change(function(){
+			booking_number = '{{room_alloc.booking_id}}';
+			receipt_for = $('#id_receipt_for').val();
+			receipt_for_month = this.value;
+			
+				$.ajax({
+					url: '{% url "get_bills_for_month" %}', 
+					data: {'booking_number':booking_number, 'receipt_for':receipt_for, 'bill_for_month' : receipt_for_month },
+					dataType: 'text', 
+					type: 'POST',
+					success: function (data) {
+						elements = JSON.parse(data);
+						bills = elements.bills;
+						var txt = "<select id='id_bill' name ='bill' class='form-control' >";
+						for (i = 0; i < bills.length; i++) {
+							txt += "<option value = '" + bills[i].bill_number + "'> #" + bills[i].bill_number + " (Rs." + bills[i].amount + ")</option>";
+						};
+						txt += "<option selected value = ''>" + "</option>";
+						txt += "</select>"; 
+						$("#id_bill").html(txt);
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+						return;
+					}					
+				});			
+		});	
+		
 	</script>
 	{% endblock jscripts %}

@@ -16,7 +16,7 @@ from django.forms import ImageField
 from guesthouse.models import Booking, Guest, Room_allocation, Pin_code
 from guesthouse.models import Receipt, Bill
 
-from guesthouse.validators import validate_image_size, validate_india_mobile_no
+from guesthouse.validators import validate_image_size, validate_india_mobile_no, validate_yyyy_mm
 
 class BookingForm(forms.ModelForm):
 
@@ -168,6 +168,13 @@ class AdvReceiptForm(forms.ModelForm):
 		required=False,
 		help_text='Payment against bill'
 	)	
+	receipt_for_month = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='YYYY-MM (Ex. 2019-01)',
+		validators=[validate_yyyy_mm]
+	)	
+	
 	class Meta:
 		model = Receipt
 		exclude = ('guest', 'booking')
@@ -176,7 +183,7 @@ class AdvReceiptForm(forms.ModelForm):
 		bill = self.cleaned_data['bill']
 
 		try:
-			bill = Bill.objects.get(pk = bill)
+			billObj = Bill.objects.get(pk = bill)
 		except Bill.DoesNotExist:
 			billObj = None
 

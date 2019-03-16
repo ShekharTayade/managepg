@@ -89,8 +89,9 @@ def choose_booking_for_payment(request):
 def payment_receipt(request):	
 
 	if request.method == 'POST':		
-		booking_num = request.POST.get('booking_number','')
-		booking = Booking.objects.get(booking_number = booking_num)
+		alloc_id = request.GET.get('alloc_id','0')
+		booking_number = request.GET.get('booking_number','')
+		booking = Booking.objects.get(booking_number = booking_number)
 		adv_receiptForm = AdvReceiptForm(request.POST.copy())
 		receipt_type = adv_receiptForm.data['receipt_for']
 		if adv_receiptForm.is_valid():
@@ -119,8 +120,8 @@ def payment_receipt(request):
 		
 		adv_receiptForm = AdvReceiptForm(initial={'receipt_for':receipt_type, 'mode_of_payment':'ON',
 			'receipt_date':today, })
-		room_alloc = Room_allocation.objects.get(pk = alloc_id)
-		booking = Booking.objects.get(booking_number = booking_number)
+	room_alloc = Room_allocation.objects.get(pk = alloc_id)
+	booking = Booking.objects.get(booking_number = booking_number)
 
 	'''
 	if receipt_type == "RN":

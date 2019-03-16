@@ -323,8 +323,8 @@ class Booking_food(models.Model):
 	food_option = models.BooleanField(default=False)
 	food_preference = models.CharField(max_length = 7, blank=True, choices=FOOD_PREF, default = "VEG")
 	price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
-	start_date = models.DateTimeField(null=True, blank=True)
-	end_date = models.DateTimeField(null=True, blank=True)
+	start_date = models.DateField(null=True, blank=True)
+	end_date = models.DateField(null=True, blank=True)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)		
 
@@ -339,8 +339,8 @@ class Room_allocation(models.Model):
 	room = models.ForeignKey(Room, models.PROTECT, null=True, blank=True)
 	floor = models.ForeignKey(Floor, models.PROTECT, null=True, blank=True)
 	block = models.ForeignKey(Block, models.PROTECT, null=True, blank=True)
-	allocation_start_date = models.DateTimeField(null=True, blank=True)
-	allocation_end_date = models.DateTimeField(null=True, blank=True)
+	allocation_start_date = models.DateField(null=True, blank=True)
+	allocation_end_date = models.DateField(null=True, blank=True)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
@@ -371,33 +371,30 @@ class Vacation_period (models.Model):
 
 
 class Bill(models.Model):
-	RENT = 'Monthly Rent'
-	ADV = 'Advance Payment'
-	ADVRENT = 'Advance Rent Payment'
-	FOOD = 'Food Service'
-	OTHERS = 'Other Services'
 
 	BILL_HEAD = (
-		(RENT, 'Monthly Rent'),
-		(ADV, 'Advance Payment'),
-		(ADVRENT, 'Advance Rent Payment'),
-		(FOOD, 'Food Service'),
-		(OTHERS, 'Other Services'),
-)
+		('RN', 'Monthly Rent'),
+		('AD', 'Advance Payment'),
+		('AR', 'Advance Rent Payment'),
+		('BK', 'Blocking Advance'),
+		('FD', 'Food Service'),
+		('OT', 'Other Services'),
+	)	
 
 	bill_number = models.CharField(max_length = 15, primary_key = True)
 	bill_date = models.DateField(null = False, blank = False)
-	bill_for_month = models.CharField(max_length = 6, null = False, blank=False) 
+	bill_for_month = models.CharField(max_length = 7, null = False, blank=False) 
 	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
 	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
 	bill_for = models.CharField(max_length = 2, choices=BILL_HEAD, null=False, blank = False)
 	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
-	created_date = models.DateTimeField(auto_now_add=True, null=False)	
-	updated_date = models.DateTimeField(auto_now=True, null=False)			
+	created_date = models.DateTimeField(auto_now_add=True, null=False)
+	updated_date = models.DateTimeField(auto_now=True, null=False)
 
 	def __str__(self):
 		return self.bill_number
-	
+
+		
 class Receipt(models.Model):
 	
 	PAYMENT_MODE = (
@@ -420,8 +417,8 @@ class Receipt(models.Model):
 	receipt_for = models.CharField(max_length = 2, choices=RECEIPT_HEAD, blank=False, null=False)
 	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
 	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
-	bill = models.ForeignKey(Bill, models.PROTECT, null=True, blank=True, help_text='Payment againt bill')  ## Will be null, for "AD" and "AR"
-	receipt_for_month = models.CharField(max_length = 6, blank = True, default = '', help_text='Payment month (YYYY-MM)') ## Null in case of AD
+	bill = models.ForeignKey(Bill, models.PROTECT, null=True, blank=True, help_text='Select bill againt which Payment is being made')  ## Will be null, for "AD" and "AR"
+	receipt_for_month = models.CharField(max_length = 7, blank = True, default = '', help_text='Payment month (YYYY-MM)') ## Null in case of AD
 	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	mode_of_payment = models.CharField(max_length = 2, choices=PAYMENT_MODE, blank = False, null=False)
 	payment_reference = models.CharField(max_length = 100, blank = True, default = '')

@@ -22,20 +22,6 @@ def validate_image_size(value):
     if value.size > limit:
          raise ValidationError(_('Please upload image with size <= 50KB.'))
         
-def validate_max100(value):
-    
-    if value > 100 :
-         raise ValidationError(_('Please enter a value less than 100 %.'))
-
-def validate_max24hrs(value):
-    
-    if value > 24 :
-         raise ValidationError(_('Please enter a value less than 24 hr.'))
-
-def validate_max7days(value):
-
-    if value > 7 :
-         raise ValidationError(_('Please enter a value less than 7 days.'))
 
 def validate_india_mobile_no (value):
     regex = r'^[6-9]\d{9}$'
@@ -43,4 +29,11 @@ def validate_india_mobile_no (value):
   
     if not isValid:
          raise ValidationError(_('Please enter 10-digit mobile number without prefix +91 or 0'))
-    
+
+def validate_yyyy_mm (value):
+    regex = r'^([12]\d{3}-(0[1-9]|1[0-2]))$'
+    isValid = re.match(regex, value)
+  
+    if not isValid:
+         raise ValidationError(_('Please enter year and month in the format YYYY-MM, (ex. enter "2019-01" for January 2019)'))
+  		 
