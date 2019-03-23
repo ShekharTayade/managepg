@@ -28,7 +28,7 @@
 											<td>	
 												<ul class = "list-inline">
 													<li class="list-inline-item">
-														<a href = "{% url 'payment_confirmation' i.id %}"
+														<a href = "{% if i.receipt_for == 'AR' %} {% url 'payment_confirmation_AR' i.receipt_number %} {% else %} {% url 'payment_confirmation' i.id %} {% endif %}"
 															class = "btn btn-link" 
 															data-toggle="tooltip" title="Print Receipt" 
 															type = "submit">

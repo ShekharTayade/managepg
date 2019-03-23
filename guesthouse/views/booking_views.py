@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db.models import Count, Q, Max
-
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
@@ -24,6 +24,7 @@ from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
 
 today = datetime.datetime.today()
 
+@login_required
 def new_booking(request):
 
 	validation_msg = []
@@ -42,6 +43,9 @@ def new_booking(request):
 		validations = applyBookingValidations(guest_form, booking_form, room_allocation_form)
 		validation_result = validations['result']
 		validation_msg = validations['msg']
+	
+		import pdb
+		pdb.set_trace()
 	
 		if validation_result:
 			if guest_form.is_valid():
@@ -310,7 +314,8 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 				
 		
 	return {'result':result, 'msg':msg}
-	
+
+@login_required	
 def get_availablity(request, from_date):
 
 	# Get all beds currently allocated
@@ -339,6 +344,7 @@ def get_availablity(request, from_date):
 	
 	return { 'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks }
 
+@login_required
 @csrf_exempt
 def get_bookings(request):
 	startDt = ''
@@ -598,11 +604,12 @@ def get_bed_availablity(request):
 			
 	return JsonResponse({'beds':list(beds)}, safe=False)
 
-
+@login_required
 def manage_booking(request):
 	
 	return render(request, 'guesthouse/manage_booking.html', {} )
 
+@login_required
 @csrf_exempt
 def delete_booking(request):
 	booking_number = request.POST.get('booking_number', '')
@@ -629,7 +636,7 @@ def delete_booking(request):
 
 	return JsonResponse({'status':"SUCCESS"})
 
-
+@login_required
 def change_room_bed(request):
 
 	msg = ''

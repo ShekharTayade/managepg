@@ -1,0 +1,79 @@
+<!doctype html>
+{% load static %}
+{% load utils %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Catering</title>
+	<link rel="stylesheet" href="{% static 'css/printpdf_food.css' %}">
+  </head>
+
+  <body>
+
+	<doc_head> CATERING SERVICE BILL </doc_head>
+	<br />
+	<br />
+	<br />
+	<div>
+		<logo-addr>
+			<img src="{{gh.logo_website.url}}"class="rounded float-left" alt="Logo">
+			<br/>
+			#130/12, Veerabhadra Nagar<br />
+			Banashakari 3rd Stage<br />
+			Bengaluru 560 085<br />
+		</logo-addr>
+		<doc_right>
+			Receipt Number:{{rct.receipt_number}} <br />
+			Date: {{rct.receipt_date|date:'d-M-Y'}} <br />
+			<br />
+			Name : <span style = "text-decoration:underline">{{rct.guest.first_name}} {{rct.guest.middle_name}} {{rct.guest.last_name}}</span> <br />
+			<br />
+			Block:  &nbsp;&nbsp;'{{room_alloc.block.block_name}}', floor:&nbsp;&nbsp; '{{room_alloc.floor.floor_name}}', <br />
+			Room:&nbsp;&nbsp; '{{room_alloc.room.room_name}}', Bed:&nbsp;&nbsp; '{{room_alloc.bed.bed_name}}'<br />
+		</doc_right>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+	<hr_thin>
+
+	</hr_thin>
+	<doc_mid_left>
+		<strong><span style = "font-size:1rem; font-weight:500;">Catering service provided for the month of </span> {{rct.receipt_for_month|month_name|default:'N/A'}}</strong>
+	</doc_mid_left>
+	<doc_mid>
+		<table>
+			<tbody>
+				<tr>
+					<td>Sub total:</td>
+					<td>{{rct.amount|minus_tax:"5"|floatformat}}</td>
+				</tr>
+				<tr>
+					<td>CGST: </td>
+					<td>-</td>
+				</tr>
+				<tr>
+					<td>SGST (5%):</td> 
+					<td>{{rct.amount|tax:"5"|floatformat}}</td>
+				</tr>
+				<tr>
+					<td>TOTAL:</td>
+					<td><span style = "font-size:1.2rem; text-decoration:underline;"><strong>Rs. {{rct.amount|floatformat}}</strong></i></span></td>
+				</tr>
+			</tbody>
+		</table>
+	</doc_mid>
+	
+	<doc_footer>
+		<footer_left>
+			GSTIN: 29CKSPM2488N1ZZ
+		</footer_left>
+			
+		<footer_center>
+			Occupant Signature
+		</footer_center>
+		<footer_right>
+			For SAM Catering
+		<footer_right>
+	</doc_footer>
+	

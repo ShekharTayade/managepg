@@ -1,0 +1,117 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load utils %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Bills/Receipts Report</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Bills-Payements Report</h3>
+						</div>
+					</div>
+				</div>
+
+				<p class="text-muted">{% if count > 0 %} {{ bookings.count }} bookings found {% else %} 0 bookings found{% endif %}</p>
+						
+				<div class="table table-responsive">
+					<table id = "bookingsTbl" class="table table-responsive">
+						<thead>
+							<tr>
+								<th width="10%">Booking No.</th>
+								<th width="30%">Name</th>
+								<th width="15%">Check-in/out</th>
+								<th width="15%">Contact</th>
+								<th width="10%">Bill Amount</th>
+								<th width="10%">Receipt Amount</th>
+								<th width="10%">Outstanding</th>											
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in bookings %}
+							<tr>
+								<td><a href="" >{{i.booking_number}}</a></td>
+								<td>{{i.guest__first_name}} {{i.guest__middle_name}} {{i.guest__last_name}}</td>
+								<td><small>
+									{{i.check_in_date|default:''}}
+									{% if i.check_out_date %}<br /> {{i.check_out_date|default:'' }} {% endif %}
+									</small>
+								</td>
+								<td><small>
+									{% if i.guest__phone_number %} Ph: {{i.guest__phone_number}} {% endif %}
+									{% if i.guest__email_id %}<br /> Email:{{i.guest__email_id}} {% endif %}
+									</small>
+								</td>
+								<td>{{i.bill_amt|floatformat}}</td>
+								<td></td>
+								<td></td>
+							</tr>
+							{% empty %}
+							<tr>
+								<td colspan = "5" ><strong>No Bookings Found!</strong></td>
+							</tr>
+							{% endfor bookings %}										
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="5">Net Outstanding<td>
+								<td >{{outstanding}}<td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>
+    $(document).ready(function() {
+      
+        table2 = $('#bookingsTbl').DataTable( {
+        retrieve: true,
+        paging: true,
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel',
+                messageTop: 'SAM Athiti Pavathi',
+                title : "Bill/Receipts Report"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: 'SAM Athiti Pavathi',
+                title : "Bill/Receipts Report"
+            },
+            {
+                extend: 'print',
+                messageTop: 'SAM Athiti Pavathi',
+                title : "Bill/Receipts Report"
+			}
+        ]
+        
+        } );
+    } );    
+    </script>	
+	{% endblock jscripts %}

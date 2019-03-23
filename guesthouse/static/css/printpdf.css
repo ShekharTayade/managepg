@@ -8,7 +8,7 @@
     content: '♥ Thank you!'; }
   @bottom-right {
     color: #a9a;
-    content: 'SAM Atithi Pavathi';
+    content: 'SAM';
     font-family: Pacifico;
     font-size: 8pt; } }
 
@@ -25,6 +25,11 @@ html {
     font-size: 40pt;
     margin: 0; }
 
+	html text-center{
+		left:225px;
+	}
+		
+	
 	html logo {
 	}
 	

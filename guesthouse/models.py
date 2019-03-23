@@ -119,6 +119,7 @@ class Room(models.Model):
 	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	max_beds = models.IntegerField(null=False)
 	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	short_term_rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 
 	def __str__(self):
 		return self.room_name
@@ -134,6 +135,7 @@ class Room_conversion(models.Model):
 	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	max_beds = models.IntegerField(null=False)
 	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	short_term_rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 
 	def __str__(self):
 		return self.room_name
@@ -173,6 +175,7 @@ class Food_price(models.Model):
 	)	
 	type = models.CharField(max_length = 7, primary_key=True, null=False, choices=FOOD_PREF, default = "VEG")
 	price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	vacation_period_price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 
 	def __str__(self):
 		return self.type	
@@ -307,6 +310,7 @@ class Booking (models.Model):
 	food_option = models.BooleanField(default=False)
 	food_preference = models.CharField(max_length = 7, blank=True, choices=FOOD_PREF, default = "VEG")
 	tenure = models.CharField(max_length = 2, blank=True, choices=TENURE, default = LONG_TERM)
+	account_closed = models.BooleanField(default=False)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
@@ -427,4 +431,25 @@ class Receipt(models.Model):
 
 	def __str__(self):
 		return self.receipt_number
-	
+
+
+class Billing_error(models.Model):
+	BILL_HEAD = (
+		('RN', 'Monthly Rent'),
+		('AD', 'Advance Payment'),
+		('AR', 'Advance Rent Payment'),
+		('BK', 'Blocking Advance'),
+		('FD', 'Food Service'),
+		('OT', 'Other Services'),
+	)	
+	id = models.AutoField(primary_key=True)  # Receipt_number is not the PK, as there can be multiple records with same receipt_number for AR case
+	bill_number = models.CharField(max_length = 15, blank = True, default = '')
+	bill_date = models.DateField(null = True, blank = True)
+	bill_for_month = models.CharField(max_length = 7, null = False, blank=False) 
+	guest = models.ForeignKey(Guest, models.DO_NOTHING, null=True)
+	booking = models.ForeignKey(Booking, models.DO_NOTHING, null=True)
+	bill_for = models.CharField(max_length = 2, choices=BILL_HEAD, default = '', blank = True)
+	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	error = models.CharField(max_length = 2000, default = '', blank = True)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)
+	updated_date = models.DateTimeField(auto_now=True, null=False)

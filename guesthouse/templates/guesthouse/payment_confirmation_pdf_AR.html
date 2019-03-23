@@ -1,0 +1,64 @@
+<!doctype html>
+{% load static %}
+{% load utils %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Invoice</title>
+    <meta name="description" content="Invoice demo sample">
+    <meta name="author" content="Kozea">
+	<link rel="stylesheet" href="{% static 'css/printpdf.css' %}">
+  </head>
+
+  <body>
+  
+	<img src="{{gh.logo_website.url}}"class="rounded float-left" alt="Logo">
+
+
+    <dl>
+		<strong>SAM Chambers</strong><br/>
+		#4140, 11th Cross, 2nd Main, 80 Feet Main Road<br/>
+		Girinagar 4th Phase, Near Sita Circle<br/>
+		Bengaluru<br/>
+		Phone: 080 – 26699988, 26699977, 26917009<br/>
+		Mobile: 7829572250, 9742655138, 9742615372, 8970550327<br/>
+		Fax: 080 – 26698855<br/>
+		www.samatithipavathi.com<br/>
+		info@samatithipavathi.com  <br/>
+    </dl>	
+
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<rct>
+		<rch_h><strong>Receipt Number:{{rct.receipt_number}}</strong></rct_h>
+	</rct>
+	<doc_head>
+		{{receipt_type}}
+	</doc_head>
+	<doc_dt>
+		Date: {{rct.receipt_date|date:'d-M-Y'}}
+	</doc_dt>
+
+	<doc_txt>
+			Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}}</span> <br />
+			from Mr/Miss/Mrs &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{rct.guest.first_name}} {{rct.guest.middle_name}} {{rct.guest.last_name}}</span> <br />
+			Residing at &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">Block: '{{room_alloc.block.block_name}}', floor: '{{room_alloc.floor.floor_name}}', Room: '{{room_alloc.room.room_name}}', Bed: '{{room_alloc.bed.bed_name}}'</span><br />
+			towards the {{receipt_type}} for months {% for r in rcts %} {{r.receipt_for_month|month_name}},  {% endfor %}.
+	</doc_txt>	
+	
+	
+	<doc_footer>
+		<footer_left>
+			<strong>Rs.{{rct.amount|multiply:4|floatformat}}</strong>
+		</footer_left>
+			
+		<footer_center>
+			Occupant Signature
+		</footer_center>
+		<footer_right>
+			For SAM Atithi Pavathi
+		<footer_right>
+	</doc_footer>
+	

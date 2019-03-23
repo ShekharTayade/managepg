@@ -50,10 +50,17 @@ urlpatterns =[
 	url(r'^payment_receipt/$', views.payment_receipt, name='payment_receipt'),
 	url(r'^ajax/choose_booking_for_payment/$', views.choose_booking_for_payment, name='choose_booking_for_payment'),
 	path('payment_confirmation/<int:rct_id>/', views.payment_confirmation, name='payment_confirmation'),
+	path('payment_confirmation_AR/<str:rct_no>/', views.payment_confirmation_AR, name='payment_confirmation_AR'),
 	path('payment_confirmation_pdf/<int:rct_id>/', views.payment_confirmation_pdf, name='payment_confirmation_pdf'),
+	path('payment_confirmation_pdf_AR/<str:rct_no>/', views.payment_confirmation_pdf_AR, name='payment_confirmation_pdf_AR'),
 	url(r'^print_receipts/$', views.print_receipts, name='print_receipts'),
 	url(r'^ajax/get_receipts/$', views.get_receipts, name='get_receipts'),
+	url(r'^ajax/get_monthly_adv_rent/$', views.get_monthly_adv_rent, name='get_monthly_adv_rent'),	
+	url(r'^ajax/get_net_advance/$', views.get_net_advance, name='get_net_advance'),
 	url(r'^ajax/get_bills_for_month/$', views.get_bills_for_month, name='get_bills_for_month'),
+
+	url(r'^bills_receipts_report/$', views.bills_receipts_report, name='bills_receipts_report'),
+
 	
 ]
 	

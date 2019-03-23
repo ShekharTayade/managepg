@@ -66,7 +66,7 @@
 				<div id="navigation" class="collapse navbar-collapse">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item">
-							<a href="#" class="nav-link active">Home</a>
+							<a href="{% url 'index' %}" class="nav-link active">Home</a>
 						</li>
 						<li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Menu<b class="caret"></b></a>
 							<ul class="dropdown-menu megamenu">
@@ -101,6 +101,15 @@
 												<li class="nav-item"><a href="{% url 'print_receipts' %}" class="nav-link">Search & Print Payment Receipts</a></li>
 												<li class="dropdown-divider"></li>
 												<li class="nav-item"><a href="" class="nav-link">Cancel Blocking</a></li>
+											</ul>
+										</div>
+										<div class="col-md-6 col-lg-3">
+											<h5>Reports</h5>
+											<ul class="list-unstyled mb-3">
+												<li class="nav-item"><a href="{% url 'bills_receipts_report' %}" class="nav-link">Bills/Receipts Report</a></li>
+												<li class="nav-item"><a href="" class="nav-link">Guest Bill-Receipts details</a></li>
+												<li class="dropdown-divider"></li>
+												<li class="nav-item"><a href="" class="nav-link">Room/Bed Occupancy Report</a></li>												
 											</ul>
 										</div>
 										<div class="col-md-6 col-lg-3">

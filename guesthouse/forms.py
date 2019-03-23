@@ -166,7 +166,7 @@ class AdvReceiptForm(forms.ModelForm):
 	bill = forms.CharField(
 		widget=forms.Select(),
 		required=False,
-		help_text='Payment against bill'
+		help_text='Payment bill against which payment is being made'
 	)	
 	receipt_for_month = forms.CharField(
 		widget=forms.TextInput(),
@@ -187,4 +187,68 @@ class AdvReceiptForm(forms.ModelForm):
 		except Bill.DoesNotExist:
 			billObj = None
 
-		return billObj		
+		return billObj
+
+
+
+class AdvReceiptForm_AR(forms.ModelForm):
+	id = forms.CharField(
+		widget=forms.TextInput(),
+		required=False
+	)	
+	guest = forms.CharField(
+		widget=forms.TextInput(),
+		required=False
+	)	
+	booking = forms.CharField(
+		widget=forms.TextInput(),
+		required=False
+	)	
+	receipt_number = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='Auto Generated'
+	)
+	bill = forms.CharField(
+		widget=forms.Select(),
+		required=False,
+		help_text='Payment bill against which payment is being made'
+	)	
+	receipt_for_month1 = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='YYYY-MM (Ex. 2019-01)',
+		validators=[validate_yyyy_mm]
+	)	
+	receipt_for_month2 = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='YYYY-MM (Ex. 2019-02)',
+		validators=[validate_yyyy_mm]
+	)	
+	receipt_for_month3 = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='YYYY-MM (Ex. 2019-03)',
+		validators=[validate_yyyy_mm]
+	)	
+	receipt_for_month4 = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='YYYY-MM (Ex. 2019-04)',
+		validators=[validate_yyyy_mm]
+	)	
+	
+	class Meta:
+		model = Receipt
+		exclude = ('guest', 'booking')
+		
+	def clean_bill(self):
+		bill = self.cleaned_data['bill']
+
+		try:
+			billObj = Bill.objects.get(pk = bill)
+		except Bill.DoesNotExist:
+			billObj = None
+
+		return billObj			
