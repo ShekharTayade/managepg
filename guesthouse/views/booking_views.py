@@ -13,9 +13,9 @@ from dateutil.relativedelta import relativedelta
 import json
 
 from django.http import JsonResponse
-#from weasyprint import HTML, CSS
-#from django.template.loader import render_to_string
-#from django.core.files.storage import FileSystemStorage
+from weasyprint import HTML, CSS
+from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
 
 from .views import *
 from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
@@ -748,7 +748,7 @@ def change_room_bed(request):
 	return render(request, 'guesthouse/change_room_bed.html', 
 		{'room_allocation':room_allocation, 'msg':msg} )	
 
-'''		
+	
 def booking_form(request, booking_number):
 
 	gh = Guesthouse.objects.get(pk=settings.GH_ID)
@@ -784,4 +784,4 @@ def booking_form(request, booking_number):
 	
 	
 	return render(request, 'guesthouse/booking_form.html', {'room':room, 'gh':gh} )	
-'''	
+	

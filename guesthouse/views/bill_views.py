@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.db.models import Count, Q, Max
-
+from django.db.models import Count, Q, Max, Sum
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
@@ -199,13 +199,14 @@ def get_bills_for_month(request):
 	
 	
 
-def generate_curr_month_bills():	
+def generate_month_bills(month):	
 	err_flag = False
 	today = datetime.datetime.today()
 	
-	year = str(today.year)
-	mth = today.strftime('%m')
-	month = year + '-' + mth
+	if month == '':
+		year = str(today.year)
+		mth = today.strftime('%m')
+		month = year + '-' + mth
 	curr_month_1st =  datetime.datetime.strptime(month + '-01', "%Y-%m-%d").date()
 	# Get all bookings valid during the current month
 	bookings = Booking.objects.filter( 
@@ -364,4 +365,63 @@ def get_taxes(type):
 	if taxes:
 		tax_rate = taxes.tax_rate
 	return ({"tax_rate":tax_rate})
+
+
+@login_required
+def process_month_closing(request, month):
+
+	# Generate Bills for current month
+	bill_generation = generate_curr_month_bills()
 	
+	if bill_generation == False:
+		return ("An Error Occured in Billing")
+		
+	err_flag = False
+	today = datetime.datetime.today()
+	
+	if month == '':
+		year = str(today.year)
+		mth = today.strftime('%m')
+		month = year + '-' + mth
+		
+	curr_month_1st =  datetime.datetime.strptime(month + '-01', "%Y-%m-%d").date()
+
+	# Get all bookings valid during the current month
+	bookings = Booking.objects.filter( 
+		Q(check_out_date__isnull = True) | Q(check_out_date__gte = curr_month_1st) )
+	
+	rct_types_for_billing = ['RN', 'FD', 'AR', 'OT']  # not considering the advance paid for the monthly calculations
+	for b in bookings:
+	
+		bills = Bill.objects.filter(booking = booking).aggregate(bill_sum=Sum('amount'))
+		rcts = Receipt.objects.filter(
+			booking = booking, receipt_for__in = rct_types_for_billing).aggregate(rct_sum=Sum('amount'))
+
+		closing_balance = bill - rcts
+		
+		# update the closing balance as of this month
+		try:
+			closing = closing_balance(
+				guest = b.guest,
+				booking = b,
+				closing_balance_month = month,
+				amount = closing_balance,
+				created_date = today,	
+				updated_date = today
+			)
+			closing.save()
+		except Exception as error:
+			err_flag = True
+			print (error)
+			err = month_closing_error (
+				guest = b.guest,
+				booking = b,
+				closing_balance_month = month,
+				amount = closing_balance,
+				error = error,
+				created_date = today,	
+				updated_date = today
+			)
+			err.save()
+		
+	return err_flag

@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db.models import Count, Q, Max, Sum
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
 import datetime
 from dateutil.relativedelta import relativedelta

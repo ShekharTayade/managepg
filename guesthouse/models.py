@@ -453,3 +453,25 @@ class Billing_error(models.Model):
 	error = models.CharField(max_length = 2000, default = '', blank = True)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)
 	updated_date = models.DateTimeField(auto_now=True, null=False)
+
+class closing_balance(models.Model):
+	id = models.AutoField(primary_key=True) 
+	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
+	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
+	closing_balance_month = models.CharField(max_length = 7, blank = False, null = False, help_text='Closing Balance as of end of month (YYYY-MM)')
+	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)			
+
+
+class month_closing_error(models.Model):
+	id = models.AutoField(primary_key=True)
+	guest = models.ForeignKey(Guest, models.DO_NOTHING, null=True)
+	booking = models.ForeignKey(Booking, models.DO_NOTHING, null=True)
+	closing_balance_month = models.CharField(max_length = 7, null = False, blank=False) 
+	amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	error = models.CharField(max_length = 2000, default = '', blank = True)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)
+	updated_date = models.DateTimeField(auto_now=True, null=False)
+
+	

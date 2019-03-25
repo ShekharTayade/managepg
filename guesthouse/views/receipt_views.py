@@ -7,15 +7,15 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 import datetime
 from dateutil.relativedelta import relativedelta
-
+from django.contrib.auth.decorators import login_required
 from num2words import num2words
 
 import json
 
 from django.http import JsonResponse
-#from weasyprint import HTML, CSS
-#from django.template.loader import render_to_string
-#from django.core.files.storage import FileSystemStorage
+from weasyprint import HTML, CSS
+from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
 
 from .views import *
 from guesthouse.forms import AdvReceiptForm, AdvReceiptForm_AR
