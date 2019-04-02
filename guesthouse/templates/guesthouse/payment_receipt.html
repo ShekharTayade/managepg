@@ -334,11 +334,8 @@
 		}
 		
 		if ('{{receipt_type}}' == 'RN'){
-			if ('{{booking.tenure}}' == 'LT'){
-				$("#id_amount").val('{{room_alloc.room.rent_per_bed}}');
-			} else {
-				$("#id_amount").val('{{room_alloc.room.short_term_rent_per_bed}}');
-			}
+		
+			$("#id_amount").val('{{rent}}');
 		}
 
 		

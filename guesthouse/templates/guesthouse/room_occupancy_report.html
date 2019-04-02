@@ -1,0 +1,220 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load utils %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Occupancy Dashboard</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Occupancy Dashboard</h3>
+						</div>
+					</div>
+				</div>
+
+				<h4 class="box"><span class = "text-primary"><strong>Total Occupancy: {{percent}}%</strong></span></h4>
+				<div class = "box">
+					<div id = "barchart">
+					</div>
+				</div>
+				<div class = "box">
+					<div class = "row">
+						<table class = "table table-borderless">
+							<thead>
+								<th width="10%">Block</th>
+								<th width="10%" style="text-align:right">Total Beds</th>
+								<th width="10%" style="text-align:right">Occupied Beds</th>
+								<th width="10%" style="text-align:right">% Occupancy</th>
+								<th width="10%" style="text-align:right">Blocked Beds</th>
+							</thead>
+							<tbody>
+								{% for t in blocks_total %}
+								<tr>
+									<td >{{t.block__block_name}}</td>
+									<td style="text-align:right">{{t.total_beds}}</td>
+									{% for o in blocks_occ %}
+										{% if t.block__block_name == o.block__block_name %}
+											<td style="text-align:right">{{o.occupied_beds}}</td>
+											<td style="text-align:right">{{t.total_beds|percent:o.occupied_beds}}%</td>
+										{% endif %}
+									{% endfor %}			
+									{% for b in blocks_blkd %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style="text-align:right">{{b.blocked_beds}}</td>
+										{% endif %}
+									{% endfor %}			
+								</tr>	
+								{% endfor %}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>TOTAL</th>
+									<th style="text-align:right">{{total_beds}}</th>
+									<th style="text-align:right">{{occupied_beds}}</th>
+									<th style="text-align:right">{{percent}}%</th>
+									<th style="text-align:right">{{blocked_beds}}</th>
+								</tr>
+							</tfoot>								
+						</table>
+						<br />
+					</div>
+				</div>
+				<div class = " box mb-3">
+					<div class = "text-primary"><h4>All Details <i class = "fa fa-chevron-right"></i></h4></div>
+				</div>
+				
+				<div class = "box mb-5">
+						<table id = "details" class = "table table-bordered">
+							<thead>
+								<th width="10%">Block</th>
+								<th width="10%">Floor</th>
+								<th width="10%">Room</th>
+								<th width="10%">Bed</th>
+								<th width="10%">Status</th>
+							</thead>
+							<tbody>						
+								{% for d in occupancy_dashboard %}
+								<tr>
+									<td> {{d.block.block_name}}</td>
+									<td> {{d.floor.floor_name}}</td>
+									<td> {{d.room.room_name}}</td>
+									<td> {{d.bed.bed_name}}</td>
+									<td style="text-align:center"> 									
+										{% if d.occupied %} 
+											<button class = "btn-link" 
+													data-toggle="tooltip" title="Click for occupant details"
+													onclick = 'get_occ_details("{{d.bed_id}}");'>
+												Occupied <i class="fa fa-circle" style="font-size:24px;color:red"></i>
+											</button>
+											
+										{% elif d.blocked %}
+											<button class = "btn-link" 
+													data-toggle="tooltip" title="Click for occupant details"
+													onclick = 'get_occ_details("{{d.bed_id}}");'>
+												Blocked <i class="fa fa-circle" style="font-size:24px;color:amber"></i>
+											</button>
+										{% else %}
+											Vacant <i class="fa fa-circle" style="font-size:24px;color:green"></i>
+										{% endif %}										
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+				</div>
+				
+				<div id = "occ_details">
+					{% include 'guesthouse/bed_occupant_details.html' %}	
+				</div>				
+				
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>	
+    google.charts.load("current", {packages:["corechart"]});
+    
+    google.charts.setOnLoadCallback(drawChart);
+	
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ["Total Beds", "Beds", { role: "style" } ],
+            ["Occupied", {{occupied_beds}}, "#b87333"],
+            ["Blocked", {{blocked_beds}}, "amber"],
+            ["Vacant", {{vacant_beds}}, "green"],
+        ]);   
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+        var options = {
+            title: "Occupancy",
+            bar: {groupWidth: "95%"},
+            legend: { position: "none" },
+            is3D: true,
+            animation: {"startup": true}
+        };
+        var chart = new google.visualization.BarChart(document.getElementById("barchart"));
+        chart.draw(view, options);
+	}
+        	
+    </script>	
+	
+	<script>
+    $(document).ready(function() {
+      
+        table = $('#details').DataTable( {
+        retrieve: true,
+        paging: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel',
+                messageTop: 'SAM Athiti Pavathi',
+                title : "Occupancy Report"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: 'SAM Athiti Pavathi',
+                title : "Occupancy Report"
+            },
+            {
+                extend: 'print',
+                messageTop: 'SAM Athiti Pavathi',
+                title : "Occupancy Report"
+			}
+        ]
+        
+        } );
+    } );    	
+	
+	</script>
+	
+	<script>
+		function get_occ_details(bed_id) {
+			if ( bed_id == '' ) {
+				return;
+			}
+			$.ajax({
+				url: '{% url "get_bed_occupant_details" %}', 
+				dataType: 'text',
+				data: {'bed_id':bed_id} ,
+				success: function (data) {
+					$("#occ_details").html(data);
+					$('#bed_occ_details').modal('show');
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
+					return;
+				}
+			});			
+		}
+	</script>		
+	{% endblock jscripts %}

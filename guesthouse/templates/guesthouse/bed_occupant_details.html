@@ -1,0 +1,38 @@
+<div id="bed_occ_details" tabindex="-1" role="dialog" aria-labelledby="Delete Message" aria-hidden="true" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Occupant Details</h5>
+				<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+			</div>
+			<div class="modal-body">	
+				<div class = "box">
+					<table class = "table table-bordered">
+						<thead>
+							<th></th>
+							<th>Guest</th>
+							<th>Booking Number</th>
+							<th>Room</th>
+							<th>Check-in / Check-out</th>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									{% if bed.guest.guest_photo %}
+									<img id = "modal-photo" class="card-img-top img-display" src="{{bed.guest.guest_photo.url }}" alt="Photo" style="width:100%">
+									{% endif %}
+								</td>
+								<td>{{bed.guest.first_name}} {{bed.guest.middle_name}} {{bed.last.first_name}}<br />
+									{{bed.guest.phone_number}} {{bed.guest.email_id}}
+								</td>
+								<td>{{bed.booking_id}}</td>
+								<td>{{bed.block.block_name}}, {{bed.floor.floor_name}}, {{bed.room.room_name}}, {{bed.bed.bed_name}}</td>
+								<td>{{bed.allocation_start_date|date:"d-m-Y"}} / {{bed.allocation_end_date|date:"d-m-Y"}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

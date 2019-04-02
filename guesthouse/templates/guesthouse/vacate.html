@@ -1,0 +1,329 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Vacate Room</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Vacate Room</h3>
+							<p>Enter details for Room vacate</p>
+						</div>
+					</div>				
+					<div class="col-lg-3">
+						<!--
+						*** MENUS ***
+						_________________________________________________________
+						-->
+						<div id = "tab_navigation" class="collapse show navbar-collapse">
+							<div class="card sidebar-menu mb-4">
+								<div class="card-header">
+									<h3 class="h4 card-title">Search Bookings By</h3>
+								</div>
+								<div class="card-body">
+								
+									<div class="container">
+										<ul class="nav nav-tabs" id="myTab" role="tablist">
+											<li class="nav-item">
+												<a class="nav-link active" data-toggle="tab" href="#date_search" role="tab" aria-controls="Name, Address & Contact">Date Range</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#name_search" role="tab" aria-controls="Personal Details">Guest Name</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#booking_number_search" role="tab" aria-controls="Personal Details">Booking Number</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#email_phone_search" role="tab" aria-controls="Parents/Guardians">Email/Phone Number</a>
+											</li>
+										</ul>								
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- End col-3 -->				
+					<div class = "col-lg-9">
+						<div class="box info-bar">
+							<div class="tab-content">
+								<div class="tab-pane fade show active" id="date_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/vacate_booking_by_date.html' %}
+									</div>
+								</div>
+								<div class="tab-pane fade show " id="name_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/vacate_booking_by_name.html' %}
+									</div>
+								</div>
+								<div class="tab-pane fade show " id="booking_number_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/vacate_booking_by_number.html' %}
+									</div>
+								</div>
+								<div class="tab-pane fade show " id="email_phone_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/vacate_booking_by_email_phone.html' %}
+									</div>
+								</div>
+							</div>
+							<!-- end tab-->
+						</div>
+						<div class="box info-bar">
+							<div id = "bookings_table">
+								{% include 'guesthouse/vacate_table.html' %}
+							</div>
+						</div>						
+					</div>
+					<!-- END`: Col-9 -->					
+				</div>
+			</div>
+        </div>
+    </div>
+	<div id = "delete-confirm">
+		{% include 'guesthouse/delete_confirm_message.html' %}	
+	</div>
+	{% include 'guesthouse/message-modal_ok.html' %}
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>
+		$( document ).ready(function() {
+			var today = new Date();
+
+			var from_dt = new Date();
+			from_dt.setDate( from_dt.getDate() - 7) 
+			var fm_dt = from_dt.getDate();
+			var fm_mn = from_dt.getMonth();
+			var fm_mn = fm_mn + 1; //Javascript month start from 0
+			var fm_yy = from_dt.getFullYear();			
+			document.getElementById("fromdate").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
+
+			var to_dt = today.getDate();
+			var to_mn = today.getMonth();
+			var to_mn = to_mn + 1; //Javascript month start from 0
+			var to_yy = today.getFullYear();			
+			
+			document.getElementById("todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
+
+			// Trigger the inital fetch of orders
+			document.getElementById("date-submit").click();		
+		});
+	
+		function get_bookings(page){
+		
+			var execute_ajax = false;
+			var query_data = {};
+			
+			var activeTab= document.getElementsByClassName('active');		
+			for (i = 0; i < activeTab.length; i++) {
+
+				id = activeTab[i].id;
+				
+				switch(id) {
+					case 'date_search':
+						execute_ajax = true;
+
+						//Get the from, to dates
+						var fm_d = new Date(document.getElementById("fromdate").value);
+						if (fm_d > new Date()) {
+							$("#msg").html("From Date can't be greatrer than today");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						var fm_dt = fm_d.getDate();
+						var fm_mn = fm_d.getMonth();
+						var fm_mn = fm_mn + 1; //Javascript month start from 0
+						var fm_yy = fm_d.getFullYear();			
+						var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
+						  
+						var to_d = new Date(document.getElementById("todate").value);
+						var to_dt = to_d.getDate();
+						var to_mn = to_d.getMonth();
+						var to_mn = to_mn + 1; //Javascript month start from 0
+						var to_yy = to_d.getFullYear();			
+						var to_date = to_yy + "-" + to_mn + "-" + to_dt;
+						
+						if ( to_d < fm_d ) {
+							$("#msg").html("To Date can't be earlier than From Date");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						query_data = {'fromdate':from_date, 'todate':to_date, 'page':page, 'source':'VACATE'}
+						break;
+					case 'name_search':
+						execute_ajax = true;
+						var f_name = document.getElementById("first_name").value;
+						var m_name = document.getElementById("middle_name").value;
+						var l_name = document.getElementById("last_name").value;
+						
+						if (f_name == '' && m_name == '' && l_name == '') {
+							$("#msg").html("Please enter name");
+							$("#msg-modal").modal("show");
+							return;
+						}							
+
+						query_data = {'f_name':f_name, 'm_name':m_name, 'l_name':l_name, 'page':page, 'source':'VACATE'}
+						break;
+					case 'booking_number_search':
+						execute_ajax = true;
+						var b_num = document.getElementById("booking_num").value;
+						
+						if (b_num == '' ) {
+							$("#msg").html("Please enter booking number");
+							$("#msg-modal").modal("show");
+							return;
+						}							
+
+						query_data = {'booking_number':b_num, 'page':page, 'source':'VACATE'}
+						break;
+					case 'allocation_search':
+						execute_ajax = true;
+						//Get the from, to dates
+						var fm_d = new Date(document.getElementById("noalloc_fromdate").value);
+						if (fm_d > new Date()) {
+							$("#msg").html("From Date can't be greatrer than today");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						var fm_dt = fm_d.getDate();
+						var fm_mn = fm_d.getMonth();
+						var fm_mn = fm_mn + 1; //Javascript month start from 0
+						var fm_yy = fm_d.getFullYear();			
+						var from_date = fm_yy + "-" + fm_mn + "-" + fm_dt;
+						  
+						var to_d = new Date(document.getElementById("noalloc_todate").value);
+						var to_dt = to_d.getDate();
+						var to_mn = to_d.getMonth();
+						var to_mn = to_mn + 1; //Javascript month start from 0
+						var to_yy = to_d.getFullYear();			
+						var to_date = to_yy + "-" + to_mn + "-" + to_dt;
+						
+						if ( to_d < fm_d ) {
+							$("#msg").html("To Date can't be earlier than From Date");
+							$("#msg-modal").modal("show");
+							return;
+						}
+						query_data = {'noalloc_fromdate':from_date, 'noalloc_todate':to_date, 'page':page, 'source':'VACATE'}
+						break;
+
+						break;
+					case 'email_phone_search':
+						execute_ajax = true;
+						var email_id = document.getElementById("email_id").value;
+						var phone_number = document.getElementById("phone_number").value;
+
+						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page, 'source':'VACATE'}
+						break;
+					case 'booking_number_search':
+						execute_ajax = true;
+
+						break;
+						
+				} // End switch
+
+			} // End for
+			
+			if (execute_ajax) {
+
+				$.ajax({
+					url: '{% url "get_bookings" %}', 
+					dataType: 'text',
+					data: query_data,
+					type: 'POST',
+					success: function (data) {
+						$("#bookings_table").html(data);
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please let us know the details and we will be happy to help sort it out."); 
+						return;
+					}
+				});	
+			}
+		}
+		
+		
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}
+	</script>
+
+	<script>
+		function confirm_booking_delete(booking_number) {
+			if ( booking_number == '' ) {
+				return;
+			}
+			$.ajax({
+				url: '{% url "get_booking_by_number" %}', 
+				dataType: 'text',
+				data: {'booking_number':booking_number} ,
+				type: 'POST',
+				success: function (data) {
+					$("#delete-confirm").html(data);
+					$('#delete-modal').modal('show');
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
+					return;
+				}
+			});			
+		}
+	</script>	
+	
+	<script>
+		function delete_booking(booking_number) {
+			
+			$.ajax({
+				url: '{% url "delete_booking" %}', 
+				dataType: 'text',
+				data: {'booking_number':booking_number} ,
+				type: 'POST',
+				success: function (data) {
+					status = JSON.parse(data).status
+					switch (status) {
+						case 'NO-BOOKING':
+							$("#msg").html("Booking Number is invalid");
+							$("#msg-modal").modal("show");				
+							break;
+						case 'ALLOC-DONE':
+							$("#msg").html("Cannot delete as the room, bed is already allocated. Please use 'Menu -> Vacate(Check-out)' in case this room/bed is being vacated.");
+							$("#msg-modal").modal("show");				
+							break;
+						case 'SUCCESS':
+							$("#msg").html("Booking number " + booking_number + " is sucessfully deleted");
+							$("#msg-modal").modal("show");
+							$('#delete-modal').modal('hide');
+							break;
+					}
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
+					return;
+				}
+			});			
+		
+		}
+	</script>
+	
+	{% endblock jscripts %}

@@ -38,3 +38,11 @@ def tax(value, tax_rate):
 		return 0
  
 	return float(value) - round( float(value) / (1 + (float(tax_rate)/100)), 2 )
+
+@register.filter	
+def percent(value, number):
+
+	if not number or number == '':
+		return 0
+ 
+	return round(float(number)/float(value)*100)

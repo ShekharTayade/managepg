@@ -8,7 +8,7 @@
 											<th width="15%">Booking No.</th>
 											<th width="30%">Name</th>
 											<th width="15%">Check-in/out</th>
-											<th width="15%">Contact</th>
+											<th width="20%">Contact</th>
 											<th width="20%"></th>
 										</tr>
 									</thead>
@@ -27,39 +27,65 @@
 												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
 												</small>
 											</td>
-											<td>	
-												<ul class = "list-inline">
-													<li class="list-inline-item">
-														<form action = "{% url 'new_booking' %}" method = 'GET'>
+											
+											<td>
+												<ul class="list-inline">
+													{% if source == "BOOKING" %}
+														<li class="list-inline-item">
+															<form action = "{% url 'booking_form' i.booking_number %}" method = 'GET'>
+																<input hidden name = "printpdf" value = "YES">
+																<button class = "btn btn-link" 
+																	data-toggle="tooltip" title="Print Booking Form" 
+																	type = "submit">
+																	<i class= "fa fa-print fa-lg"></i>
+																</button>
+																<input hidden name = "booking_number" value = '{{i.booking_number}}' />
+															</form>
+														</li>
+														<li class="list-inline-item">
+															<form action = "{% url 'new_booking' %}" method = 'GET'>
+																<button class = "btn btn-link" 
+																	data-toggle="tooltip" title="Edit Booking" 
+																	type = "submit">
+																	<i class= "fa fa-address-card-o fa-lg"></i>
+																</button>
+																<input hidden name = "booking_number" value = '{{i.booking_number}}' />
+															</form>
+														</li>
+														<li class="list-inline-item">
+															<form action = "{% url 'change_room_bed' %}" method = 'GET'>
+																<button class = "btn btn-link" 
+																	data-toggle="tooltip" title="Change Room,Bed" 
+																	type = "submit">
+																	<i class= "	fa fa-bed fa-lg"></i>
+																</button>
+																<input hidden name = "booking_number" value = '{{i.booking_number}}' />
+															</form>
+														</li>
+														<li class="list-inline-item">
 															<button class = "btn btn-link" 
-																data-toggle="tooltip" title="Edit Booking" 
-																type = "submit">
-																<i class= "fa fa-address-card-o fa-lg"></i>
-															</button>
-															<input hidden name = "booking_number" value = '{{i.booking_number}}' />
-														</form>
-													</li>
-													<li class="list-inline-item">
-														<form action = "{% url 'change_room_bed' %}" method = 'GET'>
-															<button class = "btn btn-link" 
-																data-toggle="tooltip" title="Change Room,Bed" 
-																type = "submit">
-																<i class= "	fa fa-bed fa-lg"></i>
-															</button>
-															<input hidden name = "booking_number" value = '{{i.booking_number}}' />
-														</form>
-													</li>
-													<li class="list-inline-item">
-														<button class = "btn btn-link" 
-															style = "cursor: pointer; color:red;"
-															data-toggle="tooltip" title="Delete Booking" 
-															onclick = "confirm_booking_delete('{{i.booking_number}}');"
-															type = "button">
-															<i class="fa fa-trash-o fa-lg"></i>
-														</button>											
-													</li>
+																style = "cursor: pointer; color:red;"
+																data-toggle="tooltip" title="Delete Booking" 
+																onclick = "confirm_booking_delete('{{i.booking_number}}');"
+																type = "button">
+																<i class="fa fa-trash-o fa-lg"></i>
+															</button>											
+														</li>
+													{% else %}
+														<li class="list-inline-item">
+															<form action = "{% url 'vacate_form' i.booking_number %}" method = 'GET'>
+																<button class = "btn btn-primary" 
+																	data-toggle="tooltip" title="Vacate" 
+																	type = "submit">
+																	<i class= "fa fa-sign-out fa-lg"> Vacate </i>
+																	<!-- fa fa-external-link fa fa-minus-circle fa fa-power-off fa fa-share-square-o fa fa-sign-out-->
+																</button>
+																<input hidden name = "booking_number" value = '{{i.booking_number}}' />
+															</form>
+														</li>													
+													{% endif %}
 												</ul>
-											</td>
+											</td> 
 										</tr>
 										{% empty %}
 										<tr>

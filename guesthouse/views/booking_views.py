@@ -21,12 +21,14 @@ from .views import *
 from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation 
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
+from guesthouse.models import Room_conversion, Bed_conversion
 
 today = datetime.datetime.today()
 
 @login_required
 def new_booking(request):
 
+	bed_allocated = False
 	validation_msg = []
 	if request.method == 'POST':
 
@@ -36,6 +38,7 @@ def new_booking(request):
 		room = {}
 
 		# Parse request into the three forms
+
 		guest_form = GuestForm(request.POST.copy(), request.FILES, prefix = "guest")
 		booking_form = BookingForm(request.POST.copy(), prefix="booking")
 		room_allocation_form = Room_allocationForm(request.POST.copy(), prefix="room")
@@ -43,18 +46,22 @@ def new_booking(request):
 		validations = applyBookingValidations(guest_form, booking_form, room_allocation_form)
 		validation_result = validations['result']
 		validation_msg = validations['msg']
-	
-		import pdb
-		pdb.set_trace()
-	
+
 		if validation_result:
 			if guest_form.is_valid():
-				guest = guest_form.save(commit=False)
 				if guest_form.data['guest-guest_id'] != '':
 					# Get instance alread in the DB
 					g_inst = Guest.objects.get(guest_id = int(guest_form.data['guest-guest_id']))
+					if not request.FILES:
+						guest_form.data['guest-guest_photo'] = g_inst.guest_photo
+
+				guest = guest_form.save(commit=False)
+
+				if guest_form.data['guest-guest_id'] != '':
 					guest.guest_id = g_inst.guest_id
 					guest.created_date = g_inst.created_date
+					if not request.FILES:
+						guest.guest_photo = g_inst.guest_photo
 				
 				try :
 					pin = guest_form.data['guest-current_pin_code']
@@ -73,10 +80,13 @@ def new_booking(request):
 				
 				guest.save()
 				validation_msg.append("Guest Details are saved.")
-
-				guest_form = GuestForm(request.POST.copy(), instance = guest, prefix="guest")
-				guest_form.data['guest-guest_id'] = guest.guest_id				
+				guest_form = GuestForm(instance = guest, prefix="guest", initial={
+					'current_pin_code':guest.current_pin_code, 
+					'permanent_pin_code':guest.permanent_pin_code,
+					'company_pin_code':guest.company_pin_code, 'guest_photo':guest.guest_photo})
 				
+				guest_form.data['guest-guest_id'] = guest.guest_id				
+
 				if booking_form.is_valid():
 					booking = booking_form.save(commit=False)
 					
@@ -97,6 +107,7 @@ def new_booking(request):
 					booking_form.data['booking-booking_number'] = booking.booking_number
 					booking_form.data['booking-guest'] = booking.guest
 					booking_form.data['booking-guesthouse'] = booking.guesthouse
+					booking_form.data['booking-check_in_date'] = booking.check_in_date
 
 					# Create, Update room allocation, only if check_in_date is present
 					if booking.check_in_date is not None:
@@ -112,7 +123,14 @@ def new_booking(request):
 							room.allocation_end_date = booking.check_out_date
 							
 							room.save()
-							
+							if room:
+								if room.bed :
+									bed_allocated = True
+								else:
+									bed_allocated = False
+							else:
+								bed_allocated = False
+								
 							if room.bed :
 								validation_msg.append("Room/Bed allocation is done.")
 							else:
@@ -140,7 +158,6 @@ def new_booking(request):
 			guest = {} # passing an empty guest instance, it's used in POST to display the photo in the browser
 			room_allocation_form = Room_allocationForm(prefix="room")
 		else :
-
 			booking = Booking.objects.get(booking_number = booking_number)
 			booking_form = BookingForm(instance = booking, prefix="booking", initial={'guest' : booking.guest_id,
 					'guesthouse':booking.guesthouse_id, 'booking_number':booking.booking_number})
@@ -168,6 +185,14 @@ def new_booking(request):
 					'block':room.block_id, 'floor':room.floor_id, 'room':room.room_id, 'bed':room.bed_id})
 			else:
 				room_allocation_form = Room_allocationForm(prefix="room")
+			
+			if room:
+				if room.bed_id :
+					bed_allocated = True
+				else:
+					bed_allocated = False
+			else:
+				bed_allocated = False
 	
 	# Get available beds, and pass to front end
 	room_availability = get_availablity(request, today)
@@ -175,7 +200,6 @@ def new_booking(request):
 	floors = room_availability['floors']
 	rooms = room_availability['rooms']
 	beds = room_availability['beds']
-	
 
 	if beds is None:
 		validation_msg.append['There is no availability currently!!']
@@ -206,7 +230,7 @@ def new_booking(request):
 		'booking_form': booking_form, 'guest_form':guest_form, 'room_allocation_form':room_allocation_form,
 		'country_arr':country_arr, 'state_arr':state_arr, 'city_arr':city_arr, 'pin_code_arr':pin_code_arr, 
 		'validation_msg':validation_msg, 'guest':guest, 'room' : room, 
-		'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks, 
+		'beds':beds, 'rooms':rooms, 'floors':floors, 'blocks':blocks, 'bed_allocated':bed_allocated
 		})
 
 	
@@ -354,6 +378,7 @@ def get_bookings(request):
 	booking_number = ''
 	
 	page = request.POST.get('page', 1)
+	source = request.POST.get('source', 'BOOKING')
 
 	from_date = request.POST.get("fromdate", '')
 	if from_date != '' :
@@ -422,7 +447,7 @@ def get_bookings(request):
 		bookings = paginator.page(paginator.num_pages)
 	
 	return render(request, 'guesthouse/bookings_table.html', {'count':count, 
-		'bookings': bookings})		
+		'bookings': bookings, 'source':source})		
 	
 @csrf_exempt
 def get_booking_by_number( request ):
@@ -571,8 +596,6 @@ def get_room_availablity(request):
 	rooms = Bed.objects.filter(floor_id = floor_id).exclude(
 		bed_id__in = bed_alloc).select_related('room').values(
 		'room_id', 'room__room_name').distinct()
-	
-	print(list(rooms))
 			
 	return JsonResponse({'rooms':list(rooms)}, safe=False)
 
@@ -595,12 +618,18 @@ def get_bed_availablity(request):
 		Q(allocation_end_date__isnull = True, bed_id__isnull = False) 
 		).values('bed_id')	
 	
-	# Get the currently available floors (by excluding allocated beds)
-	beds = Bed.objects.filter(room_id = room_id).exclude(
-		bed_id__in = bed_alloc).values(
-		'bed_id', 'bed_name').distinct()
-	
-	print(list(beds))
+	# Get the currently available beds (by excluding allocated beds)
+	room_conv = Room_conversion.objects.filter(room_id = room_id, available_from__lte = today,
+			available_to__gte = today)
+	if room_conv:
+		beds = Bed_conversion.objects.filter(room_id = room_id, available_from__lte = today,
+			available_to__gte = today).exclude( bed_id__in = bed_alloc).values(
+			'bed_id', 'bed_name').distinct()
+		print(beds)
+	else:
+		beds = Bed.objects.filter(room_id = room_id).exclude(
+			bed_id__in = bed_alloc).values(
+			'bed_id', 'bed_name').distinct()
 			
 	return JsonResponse({'beds':list(beds)}, safe=False)
 
@@ -752,36 +781,38 @@ def change_room_bed(request):
 def booking_form(request, booking_number):
 
 	gh = Guesthouse.objects.get(pk=settings.GH_ID)
-
-	print(gh.logo_website.url)
 	
 	printpdf = request.GET.get("printpdf", "NO")
 
-	room = Room_allocation.objects.filter( booking_id = booking_number, 
-				allocation_end_date__isnull = True).select_related(
+	room = Room_allocation.objects.filter(booking_id = booking_number).select_related(
 				'booking','guest', 'bed', 'room', 'floor','block').first()
-				
+	
+	if not room:
+		room = Booking.objects.filter(booking_number = booking_number).select_related(
+				'guest').first()
+		bk_num = room.booking_number
+	else: 
+		bk_num = room.booking_id
+	
 	if printpdf == "YES":
-		
-		html_string = render_to_string('guesthouse/booking_form_pdf.html', {'room':room, 'gh':gh})
+		if room:
+			html_string = render_to_string('guesthouse/booking_form_pdf.html', {'room':room, 'gh':gh, 'bk_num':bk_num})
 
-		html = HTML(string=html_string, base_url=request.build_absolute_uri())
-		
-		html.write_pdf(target= settings.TMP_FILES + room.booking_id + '_pdf.pdf',
-			stylesheets=[CSS(settings.CSS_FILES +  'style.default.css'), 
-						CSS(settings.CSS_FILES +  'custom.css'),
-						CSS(settings.VENDOR_FILES + 'bootstrap/css/bootstrap.min.css') ],
-							presentational_hints=True);
-						
-		fs = FileSystemStorage(settings.TMP_FILES)
-		with fs.open(room.booking_id + '_pdf.pdf') as pdf:
-			response = HttpResponse(pdf, content_type='application/pdf')
-			response['Content-Disposition'] = 'attachment; filename="' + room.booking_id + '_pdf.pdf"'
-			return response
+			html = HTML(string=html_string, base_url=request.build_absolute_uri())
+			
+			html.write_pdf(target= settings.TMP_FILES + bk_num + '_pdf.pdf',
+				stylesheets=[CSS(settings.CSS_FILES +  'style.default.css'), 
+							CSS(settings.CSS_FILES +  'custom.css'),
+							CSS(settings.VENDOR_FILES + 'bootstrap/css/bootstrap.min.css') ],
+								presentational_hints=True);
+							
+			fs = FileSystemStorage(settings.TMP_FILES)
+			with fs.open(bk_num + '_pdf.pdf') as pdf:
+				response = HttpResponse(pdf, content_type='application/pdf')
+				response['Content-Disposition'] = 'attachment; filename="' + bk_num + '_pdf.pdf"'
+				return response
 
-		return response		
+			return response		
 	
-	
-	
-	return render(request, 'guesthouse/booking_form.html', {'room':room, 'gh':gh} )	
+	return render(request, 'guesthouse/booking_form.html', {'room':room, 'gh':gh, 'bk_num':bk_num} )	
 	

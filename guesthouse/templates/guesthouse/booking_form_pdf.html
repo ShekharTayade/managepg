@@ -6,14 +6,14 @@
 					</div>
 					
 					<div class = "col-sm-2">
-						<img src="{{gh.logo_website.url}}"class="rounded float-right" alt="Logo">
+						<img src="{% static 'img/logo_booking_form.png' %}"class="rounded float-right" alt="Logo">
 					</div>
 				</div>
 
 				<div class = "row">
 					<div class = "col-sm-8">
 						<h4>Registration No.: 
-							<span style = "color:red">{{room.booking_id}}</span>
+							<span style = "color:red">{{bk_num}}</span>
 						</h4>
 						<h3>P G Registration Form</h3>
 					</div>
@@ -45,7 +45,7 @@
 									</tr>
 									<tr>
 										<td> <h5>File No.:</h5></td>
-										<td><h5>????</h5></td>
+										<td><h5>________________</h5></td>
 									</tr>
 									<tr>
 										<td><h5>Block</h5></td>
@@ -130,73 +130,88 @@
 					</div>
 				</div>
 				
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 				<div class = "row">
 					<div class = "col-sm-12 section-head">
 						<h4>Parent Details</h4>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
-						<h5><strong>Father / Guardian Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_name}}</h5>
+					<div class = "col-sm-12 hr-thin" style="width:50%">
+						<h5><strong>Father / Guardian Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_name}}
+							<span style = "margin-left:750px;"><strong>Photo</strong></span>
+						</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Educational Qualifications:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_qualifications}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Occupation/Designation:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_occupation}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin" style="width:50%">
 						<h5><strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_company}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Phone:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_phone_number}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thick">
+					<div class = "col-sm-12 hr-thick"  style="width:50%">
 						<h5><strong>Email:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_1_email_id}}</h5>
 					</div>
 				</div>
-
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
-						<h5><strong>Mother / Guardian Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_name}}</h5>
+					<div class = "col-sm-12 hr-thin" style="width:50%" >
+						<h5><strong>Mother / Guardian Name:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_name}}
+							<span style = "margin-left:750px;"><strong>Photo</strong></span>
+						</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin" style="width:50%" >
 						<h5><strong>Educational Qualifications:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_qualifications}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Occupation/Designation:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_occupation}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_company}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Phone:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_phone_number}}</h5>
 					</div>
 				</div>
 				<div class = "row mt-2">
-					<div class = "col-sm-12 hr-thin">
+					<div class = "col-sm-12 hr-thin"  style="width:50%">
 						<h5><strong>Email:</strong>&nbsp;&nbsp;&nbsp;&nbsp;{{room.guest.parent_guardian_2_email_id}}</h5>
 					</div>
 				</div>
 				
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 				<div class = "row mt-5">
 					<div class = "col-sm-12 section-head">
 						<h4>Permanent Address</h4>
@@ -272,6 +287,10 @@
 					</div>
 				</div>
 
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 				<div class = "row">
 					<div class = "col-sm-12 section-head">
 						<h4>Personal Details</h4>
@@ -294,6 +313,10 @@
 				</div>
 				
 
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 				<div class = "row">
 					<div class = "col-sm-12 section-head">
 						<h4>Personal Doctor Details</h4>
@@ -310,6 +333,10 @@
 					</div>
 				</div>
 
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 				<div class = "row">
 					<div class = "col-sm-12 section-head">
 						<h4>For Office Use only</h4>
@@ -349,3 +376,100 @@
 					</div>
 				</div>
 			
+
+<div class = "row" style = "page-break-after: always;">			
+<pre>
+
+NORMS TO BE FOLLOWED AT SAM PG
+
+1.	The Occupant Shall pay an advance of 3 months’ rent as interest free security deposit and same shall be refundable at the time of vacating the PG.
+2.	Maintenance charges of Rs.3000/- for luxury and Rs.2000/- for Non luxury and damages if any shall be deducte3d at the time of vacating.
+3.	The rental charges shall be paid in advance i.e., : on or before 10th of every month.
+4.	The management will not to be responsible for any belongings of the occupant.
+5.	The occupant shall not use any electrical appliance such as water heater / room heater / electrical stove, etc, and if found using the security deposit shall not be refunded and will be forfeited.
+6.	24 Hrs hot water will be provided.
+7.	The occupants are prohibited from bringing any friends,relatives,accomplice,colleague or any other persons inside the PG.
+8.	The occupants shall return to the PG premises before 10 PM, however as a special case written declaration by parents or prior permission from the warden as the case would be, the retuning time may be extended depending on the warden as the case wouls be, the returning time may be extended depending on the situation.
+9.	In case the occupant is not returning for a day or two, prior written permission to be taken from the PG management.
+10.	In case any occupant does not return to the PG for a period of 7 days consecutively without prior permission from the PG management in writing, the warden may take necessary action to inform their parents and if need be, to inform the concerned jurisdiction police / regulatory authorise also depending on the circumstances.
+11.	If any occupant absents themselves from the PG accommodation for three months consecutively without prior intimation and do not claim their baggage, the management shall have right to vacate their room, collect her baggage to keep it under safe custody, However, the management will not be responsible for missing articles, if any. Also the management shall have right to dispose of the baggage ,if unclaimed even after a month from the date of keeping it under safe custody.
+12.	Any issues / problems, the decision of the SAM Pg management would be final.
+13.	Payments shall be by online / cash in favour of SAM Atithi Pavathi.
+14.	Stay should be for minimum period of 6 months and to vacate 1 month prior written notice to be given to the management.
+15.	Management will not be responsible for any injuries caused during their stay 9in the PG Premises.
+16.	The Occupant shall have no rights to file any case or claims against any issues arising during they stay / after vacating the PG.
+17.	Food will be served only at the dining hall.
+18.	Alcoholic drinks smoking are prohibited inside the PG premises.
+19.	Loud music / public announcing system are also prohibited.
+20.	Any missed food due to late arrival of the occupant, will not be served later and occupant cannot claim for reimbursement.
+21.	If any occupant desires to pack launch, prior intimation should be given.
+22.	For any laundry service, the occupant should inform in advance, which will be on chargeable basis.
+23.	Passport / ID card Xerox copy and address proof of parents Xerox copy to be submitted compulsorily.
+24.	Minimum increase of 5% per annum.
+25.	Biometric access is must (Before entering and exit) for all the occupants of SAM PG.
+26.	CCTV cameras are installed on the common area lobby on each floor and dining half for security reasons.
+27.	The occupant should strictly follow pool / gym timings and guidelines. Loud music in pool area, dining area & open area should be avoided as it can cause disturbance for neighbours and public.
+28.	The occupant shall not bring any personal issues related to PG inmates to Managers / Management. Any issues regarding facilities are most welcome to help us in rendering better service.
+29.	Occupants suffering from any kind of contagious diseases, like:  Chicken box, etc., are requested to kindly move to parental / guardian care with immediate effect in the interest of the health of other PG inmates. However, any immediate care for sick inmates will be taken care at the in-house Medical Care Room.
+30.	Management is not responsible for any injuries caused at pool / gym area due to pranks/mischief of PG inmates. Personal and proper care to be taken to avoid any such incidents.
+31.	Washing Machine area to be maintained cleanly and hygienically. A minimum of 70 % Load and above of the machines capacity should be maintained to start the machine, failing, which the machines will not be able to perform properly.
+32.	Microwave Ovens are provided on each floor. Occupants should take care to see that these are not used when empty and also not to overheat them. Also, after usage the same should be switched off and maintained cleanly / hygienically.
+33.	Electric water kettles are provided on each floor. Occupants should take care to see that these are used appropriately and maintained cleanly/ hygienically.
+34.	Unnecessary usage of Lightings and fans to be avoided and the same to be switched off when not in use / during leaving the rooms / common area / study area.
+35.	Personal training, aerobic & Zomba classes extra to be paid to instructor directly.
+36.	Any beauty services extra to be paid to beauty parlour team directly.
+
+</pre>
+</div>
+<div class = "row" style = "page-break-after: always;">			
+<pre>
+
+CAFETERIA TERMS AND CONDITIONS
+Sam Atithi Pavathi hastied up with Sam caterers for food, so we request all the PG occupants to go through & sign.
+1.	Sam Atithi Pavathi has tied up with Sam caterers for food, so we request all the PG occupants to go through & sign
+2.	(All Four week menu is as enclosed with for your reference, subject to change seasonally).
+3.	Food is compulsory, any Utilized food, tariff will not be refunded.
+4.	On vacation once a year if guest not in PG for 15 days continuous in a month 50 % charges has to be paid.
+5.	Food menu is fixed no changes as we need to consider all guests.
+6.	Floor wise Microwave oven should be kept clean.
+7.	Food will not be served to rooms or allowed to take to Rooms.
+8.	Only if the Guest is not well we will supply food to Rooms.
+9.	To keep used plates in proper tubes.
+10.	Request Guest not to waste food.
+11.	Request Guest to sign the Register so that we will be aware how many will come for Breakfast/Lunch/Dinner, if you miss signing in register it will be difficult for us to calculate to prepare food.
+12.	Food timings are mentioned in the menu list.
+13.	Food payment to be paid along with the Room Charges.
+
+
+
+Signature of Management			Signature of PG Guest
+                                            		                          (I have read & understood)	   
+
+
+
+
+
+
+SELF DECLARATION POINTS FOR OCCUPENTS UTILIZING PG FECILITIES (NEW & OLD BLOCKS) 
+		EXPLANATION OF POINTS
+SL.NO
+1.	ROOMS/LIGHTS/FANS/ELECTRICAL USAGE POINTS TO BE SWITCHED OFF WHEN NOT IN USE.
+2.	ENSURE TO USE BRANDED MOBILE CHARGES/LAP TOP/ ELECTRICAL AL GADGET TO AVOIDSHORT CIRCUTES OVER HEATING.
+3.	ENURE BATHROOM LIGHTS/EXAUST FANS TO BE SWITCHED OFF BEFORE LEAVING THE BATHROOM.
+4.	WHILE USING SWIMMING POOL EXTRA-PRECAUTION TO BE TAKEN FOR WATER SAFTY ASPECTS UNDER SELF GUIDENCE. DO NOT USE SWIMMING POOL FOR LEARNING SWIMMING.
+5.	DURING USAGE OF GYM EQUIPMENT ADEQUATE SAFTY AWRENESS TO BE LEARNT BEFORE USAGE & FOLLOWED.
+6.	WHILE USING FUN KITCHEN,ENSURE GAS / ELECTICAL HEATING SYSTEMS ARE SWITCHEDOFF AFTER USE ALSO CLEANSINESS / HYGENITY TO BE MAINTAINED AT FUN KITCHEN.
+7.	WHILE UTILIZING BEAUTY PARLOUR ENSURE PROCEDURE FOLLOWED ARE SAFE AND MANAGEMENT NOT RESPONSIBLE FOR ANY COUNTER EFFECTS ON SKIN / FACE.
+8.	FOR ENJOYING THE BICYC LE RIDE FREE OF ANY CHARGES IN THE CITY,THE BORROWER SHOULD SIGN THE FORM AVAILABLE WITH STAFF AND FOLLOW THE INSTRUCTIONS MENTIONED.
+9.	ALSO AGREED TO UNDERTAKE THAT INSIDE THE PG PREMISES SHALL NOTINVOVE IN MISCHIEVOUS AND PLAY FUL ACTIVITES WITH CO-OCCUPANTS ESPECIALLY DURING SPECIAL CELEBERATIONS, KEEPING SAFTY OF THE ACCUPANTS.
+10.	THESE POINTS ARE NOT EXAUSTIVE AND MANAGEMENT CAN REVISE FROM TIME TO TIME.
+
+IN CASE OF ANY VOILATION OF THE ABOVE POINTS THE MANAGEMENT IS NOT RESPONSIBLE FOR ANY UNDESIRABLE INCIDENT AND ACCUPANTS ONLY SHALL BE RESPONSIBLE.
+I HEREBY UNDERTAKE THE ABOVE POINTS ARE READ / UNDERSTOOD AND SHALL BE FOLLOWED MITICULSSY.
+ATTESTED BY PARENTS			SIGNATURE OF OCCUPANT
+1.	                                                                            DATE :
+2.	
+	
+
+</pre>				
+</div>			

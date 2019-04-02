@@ -21,7 +21,7 @@ from .views import *
 from guesthouse.forms import AdvReceiptForm, AdvReceiptForm_AR
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation, Bill, Receipt
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
-from guesthouse.models import Room_allocation
+from guesthouse.models import Room_allocation, Room_conversion
 
 from weasyprint import HTML, CSS
 from django.template.loader import render_to_string
@@ -204,14 +204,68 @@ def payment_receipt(request):
 		
 		rct_for = ''
 		if receipt_type == 'AR':
+		
+			#Get current month + 3 for populating adv months
+			
+			# Month 1
+			year = str(today.year)
+			mth = today.strftime('%m')
+			month1 = year + '-' + mth
+			
+			# Month 2
+			if mth == '12' :
+				mth = '01'
+				year = str(int(year) + 1)
+			else:
+				mth = str(int(mth) + 1)
+			month2_dt = today.replace(month=int(mth))
+			mth = month2_dt.strftime('%m')
+			month2 = year + '-' + mth
+			
+			# Month 3
+			if mth == '12' :
+				mth = '01'
+				year = str(int(year) + 1)
+			else:
+				mth = str(int(mth) + 1)
+			month3_dt = month2_dt.replace(month=int(mth))
+			mth = month3_dt.strftime('%m')
+			month3 = year + '-' + mth
+ 		
+			# Month 4
+			if mth == '12' :
+				mth = '01'
+				year = str(int(year) + 1)
+			else:
+				mth = str(int(mth) + 1)
+			month4_dt = month3_dt.replace(month=int(mth))
+			mth = month4_dt.strftime('%m')
+			month4 = year + '-' + mth
+
+
 			adv_receiptForm_AR = AdvReceiptForm_AR(initial={'receipt_for':receipt_type, 'mode_of_payment':'ON',
-				'receipt_date':today, })
+				'receipt_date':today, 'receipt_for_month1':month1, 'receipt_for_month2':month2,
+				'receipt_for_month3':month3, 'receipt_for_month4':month4})
 		else:
 			adv_receiptForm = AdvReceiptForm(initial={'receipt_for':receipt_type, 'mode_of_payment':'ON',
 				'receipt_date':today, })
-	room_alloc = Room_allocation.objects.get(pk = alloc_id)
+	try: 		
+		room_alloc = Room_allocation.objects.get(pk = alloc_id)
+	except Room_allocation.DoesNotExist:
+		room_alloc = {}
+		
 	booking = Booking.objects.get(booking_number = booking_number)
 
+	try:
+		room_conv = Room_conversion.objects.get(room_id = room_alloc.room_id)
+	except Room_conversion.DoesNotExist:
+		room_conv = {}
+		
+	if room_conv:
+		rent = room_conv.rent_per_bed
+	else:
+		rent = room_alloc.room.rent_per_bed
+	
 	'''
 	if receipt_type == "RN":
 		template = 'guesthouse/rent_receipt.html'
@@ -229,12 +283,14 @@ def payment_receipt(request):
 	if receipt_type == 'AR':
 		template = 'guesthouse/payment_receipt_AR.html'
 		return render(request, template, {'form':adv_receiptForm_AR, 
-					'room_alloc':room_alloc, 'booking':booking, 'receipt_type':receipt_type})	
+					'room_alloc':room_alloc, 'booking':booking, 'receipt_type':receipt_type,
+					'room_conv':room_conv})	
 	else:
 		template = 'guesthouse/payment_receipt.html'
 		
 		return render(request, template, {'form':adv_receiptForm, 
-					'room_alloc':room_alloc, 'booking':booking, 'receipt_type':receipt_type})	
+					'room_alloc':room_alloc, 'booking':booking, 'receipt_type':receipt_type,
+					'rent':rent})	
 
 
 @login_required
@@ -516,9 +572,17 @@ def get_monthly_adv_rent(request):
 	booking = Booking.objects.get(booking_number = booking_number)
 	if booking.tenure == 'ST':
 		return JsonResponse({'adv_rent_with_disc':0})
+
+	# Check for room conversion
+	room_conv = Room_conversion.objects.filter(room_id = room_alloc.room_id,
+			available_from__lte = today, available_to__gte = today).first()
+	if room_conv:
+		rent = room_conv.rent_per_bed
+	else:
+		rent = room_alloc.room.rent_per_bed
 		
 	# 5% discount while paying advance rent for 4 months
-	adv_rent_with_disc = round(room_alloc.room.rent_per_bed - (room_alloc.room.rent_per_bed * 5 /100))
+	adv_rent_with_disc = round(rent - ( rent * 5 /100))
 
 	return JsonResponse({'adv_rent_with_disc':adv_rent_with_disc})
 	

@@ -1,6 +1,7 @@
 {% extends 'guesthouse/guesthouse_base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load utils %}
 	<!-- Only Override the site content block -->
 	{% block sitecontent %}<!-- Message Modal -->
     <div id="all">
@@ -62,7 +63,7 @@
 						Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}}</span> <br />
 						from Mr/Miss/Mrs &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{rct.guest.first_name}} {{rct.guest.middle_name}} {{rct.guest.last_name}}</span> <br />
 						Residing at &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">Block: '{{room_alloc.block.block_name}}', floor: '{{room_alloc.floor.floor_name}}', Room: '{{room_alloc.room.room_name}}', Bed: '{{room_alloc.bed.bed_name}}'</span><br />
-						towards {{receipt_type}}.
+						for the month of {{rct.receipt_for_month|month_name|default:'N/A'}}.
 						</span>
 					</div>
 				</div>

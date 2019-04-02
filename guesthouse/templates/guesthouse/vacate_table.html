@@ -1,0 +1,82 @@
+							{% csrf_token %}
+							<h1>Bookings</h1>
+							<p class="text-muted">{% if count > 0 %} {{ count }} bookings found {% else %} 0 bookings found{% endif %}</p>
+							<div class="table table-responsive">
+								<table id = "bookingsTbl" class="table table-responsive">
+									<thead>
+										<tr>
+											<th width="15%">Booking No.</th>
+											<th width="30%">Name</th>
+											<th width="15%">Check-in/out</th>
+											<th width="20%">Contact</th>
+											<th width="20%"></th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for i in bookings %}
+										<tr>
+											<td>{{i.booking_number}}</td>
+											<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}</td>
+											<td><small>
+												{{i.check_in_date|default:''}}
+												{% if i.check_out_date %}<br /> {{i.check_out_date|default:'' }} {% endif %}
+												</small>
+											</td>
+											<td><small>
+												{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
+												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
+												</small>
+											</td>
+											
+											<td>
+												<ul class="list-inline">
+
+													<li class="list-inline-item">
+														<form action = "{% url 'booking_form' i.booking_number %}" method = 'GET'>
+															<button class = "btn btn-link" 
+																data-toggle="tooltip" title="Vacate" 
+																type = "submit">
+																<i class= "fa fa-sign-out fa-lg"></i>
+																<!-- fa fa-external-link fa fa-minus-circle fa fa-power-off fa fa-share-square-o fa fa-sign-out-->
+															</button>
+															<input hidden name = "booking_number" value = '{{i.booking_number}}' />
+														</form>
+													</li>
+												</ul>
+											</td> 
+										</tr>
+										{% empty %}
+										<tr>
+											<td colspan = "5" ><strong>No Bookings Found!</strong></td>
+										</tr>
+										{% endfor bookings %}
+										
+										
+									</tbody>
+									<tfoot>
+									</tfoot>
+								</table>
+							</div>
+							<div class="box info-bar">
+								<div class="row">
+									<div class="col-md-12 col-lg-12 products-showing">
+										<div class = "text-center">
+											{% if bookings.has_previous %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('1');"><i class="fa fa-chevron-left"></i> First</button>  
+												<button type = "button" class="btn btn-sm btn-primary"  onclick="get_bookings('{{ bookings.previous_page_number }}');">Prev</button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled" href="#"><i class = "fa fa-chevron-left"></i> First</button>
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled"  href="#">Prev</button>
+											{% endif %}
+											Showing Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
+											{% if bookings.has_next %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('{{ bookings.next_page_number }}');">Next</button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('{{ bookings.paginator.num_pages }}');">Last <i class = "fa fa-chevron-right"></i></button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Next</button>
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Last <i class = "fa fa-chevron-right"></i></button>
+											{% endif %}				
+										</div>
+									</div>
+								</div>
+							</div>

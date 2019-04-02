@@ -16,7 +16,7 @@
 	<br />
 	<div>
 		<logo-addr>
-			<img src="{{gh.logo_website.url}}"class="rounded float-left" alt="Logo">
+			<img src="{% static 'img/sam_catering_logo.png' %}" class="rounded float-left" alt="Logo">
 			<br/>
 			#130/12, Veerabhadra Nagar<br />
 			Banashakari 3rd Stage<br />
@@ -50,11 +50,11 @@
 				</tr>
 				<tr>
 					<td>CGST: </td>
-					<td>-</td>
+					<td>{{rct.amount|tax:"2.5"|floatformat}}</td>
 				</tr>
 				<tr>
-					<td>SGST (5%):</td> 
-					<td>{{rct.amount|tax:"5"|floatformat}}</td>
+					<td>SGST:</td> 
+					<td>{{rct.amount|tax:"2.5"|floatformat}}</td>
 				</tr>
 				<tr>
 					<td>TOTAL:</td>

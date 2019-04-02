@@ -42,8 +42,7 @@ urlpatterns =[
 	url(r'^ajax/get_bed_availablity/$', views.get_bed_availablity, name='get_bed_availablity'),
 	url(r'^ajax/delete_booking/$', views.delete_booking, name='delete_booking'),
 	url(r'^change_room_bed/$', views.change_room_bed, name='change_room_bed'),
-
-	#path('booking_form/<str:booking_number>/', views.booking_form, name='booking_form'),
+	path('booking_form/<str:booking_number>/', views.booking_form, name='booking_form'),
 	
 	
 	path('booking_details_for_payment/<str:receipt_type>', views.booking_details_for_payment, name='booking_details_for_payment'),
@@ -59,8 +58,14 @@ urlpatterns =[
 	url(r'^ajax/get_net_advance/$', views.get_net_advance, name='get_net_advance'),
 	url(r'^ajax/get_bills_for_month/$', views.get_bills_for_month, name='get_bills_for_month'),
 
-	url(r'^bills_receipts_report/$', views.bills_receipts_report, name='bills_receipts_report'),
+	#url(r'^bills_receipts_report/$', views.bills_receipts_report, name='bills_receipts_report'),
+	url(r'^room_occupancy_report/$', views.room_occupancy_report, name='room_occupancy_report'),
+	url(r'^ajax/get_bed_occupant_details/$', views.get_bed_occupant_details, name='get_bed_occupant_details'),
 
+	
+	#url(r'^vacate_booking/$', views.vacate_booking, name='vacate_booking'),
+	#path('vacate_form/<str:booking_number>/', views.vacate_form, name='vacate_form'),
+	
 	
 ]
 	

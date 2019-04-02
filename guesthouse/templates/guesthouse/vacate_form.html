@@ -1,0 +1,638 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li class="breadcrumb-item"><a href="{% url 'vacate_booking' %}">Vacate</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Vacate Form</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Vacate Form</h3>
+						</div>
+					</div>
+				</div>
+				{% if not room_alloc %}
+				<div class = "row">
+					<div class = "col-sm-12">
+						<h4 class = "text-primary">No room allocation found for - {{booking_number}}</h4>
+					</div>
+				</div>
+				{% else %}
+				<div class = "box">
+					<div class = "row">
+						<div class = "col-sm-3">
+							<h4>Guest Details </h4>
+						</div>
+					</div>
+					
+					<div class = "row">
+						<div class = "col-sm-2">
+							<div class="form-group">
+								Booking Number:
+								<input readonly class = "form-control" value = "{{room_alloc.booking_id}}">
+							</div>																							
+						</div>
+						<div class = "col-sm-5">
+							<div class="form-group">
+								Name:
+								<input readonly class = "form-control" value = "{{room_alloc.guest.first_name}} {{room_alloc.guest.middle_name}} {{room_alloc.guest.last_name}}">
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Date of Joining:
+								<input readonly class = "form-control" value = "{{room_alloc.allocation_start_date|date:'d-M-Y'}}">
+							</div>																							
+						</div>
+						<div class = "col-sm-2">
+							<div class="form-group">
+								Tenure:
+								<input readonly class = "form-control" value = "{{room_alloc.booking.get_tenure_display}}">
+							</div>																							
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Block:
+								<input readonly class = "form-control" value = "{{room_alloc.block.block_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Floor:
+								<input readonly class = "form-control" value = "{{room_alloc.floor.floor_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-2">
+							<div class="form-group">
+								Room:
+								<input readonly class = "form-control" value = "{{room_alloc.room.room_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-2">
+							<div class="form-group">
+								Bed:
+								<input readonly class = "form-control" value = "{{room_alloc.bed.bed_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-2">
+							<div class="form-group">
+								Rent:
+								<input readonly class = "form-control" value = "{{rent}}">
+							</div>
+						</div>
+						<hr>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Advance Amount:
+								<input readonly class = "form-control" value = "{{advance}}">
+							</div>
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Adv Receipt No.:
+								<input readonly class = "form-control" value = "{{advance_rct_no}}">
+							</div>
+						</div>						
+						
+					</div>
+					<div class = "box">
+						<p class = "text-primary"><strong>Settlement Amount</strong></p>
+						<div class = "row">
+							<div class = "col-sm-3">
+							</div>
+							<div class = "col-sm-3">
+								<div class = "box">
+									<div class="form-group">
+										Payable:
+										<input id = "id_final_payable_amount"
+											name = "final_payable_amount"
+											readonly class = "form-control" 
+											value = "{{final_payable_amount}}">
+									</div>
+								</div>
+							</div>						
+							<div class = "col-sm-3">
+								<div class = "box">
+									<div class="form-group">
+										Refund:
+										<input readonly class = "form-control" 
+											id = "id_refund_amount"
+											name = "refund_amount"
+											value = "{{refund_amount}}">
+									</div>
+								</div>
+							</div>						
+						</div>
+					</div>
+					<div class = "box">
+						{% if form.errors or validation_msg%}
+						<div id="errors" class="alert alert-warning alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<div class="inner">
+								{% if form.errors or booking_form.errors or room_alloaction_form.errors %}
+									<p>There were issues in the information you entered. Please correct following:</p>
+								{% endif %}
+								<!-- Error messaging -->
+								{{ form.non_field_errors }}
+								<ul>
+									<!-- Forms -->
+									{% for field in form %}
+										{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+									{% endfor %}
+
+									<!-- Validations -->
+									{% for v in validation_msg %}
+										<li>{{v}}</li>
+									{% endfor %}
+									
+								</ul>
+							</div>
+						</div>
+						{% endif %} 
+						<form method = "post" class="form-horizontal">
+							{% csrf_token %}
+							{% render_field form.vacate_id|append_attr:"hidden:hidden" type="text" class="form-control"%}
+							{% render_field form.created_date|append_attr:"hidden:hidden" type="text" class="form-control"%}
+
+							<div class = "row">
+								<div class = "col-sm-3">
+										<div class="form-group">
+											<strong class = "text-primary">{{ form.vacate_date.label_tag }}</strong>
+											{% if form.is_bound %}
+												{% if form.vacate_date.errors %}						
+													<input id = "id_vacate_date" name = "vacate_date" 
+														value = "{{form.vacate_date.value|date:'Y-m-d'}}" 
+														type = "date"
+														class="form-control is-invalid">
+													{% for error in form.vacate_date.errors %}
+														<div class="invalid-feedback">
+														  {{ error }}
+														</div>
+													{% endfor %}
+										
+												{% else %}
+													<input id = "id_vacate_date" name = "vacate_date" 
+														value = "{{form.vacate_date.value|date:'Y-m-d'}}" 
+														type = "date"
+														class="form-control is-valid">
+												{% endif %}
+											{% else %}
+													<input id = "id_vacate_date" name = "vacate_date" 
+														value = "{{form.vacate_date.value|date:'Y-m-d'}}" 
+														type = "date"
+														class="form-control">
+											{% endif %}
+											
+											{% if form.vacate_date.help_text %}
+												<small class="form-text text-muted">
+													{{ form.vacate_date.help_text }}
+												</small>
+											{% endif %}
+										</div>																							
+								</div>
+								
+								<div class = "col-sm-9">
+									<div class = "box">
+										<p><strong>Deductions:</strong></p>
+										<div class = "row">
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label>Maint. deductions:</label>
+													{% if form.is_bound %}
+														{% if form.maintenance_deductions.errors %}						
+															{% render_field form.maintenance_deductions class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.maintenance_deductions class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.maintenance_deductions class="form-control" %}
+													{% endif %}
+													
+													{% if form.maintenance_deductions.help_text %}
+														<small class="form-text text-muted">
+															{{ form.maintenance_deductions.help_text }}
+														</small>
+													{% endif %}
+												</div>		
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													{{ form.rent_arrears_deductions.label_tag }}
+													{% if form.is_bound %}
+														{% if form.rent_arrears_deductions.errors %}						
+															{% render_field form.rent_arrears_deductions class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.rent_arrears_deductions class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.rent_arrears_deductions class="form-control" %}
+													{% endif %}
+													
+													{% if form.rent_arrears_deductions.help_text %}
+														<small class="form-text text-muted">
+															{{ form.rent_arrears_deductions.help_text }}
+														</small>
+													{% endif %}
+												</div>		
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													{{ form.other_deductions.label_tag }}
+													{% if form.is_bound %}
+														{% if form.other_deductions.errors %}						
+															{% render_field form.other_deductions class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.other_deductions class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.other_deductions class="form-control" %}
+													{% endif %}
+													
+													{% if form.other_deductions.help_text %}
+														<small class="form-text text-muted">
+															{{ form.other_deductions.help_text }}
+														</small>
+													{% endif %}
+												</div>		
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class = "row">
+								<div class = "col-sm-3">
+									<div class="form-group">
+
+									</div>																							
+								</div>
+								<div class = "col-sm-9">
+									<div class = "box">
+										<p><strong>Refund:</strong></p>
+										<div class = "row">
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label>Mode of payment:</label>
+													{% if form.is_bound %}
+														{% if form.refund_mode_of_payment.errors %}						
+															{% render_field form.refund_mode_of_payment class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_mode_of_payment class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_mode_of_payment class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_mode_of_payment.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_mode_of_payment.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+											<div class = "col-sm-8">
+												<div class="form-group">
+													<label> Ch/DD in favour of:</label> 
+													{% if form.is_bound %}
+														{% if form.refund_cheque_dd_in_favour_of.errors %}						
+															{% render_field form.refund_cheque_dd_in_favour_of class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_cheque_dd_in_favour_of class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_cheque_dd_in_favour_of class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_cheque_dd_in_favour_of.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_cheque_dd_in_favour_of.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+										</div>
+										<div class = "row">
+											<div class = "col-sm-4">
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label> Chq/DD No: </label>
+													{% if form.is_bound %}
+														{% if form.refund_cheque_dd_no.errors %}						
+															{% render_field form.refund_cheque_dd_no class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_cheque_dd_no class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_cheque_dd_no class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_cheque_dd_no.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_cheque_dd_no.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label> Chq/DD Date: </label>
+													{% if form.is_bound %}
+														{% if form.refund_cheque_dd_date.errors %}						
+															{% render_field form.refund_cheque_dd_date class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_cheque_dd_date class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_cheque_dd_date class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_cheque_dd_date.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_cheque_dd_date.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>											
+										</div>
+										<div class = "row">
+											<div class = "col-sm-4">
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label> Bank Name: </label>
+													{% if form.is_bound %}
+														{% if form.refund_bank_name.errors %}						
+															{% render_field form.refund_bank_name class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_bank_name class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_bank_name class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_bank_name.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_bank_name.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label> Account No: </label>
+													{% if form.is_bound %}
+														{% if form.refund_bank_acc_no.errors %}						
+															{% render_field form.refund_bank_acc_no class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_bank_acc_no class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_bank_acc_no class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_bank_acc_no.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_bank_acc_no.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+										
+										</div>
+										<div class = "row">
+											<div class = "col-sm-4">
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label> IFSC Code: </label>
+													{% if form.is_bound %}
+														{% if form.refund_ifsc_code.errors %}						
+															{% render_field form.refund_ifsc_code class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_ifsc_code class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_ifsc_code class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_ifsc_code.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_ifsc_code.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+											<div class = "col-sm-4">
+												<div class="form-group">
+													<label> Bank Branch: </label>
+													{% if form.is_bound %}
+														{% if form.refund_bank_branch.errors %}						
+															{% render_field form.refund_bank_branch class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_bank_branch class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_bank_branch class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_bank_branch.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_bank_branch.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+										
+										</div>
+										<div class = "row">
+											<div class = "col-sm-4">
+											</div>
+											<div class = "col-sm-8">
+												<div class="form-group">
+													<label> Refund Reference: </label>
+													{% if form.is_bound %}
+														{% if form.refund_reference.errors %}						
+															{% render_field form.refund_reference class="form-control is-invalid" %}
+														{% else %}
+															{% render_field form.refund_reference class="form-control is-valid" %}
+														{% endif %}
+													{% else %}
+															{% render_field form.refund_reference class="form-control" %}
+													{% endif %}
+													
+													{% if form.refund_reference.help_text %}
+														<small class="form-text text-muted">
+															{{ form.refund_reference.help_text }}
+														</small>
+													{% endif %}
+												</div>
+											</div>
+										
+										</div>
+										
+										
+									</div>
+								</div>
+								
+							</div>
+
+							<div class = "row">
+								<div class = "col-sm-6">
+									<div class="form-group">
+										{{ form.statement_prepared_by.label_tag }}
+										{% if form.is_bound %}
+											{% if form.statement_prepared_by.errors %}						
+												{% render_field form.statement_prepared_by class="form-control is-invalid" %}
+											{% else %}
+												{% render_field form.statement_prepared_by class="form-control is-valid" %}
+											{% endif %}
+										{% else %}
+												{% render_field form.statement_prepared_by class="form-control" %}
+										{% endif %}
+										
+										{% if form.statement_prepared_by.help_text %}
+											<small class="form-text text-muted">
+												{{ form.statement_prepared_by.help_text }}
+											</small>
+										{% endif %}
+									</div>
+								</div>
+								
+								<div class = "col-sm-6">
+									<div class="form-group">
+										{{form.management_approval_by.label_tag}}
+										{% if form.is_bound %}
+											{% if form.management_approval_by.errors %}						
+												{% render_field form.management_approval_by class="form-control is-invalid" %}
+											{% else %}
+												{% render_field form.management_approval_by class="form-control is-valid" %}
+											{% endif %}
+										{% else %}
+												{% render_field form.management_approval_by class="form-control" %}
+										{% endif %}
+										
+										{% if form.management_approval_by.help_text %}
+											<small class="form-text text-muted">
+												{{ form.management_approval_by.help_text }}
+											</small>
+										{% endif %}
+									</div>
+								</div>
+								
+							</div>
+							<div class = "text-center">
+								<button class = "btn btn-primary" type="submit">Save</button>
+							</div>						
+						</form>
+					</div>
+				</div>
+				{% endif %}
+
+			</div>
+		</div>	
+	</div>
+	{% include 'guesthouse/message-modal_ok.html' %}
+
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	
+	<script>
+	
+	$( document ).ready(function() {
+
+		$("#id_receipt_for > option").each(function() {
+			if (this.value == '{{receipt_type}}') {
+				$('#id_receipt_for option[value="'+ this.value + '"]').attr("disabled", false);
+			} else {
+				$('#id_receipt_for option[value="'+ this.value + '"]').attr("disabled", true);
+			}
+		});
+		
+		if ('{{receipt_type}}' == 'AD' || '{{receipt_type}}' == 'BK' ){
+			$("#id_receipt_for_month").attr('readonly',true);
+			$("#id_bill").attr('readonly',true);
+		}
+		
+		if ('{{receipt_type}}' == 'AD'){
+			booking_number = '{{room_alloc.booking_id}}';
+			$.ajax({
+				url: '{% url "get_net_advance" %}', 
+				data: {'booking_number':booking_number},
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					adv = JSON.parse(data);
+					$("#id_amount").val(adv.net_adv_amt);
+					if (adv.adv_amt > 0 && adv.net_adv_amt == 0 ){
+						$("#adv_text").html('Advance of Rs. ' + adv.adv_amt + ' is already paid in full.');
+					}
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});						
+		}
+		
+		if ('{{receipt_type}}' == 'RN'){
+		
+			$("#id_amount").val('{{rent}}');
+		}
+
+		
+	});
+
+	
+	</script>
+	
+	<script>
+		$("#id_receipt_for_month").change(function(){
+			booking_number = '{{room_alloc.booking_id}}';
+			receipt_for = $('#id_receipt_for').val();
+			receipt_for_month = this.value;
+			
+				$.ajax({
+					url: '{% url "get_bills_for_month" %}', 
+					data: {'booking_number':booking_number, 'receipt_for':receipt_for, 'bill_for_month' : receipt_for_month },
+					dataType: 'text', 
+					type: 'POST',
+					success: function (data) {
+						elements = JSON.parse(data);
+						bills = elements.bills;
+						var txt = "<select id='id_bill' name ='bill' class='form-control' >";
+						for (i = 0; i < bills.length; i++) {
+							txt += "<option value = '" + bills[i].bill_number + "'> #" + bills[i].bill_number + " (Rs." + bills[i].amount + ")</option>";
+						};
+						txt += "<option selected value = ''>" + "</option>";
+						txt += "</select>"; 
+						$("#id_bill").html(txt);
+					},
+					error: function(xhr){
+						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+						return;
+					}					
+				});			
+		});	
+		
+	</script>
+	{% endblock jscripts %}

@@ -321,7 +321,7 @@ class Booking (models.Model):
 class Booking_food(models.Model):
 	FOOD_PREF = (
 		('VEG', 'Vegetarian'),
-		('NOV-VEG', 'Non-Vegetarian'),
+		('NON-VEG', 'Non-Vegetarian'),
 	)	
 	booking_number = models.ForeignKey(Booking, models.CASCADE, null=False)
 	food_option = models.BooleanField(default=False)
@@ -402,8 +402,8 @@ class Bill(models.Model):
 class Receipt(models.Model):
 	
 	PAYMENT_MODE = (
-		('CS', 'CASH'),
-		('ON', 'ONLINE'),
+		('CS', 'Cash'),
+		('ON', 'Online'),
 		('CH', 'Cheque'),
 		('DD', 'Demand Draft'),
 	)
@@ -454,7 +454,7 @@ class Billing_error(models.Model):
 	created_date = models.DateTimeField(auto_now_add=True, null=False)
 	updated_date = models.DateTimeField(auto_now=True, null=False)
 
-class closing_balance(models.Model):
+class Closing_balance(models.Model):
 	id = models.AutoField(primary_key=True) 
 	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
 	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
@@ -464,7 +464,7 @@ class closing_balance(models.Model):
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
 
-class month_closing_error(models.Model):
+class Month_closing_error(models.Model):
 	id = models.AutoField(primary_key=True)
 	guest = models.ForeignKey(Guest, models.DO_NOTHING, null=True)
 	booking = models.ForeignKey(Booking, models.DO_NOTHING, null=True)
@@ -474,4 +474,42 @@ class month_closing_error(models.Model):
 	created_date = models.DateTimeField(auto_now_add=True, null=False)
 	updated_date = models.DateTimeField(auto_now=True, null=False)
 
+class Occupancy_dashboard(models.Model):
+	id = models.AutoField(primary_key=True)
+	bed = models.ForeignKey(Bed, models.DO_NOTHING, null=False, blank=False)
+	room = models.ForeignKey(Room, models.DO_NOTHING, null=False, blank=False)
+	floor = models.ForeignKey(Floor, models.DO_NOTHING, null=False, blank=False)
+	block = models.ForeignKey(Block, models.DO_NOTHING, null=False, blank=False)
+	occupied =  models.BooleanField(default=False)
+	blocked =  models.BooleanField(default=False)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)
 	
+class Vacate(models.Model):
+	PAYMENT_MODE = (
+		('CS', 'Cash'),
+		('ON', 'Online'),
+		('CH', 'Cheque'),
+		('DD', 'Demand Draft'),
+	)
+	vacate_id = models.AutoField(primary_key=True)
+	vacate_date = models.DateField(null=False)	
+	room_alloc = models.ForeignKey(Room_allocation, models.PROTECT, null=False, blank=False)
+	maintenance_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	rent_arrears_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	other_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	rental_payment_status = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	final_payable_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	refund_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	refund_mode_of_payment = models.CharField(max_length = 2, choices=PAYMENT_MODE, blank = True, null=True)
+	refund_cheque_dd_in_favour_of = models.CharField(max_length = 600, default = '', blank = True)
+	refund_cheque_dd_no = models.CharField(max_length = 15, default = '', blank = True)
+	refund_cheque_dd_date = models.DateField(null=True, blank = True)
+	refund_bank_acc_no = models.CharField(max_length = 20, default = '', blank = True)
+	refund_ifsc_code = models.CharField(max_length = 10, default = '', blank = True)
+	refund_bank_name = models.CharField(max_length = 500, default = '', blank = True)
+	refund_bank_branch = models.CharField(max_length = 600, default = '', blank = True)
+	refund_reference = models.CharField(max_length = 500, default = '', blank = True)
+	statement_prepared_by = models.CharField(max_length = 500, default = '', blank = True)
+	management_approval_by = models.CharField(max_length = 500, default = '', blank = True)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)	
+	updated_date = models.DateTimeField(auto_now=True, null=False)	

@@ -244,7 +244,11 @@
 			$('.clockpicker').clockpicker({
 			   autoclose:"true",
 				placement:"bottom"            
-			});				
+			});	
+
+			if ($("#check_in_date").val() != 'undefined') {
+				get_blocks($("#check_in_date").val());
+			}
 		});
 	</script>
 

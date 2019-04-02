@@ -5,8 +5,6 @@
 														{{ guest_form.date_of_birth.label_tag }}
 														{% if guest_form.is_bound %}
 															{% if guest_form.date_of_birth.errors %}
-													
-																{% render_field guest_form.date_of_birth class="form-control is-invalid" %}
 																<input name="guest-date_of_birth" class="form-control  is-invalid" id="id_guest-date_of_birth" type="date" value= "{{guest_form.date_of_birth.value|date:'Y-m-d'}}">
 																{% for error in guest_form.date_of_birth.errors %}
 																	<div class="invalid-feedback">

@@ -14,7 +14,7 @@ from django.utils.safestring import mark_safe
 from django.forms import ImageField
 
 from guesthouse.models import Booking, Guest, Room_allocation, Pin_code
-from guesthouse.models import Receipt, Bill
+from guesthouse.models import Receipt, Bill, Vacate
 
 from guesthouse.validators import validate_image_size, validate_india_mobile_no, validate_yyyy_mm
 
@@ -251,4 +251,11 @@ class AdvReceiptForm_AR(forms.ModelForm):
 		except Bill.DoesNotExist:
 			billObj = None
 
-		return billObj			
+		return billObj		
+
+class Vacate_form(forms.ModelForm):
+	class Meta:
+		model = Vacate
+		exclude = ('vacate_id',)	
+		
+		

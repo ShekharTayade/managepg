@@ -168,7 +168,7 @@
 											</div>
 										</div>
 										
-										{% if room %}
+										{% if bed_allocated or room.block %}
 										<div class = "row" style = "border:1px solid lightgrey;">
 											<div class = "col-sm-12">
 												Current Allocation:
@@ -199,12 +199,8 @@
 												</div>
 											</div>
 										</div>
-										<!--<div class = "row">
-											<div class = "col-sm-12">
-												<strong>Allocate Another Room/Bed:</strong>
-											</div>
-										</div> -->
-										{% else %}
+										{% endif %}
+										{% if not bed_allocated %}
 										<div class = "row">
 											<div class = "col-sm-3">
 												<div class="form-group">
