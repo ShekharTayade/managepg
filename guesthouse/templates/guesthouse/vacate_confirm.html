@@ -1,0 +1,157 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li class="breadcrumb-item"><a href="{% url 'vacate_booking' %}">Vacate</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Vacate Confirm</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				
+				{% if valid_fail_msg %}
+				<div class = "row">
+					<div class = "box">
+						<h5 class = "text-primary">{{valid_fail_msg}}</h5>
+					</div>
+				</div>
+				{% else %}
+				<div class = "row">
+					<div class = "box">
+						Vacating Form Details
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "box">
+						<table class = "table table-borderless">
+							<tbody>
+								<tr>
+									<td>OCCUPANT NAME:</td> <td> {{room_alloc.guest.first_name}} {{room_alloc.guest.middle_name}} {{room_alloc.guest.last_name}}</td>
+								</tr>
+								<tr>
+									<td>DATE OF JOINING:</td> <td> {{room_alloc.allocation_start_date}}</td>
+								</tr>
+								<tr>
+									<td>TENURE:</td> <td> {{room_alloc.booking.get_tenure_display}}</td>
+								</tr>
+ 								<tr>
+									<td>VACATING DATE:</td> <td> {{room_alloc.allocation_end_date}}</td>									
+								</tr>
+								<tr>
+								</tr>
+ 								<tr>
+									<td>1. ALLOTEMENT BLOCK/FLOOR:</td> <td> {{room_alloc.block.block_name}} / {{room_alloc.floor.floor_name}}</td>	
+								</tr>
+ 								<tr>
+									<td>2. ROOM/BED:</td> <td> {{room_alloc.room.room_name}} / {{room_alloc.bed.bed_name}}</td>	
+								</tr>
+ 								<tr>
+									<td>3. TYPE:</td> <td> {{room_alloc.room.max_beds}} Bed Room</td>	<td>RENT: {{rent}}</td>
+								</tr>
+ 								<tr>
+									<td>4. ADVANCE:</td> <td> {{advance_amount}}</td>	<td>RC. NO.: {{advance_rct_no}}</td>
+								</tr>
+ 								<tr>
+									<td>5. REFUND AMOUNT:</td> <td> {{vacate.refund_amount}}</td>									
+								</tr>
+								<tr>
+								</tr>
+ 								<tr>
+									<td>1. DEDUCTIONS TOWARDS MAINTENANCE:</td> <td> {{vacate.maintenance_deductions}}</td>									
+								</tr>
+ 								<tr>
+									<td>2. DEDUCTIONS TOWARDS RENT ARREARERS:</td> <td> {{vacate.rent_arrears_deductions}}</td>									
+								</tr>
+ 								<tr>
+									<td>3. ANY OTHER DEDUCTIONS:</td> <td> {{vacate.other_deductions}}</td>									
+								</tr>
+ 								<tr>
+									<td>4. RENTAL PAYMENT STATUS:</td> <td> ________</td>									
+								</tr>
+ 								<tr>
+									<td>5. EXCESS DIFFERENCE AMOUNT PAYABLE:</td> <td> {{vacate.final_payable_amount}}</td>									
+								</tr>
+ 								<tr>
+									<td>6. FINAL PAYABLE AMOUNT:</td> <td> {{vacate.final_payable_amount}}</td>									
+								</tr>
+
+							</tbody>
+						</table>
+
+						<table>
+							<tbody>
+								<tr>
+									<td><strong>REFUND DETAILS OF THE GUEST</strong></td><td></td>
+								</tr>
+ 								</tr>
+									<td>CHEQUE IN FAVOUR OF:</td> <td> {{vacate.refund_cheque_dd_in_favour_of}}</td>									
+								</tr>
+ 								<tr>
+									<td>BANK A/C NO.:</td> <td> {{vacate.refund_bank_acc_no}}</td>									
+								</tr>
+ 								<tr>
+									<td>IFSC CODE:</td> <td> {{vacate.refund_ifsc_code}}</td><td> BRANCH:</td><td>{{vacate.refund_bank_branch}}</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td><td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td><td>&nbsp;</td>
+								</tr>
+								
+ 								<tr>
+									<td></td><td>GUEST SIGN:_______</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+						<table class = "table table-bordered">
+							<tbody>
+								<tr>
+									<td>STATEMENT PREPARED BY:</td> <td> {{vacate.statement_prepared_by}}</td>									
+								</tr>
+								<tr>
+									<td>MANAGEMENT APPROVAL BY:</td> <td> {{vacate.management_approval_by}}</td>									
+								</tr>
+								<tr>
+									<td>APPROVAL AMOUNT CASH/CHEQUE NO.:</td> <td> __________________</td>									
+								</tr>
+ 								<tr>
+									<td>BANK: {{vacate.refund_bank}}</td><td> DATE: {{vacate.vacate_date}}</td>
+								</tr>
+								<tr>
+								</tr>
+								<tr>
+								</tr>
+ 								<tr>
+									<td> SIGNATURE: _____________________</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class = "text-center mb-3">
+					<a href = "{% url 'vacate_print' vacate.vacate_id %}" class = "btn btn-primary">Print</a>
+				</div>
+				
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	{% endblock jscripts %}
+	

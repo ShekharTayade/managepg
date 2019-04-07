@@ -19,59 +19,10 @@ from guesthouse.models import Room_conversion, Bed_conversion, Room, Bed, Occupa
 
 today = datetime.datetime.today()
 
-
-@login_required
-def bills_receipts_report(request):
-
-
-	'''
-	bills = Bill.objects.filter(booking__account_closed = False).annotate(rct_amt=Sum('receipt__amount'))
-	unpaid_bills = bill.filter(Q(rct_amt = None) | Q(amount__gt = F('rct_amt']))
-	
-	rcts_without_bills = Receipt.objects.filter(bill = None, booking__account_closed = False)
-	'''
-	
-	booking_list = Booking.objects.filter(account_closed = False).values('booking_number','guest__first_name',
-		'guest__middle_name','guest__last_name', 'check_in_date', 'check_out_date', 'guest__phone_number',
-		'guest__email_id')
-	
-	bookings_bill = Booking.objects.filter(account_closed = False).values('booking_number','guest__first_name',
-		'guest__middle_name','guest__last_name', 'check_in_date', 'check_out_date', 'guest__phone_number',
-		'guest__email_id').annotate(bill_amt=Sum('bill__amount'))
-		
-	bookings_rct = Booking.objects.filter(account_closed = False).values('booking_number','guest__first_name',
-		'guest__middle_name','guest__last_name', 'check_in_date', 'check_out_date', 'guest__phone_number',
-		'guest__email_id').annotate(rct_amt=Sum('receipt__amount'))	
-
-		
-	results = {}
-	
-	for b in booking_list:
-		results={'booking_number': b.booking_number}
-		bill_rec = {}
-		b_amt = 0
-		rct_rec = {}
-		r_amt = 0
-		
-		for bill in bookings_bill:
-			if b.booking_number == bill.booking_id:
-				b_amt = b_amt + bill.amount
-		bill_rec = {'BILL-AMT':b_amt}
-		
-		for rct in bookings_rct:
-			if b.booking_number == rct.booking_id:
-				r_amt = r_amt + rct.amount
-		rct_rec = {'RCT-AMT':r_amt}	
-		
-		outstanding = 'TBD'
-		
-	
-	return render(request, 'guesthouse/bills_receipts_report.html', {'bookings':bookings, 
-			'outstanding':outstanding})
-	
+@login_required			
 def room_occupancy_report(request):
 
-	total_beds = Bed.objects.filter(available_from__lte = today,
+	beds_master = Bed.objects.filter(available_from__lte = today,
 			available_to__gte = today).select_related('block','floor','room').order_by(
 				'block','floor','room')
 
@@ -105,7 +56,7 @@ def room_occupancy_report(request):
 		if tr.room_id in room_conv:
 			beds = bed_conv.filter(room_id = tr.room_id)
 		else:
-			beds = total_beds.filter(room_id = tr.room_id)
+			beds = beds_master.filter(room_id = tr.room_id)
 		
 		for b in beds:
 			if b.bed_id in bed_alloc:
@@ -166,7 +117,137 @@ def get_bed_occupant_details(request):
 			
 	return render(request, 'guesthouse/bed_occupant_details.html', {'bed':bed})
 
+@login_required	
+def guest_account_booking(request):
+	return render(request, 'guesthouse/guest_account_booking.html', {} )
+
+
+def guest_account_report(request, booking_number):
+
+	booking = Booking.objects.get(booking_number = booking_number)
+	room_alloc = Room_allocation.objects.filter(booking_id = booking_number).order_by('updated_date').last()
+
+	# Receipts with bill
+	rcts_with_bill = Receipt.objects.filter(booking_id = booking_number, bill_id__isnull = False)
+	rcts_with_bill_ids = Receipt.objects.filter(booking_id = booking_number, bill_id__isnull = False).values_list('bill_id', flat=True)
+
+	# Receipts without bill
+	rcts_without_bill = Receipt.objects.filter(booking_id = booking_number, bill__isnull = True)
+	
+	# All Bills without receipts
+	bills_without_receipts = Bill.objects.filter(booking_id = booking_number).exclude(bill_number__in = rcts_with_bill_ids)
+
+	bills_sum = Bill.objects.filter(booking_id = booking_number).aggregate(bill_amt=Sum('amount'))
+		
+	rcts_sum = Receipt.objects.filter(booking_id = booking_number).aggregate(rct_amt=Sum('amount'))
+
+	total_bill_amt = bills_sum['bill_amt']
+	total_rct_amt = rcts_sum['rct_amt']
+		
+	# Result set is Transaction Date, Bill Amt, Rct amt, Type, For_month
+	results = []
+	for r in rcts_without_bill:
+		row = {}
+		row['id'] = r.receipt_number
+		row['date'] = r.receipt_date
+		row['bill_amt'] = None
+		row['rct_amt'] = r.amount
+		row['type'] = r.get_receipt_for_display
+		row['For Month'] = r.receipt_for_month
+		
+		results.append(row)
+	
+	for rb in rcts_with_bill:
+		row = {}
+		row['id'] = rb.receipt_number
+		row['date'] = rb.receipt_date
+		row['bill_amt'] = rb.bill.amount
+		row['rct_amt'] = rb.amount
+		row['type'] = rb.get_receipt_for_display
+		row['month'] = rb.receipt_for_month
+		
+		results.append(row)
+
+	for b in bills_without_receipts:
+		row = {}
+		row['id'] = b.bill_number
+		row['date'] = b.bill_date
+		row['bill_amt'] = b.amount
+		row['rct_amt'] = None
+		row['type'] = b.get_bill_for_display
+		row['month'] = b.bill_for_month
+		
+		results.append(row)
+		
+	result_set = sorted(results, key=lambda k: k['date'])	
+	
+	return render(request, 'guesthouse/guest_account_report.html', {'result_set':result_set, 
+		'total_bill_amt':total_bill_amt, 'total_rct_amt':total_rct_amt, 'booking':booking,
+		'room_alloc':room_alloc})
+
+@login_required		
+def bills_receipts_report(request):
+
+	room_alloc = Room_allocation.objects.filter( Q(allocation_start_date__lte = today) &
+		( Q(allocation_end_date__gte = today, bed_id__isnull = False) |	
+		  Q(allocation_end_date__isnull = True, bed_id__isnull = False) )
+		).order_by('allocation_start_date')
+		
+	result_set = []
+	total_advance = 0
+	total_unpaid_bills = 0
+	total_bills = 0
+	total_rcts = 0
+	for r in room_alloc:
+		row = {}
+		
+		# Bills without receipts
+		rcts_with_bill_ids = Receipt.objects.filter(booking_id = r.booking_id, bill_id__isnull = False).values_list('bill_id', flat=True)
+		unpaid_bills = Bill.objects.filter(booking_id = r.booking_id).exclude(
+				bill_number__in = rcts_with_bill_ids).aggregate(unpaid_bill_amt=Sum('amount'))
+		
+		rcts = Receipt.objects.filter(booking_id = r.booking_id, 
+				receipt_for__in = ['AD', 'BK']).aggregate(adv_sum=Sum('amount'))
+
+		bills_sum = Bill.objects.filter(booking_id = r.booking_id).aggregate(bill_amt=Sum('amount'))
+			
+		rcts_sum = Receipt.objects.filter(booking_id = r.booking_id).aggregate(rct_amt=Sum('amount'))
+				
+		row['booking_number'] = r.booking_id
+		row['guest_name'] = r.guest.first_name + ' ' + r.guest.middle_name + ' ' + r.guest.last_name
+		row['advance'] = rcts['adv_sum']
+		row['unpaid_bill_amt'] = unpaid_bills['unpaid_bill_amt']
+		row['total_bills'] = bills_sum['bill_amt']
+		row['total_receipts'] = rcts_sum['rct_amt']
 
 		
-	
+		if bills_sum['bill_amt']:
+			bill_amt = bills_sum['bill_amt']
+		else:
+			bill_amt = 0
+		if rcts_sum['rct_amt']:
+			rct_amt = rcts_sum['rct_amt']
+		else:
+			rct_amt = 0
+		if rcts['adv_sum']:
+			adv_amt = rcts['adv_sum']
+		else:
+			adv_amt = 0
+		if unpaid_bills['unpaid_bill_amt']:
+			unpaid_bill_amt = unpaid_bills['unpaid_bill_amt']
+		else:
+			unpaid_bill_amt = 0
+			
+		row['outstanding'] = bill_amt - ( rct_amt - adv_amt )
+
+		total_advance = total_advance + adv_amt
+		total_unpaid_bills = total_unpaid_bills + unpaid_bill_amt
+		total_bills = total_bills + bill_amt
+		total_rcts = total_rcts + rct_amt
+		outstanding = total_bills - total_rcts - total_advance
+		result_set.append(row)
+
+	return render(request, 'guesthouse/bills_receipts_report.html', {'result_set':result_set, 
+		'total_bills':total_bills, 'total_rcts':total_rcts, 'total_advance':total_advance,
+		'total_unpaid_bills':total_unpaid_bills, 'outstanding':outstanding})		
 	

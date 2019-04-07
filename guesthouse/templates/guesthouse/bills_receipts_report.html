@@ -2,6 +2,7 @@
 {% load static %}
 {% load utils %}
 {% load widget_tweaks %}
+{% load l10n %}
 	<!-- Only Override the site content block -->
 	{% block sitecontent %}
     <div id="all">
@@ -13,7 +14,7 @@
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-								<li aria-current="page" class="breadcrumb-item active">Bills/Receipts Report</li>
+								<li aria-current="page" class="breadcrumb-item active">Bills/Receipts Dashboard</li>
 							</ol>
 						</nav>
 					</div>
@@ -21,44 +22,63 @@
 				<div class = "row">
 					<div class = "col-sm-12">
 						<div class="box">
-							<h3>Bills-Payements Report</h3>
+							<h3>Bills-Receipt Dashboard</h3>
+							Bills and receipts dashboard for the bookings currently active
 						</div>
 					</div>
 				</div>
 
-				<p class="text-muted">{% if count > 0 %} {{ bookings.count }} bookings found {% else %} 0 bookings found{% endif %}</p>
+				<h4 class="box"><span class = "text-primary"><strong>Total Occupancy: {{percent}}%</strong></span></h4>
+				<div class = "box">
+					<div id = "barchart">
+					</div>
+				</div>
+				<div class = "box">
+					<div class = "row">
+						<table class = "table table-bordered">
+							<tbody>
+								<tr>
+									<td style = "text-align:right">Advance: {{total_advance|localize|default_if_none:'-'}}</td>
+									<td style = "text-align:right">Unpaid Bills amt: {{total_unpaid_bills|localize|default_if_none:'-'}}</td>
+									<td style = "text-align:right">Total Bill Amt: {{total_bills|localize|default_if_none:'-'}}</td>
+									<td style = "text-align:right">Total Receipt Amt: {{total_rcts|localize|default_if_none:'-'}}</td>
+									<td style = "text-align:right">Outstanding Amt: {{outstanding|localize|default_if_none:'-'}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+						
+
+				<div class = " box mb-3">
+					<div class = "text-primary"><h4>All Details <i class = "fa fa-chevron-right"></i></h4></div>
+				</div>
+				<p class="text-muted">{% if result_set|length > 0 %} {{ result_set|length }} bookings found {% else %} No bookings found{% endif %}</p>
 						
 				<div class="table table-responsive">
 					<table id = "bookingsTbl" class="table table-responsive">
 						<thead>
 							<tr>
-								<th width="10%">Booking No.</th>
+								<th width="20%">Booking No.</th>
 								<th width="30%">Name</th>
-								<th width="15%">Check-in/out</th>
-								<th width="15%">Contact</th>
-								<th width="10%">Bill Amount</th>
-								<th width="10%">Receipt Amount</th>
+								<th width="10%">Advance</th>
+								<th width="10%">Unpaid Bill Amt</th>
+								<th width="10%">Total Bill Amt</th>
+								<th width="10%">Total Rct Amt</th>
 								<th width="10%">Outstanding</th>											
 							</tr>
 						</thead>
 						<tbody>
-							{% for i in bookings %}
+							{% for i in result_set %}
 							<tr>
-								<td><a href="" >{{i.booking_number}}</a></td>
-								<td>{{i.guest__first_name}} {{i.guest__middle_name}} {{i.guest__last_name}}</td>
-								<td><small>
-									{{i.check_in_date|default:''}}
-									{% if i.check_out_date %}<br /> {{i.check_out_date|default:'' }} {% endif %}
-									</small>
-								</td>
-								<td><small>
-									{% if i.guest__phone_number %} Ph: {{i.guest__phone_number}} {% endif %}
-									{% if i.guest__email_id %}<br /> Email:{{i.guest__email_id}} {% endif %}
-									</small>
-								</td>
-								<td>{{i.bill_amt|floatformat}}</td>
-								<td></td>
-								<td></td>
+								<td><a href="{% url 'guest_account_report' i.booking_number %}" >{{i.booking_number}}</a></td>
+								<td>{{i.guest_name}}</td>
+								<td style = "text-align:right">{{i.advance|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{i.unpaid_bill_amt|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{i.total_bills|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{i.total_receipts|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{i.outstanding|default_if_none:'-'}}</td>
 							</tr>
 							{% empty %}
 							<tr>
@@ -68,8 +88,13 @@
 						</tbody>
 						<tfoot>
 							<tr>
-								<td colspan="5">Net Outstanding<td>
-								<td >{{outstanding}}<td>
+								<td></td>
+								<td></td>
+								<td style = "text-align:right">{{total_advance|localize|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{total_unpaid_bills|localize|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{total_bills|localize|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{total_rcts|localize|default_if_none:'-'}}</td>
+								<td style = "text-align:right">{{outstanding|localize|default_if_none:'-'}}</td>
 							</tr>
 						</tfoot>
 					</table>
@@ -83,6 +108,42 @@
 
 
 	{% block jscripts %}
+	<script>	
+    google.charts.load("current", {packages:["corechart"]});
+    
+    google.charts.setOnLoadCallback(drawChart);
+	
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ["Total", "Amount", { role: "style" } ],
+            ["Bill Amount", {{total_bills}}, "#b87333"],
+            ["Receipt Amount", {{total_rcts}}, "green"],
+            ["Advance Amount", {{total_advance}}, "grey"],
+        ]);  
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+        var options = {
+            title: "Bill & Receipts",
+            bar: {groupWidth: "95%"},
+            legend: { position: "none" },
+            is3D: true,
+            animation: {"startup": true}
+        };
+        var chart = new google.visualization.BarChart(document.getElementById("barchart"));
+        chart.draw(view, options);
+	}
+        	
+    </script>	
+	
+	
+	
 	<script>
     $(document).ready(function() {
       

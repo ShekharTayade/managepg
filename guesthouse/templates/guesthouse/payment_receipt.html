@@ -73,6 +73,16 @@
 						</div>
 					</div>
 
+					<form method = "post" class="form-horizontal">
+						{% csrf_token %}
+						{% render_field form.id|append_attr:"hidden:hidden" type="text" class="form-control"%}
+						{% render_field form.guest|append_attr:"hidden:hidden" type="text" class="form-control"%}
+						{% render_field form.booking|append_attr:"hidden:hidden" type="text" class="form-control"%}
+						{% render_field form.created_date|append_attr:"hidden:hidden" type="text" class="form-control"%}
+						<input hidden name = "alloc_id" value = "{{room_alloc.alloc_id}}"> 
+						<input hidden name = "booking_number" value = "{{booking.booking_number}}"> 
+						<input hidden name = "receipt_type" value = "{{receipt_type}}"> 
+						<!-- /Error messaging -->
 					<div class = "box">
 						{% if form.errors or validation_msg%}
 						<div id="errors" class="alert alert-warning alert-dismissable">
@@ -98,192 +108,182 @@
 							</div>
 						</div>
 						{% endif %} 
-						<form method = "post" class="form-horizontal">
-							{% csrf_token %}
-							{% render_field form.id|append_attr:"hidden:hidden" type="text" class="form-control"%}
-							{% render_field form.guest|append_attr:"hidden:hidden" type="text" class="form-control"%}
-							{% render_field form.booking|append_attr:"hidden:hidden" type="text" class="form-control"%}
-							{% render_field form.created_date|append_attr:"hidden:hidden" type="text" class="form-control"%}
-							<input hidden name = "alloc_id" value = "{{room_alloc.alloc_id}}"> 
-							<input hidden name = "booking_number" value = "{{booking.booking_number}}"> 
-							<input hidden name = "receipt_type" value = "{{receipt_type}}"> 
-							<!-- /Error messaging -->
 
-							<div class = "row">
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.receipt_number.label_tag }}
-										{% render_field form.receipt_number|append_attr:"readonly:readonly" class="form-control" %}
-										{% if form.receipt_number.help_text %}
-											<small class="form-text text-muted">
-												{{ form.receipt_number.help_text }}
-											</small>
-										{% endif %}
-									</div>																							
-								</div>
-							</div>
-							<div class = "row">
-								<div class = "col-sm-3">
-									<h4> Enter Receipt Details </h4>
-								</div>
-							</div>
-							<div class = "row">
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.receipt_date.label_tag }}
-										{% if form.is_bound %}
-											{% if form.receipt_date.errors %}						
-												<input name="receipt_date" class="form-control  is-invalid" id="id_receipt_date" type="date" value= "{{form.receipt_date.value|date:'Y-m-d'}}">
-												{% for error in form.receipt_date.errors %}
-													<div class="invalid-feedback">
-													  {{ error }}
-													</div>
-												{% endfor %}
-									
-											{% else %}
-												<input name="receipt_date" class="form-control  is-valid" id="id_receipt_date" type="date" value= "{{form.receipt_date.value|date:'Y-m-d'}}">
-											{% endif %}
-										{% else %}
-											<input name="receipt_date" class="form-control" id="id_receipt_date" type="date" value= "{{form.receipt_date.value|date:'Y-m-d'}}">
-										{% endif %}
-									
-										{% if form.receipt_date.help_text %}
-											<small class="form-text text-muted">
-												{{ form.receipt_date.help_text }}
-											</small>
-										{% endif %}
-									</div>																							
-								</div>
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.receipt_for.label_tag }}
-										{% render_field form.receipt_for|append_attr:"readonly:readonly" class="form-control" %}
-										{% if form.receipt_for.help_text %}
-											<small class="form-text text-muted">
-												{{ form.receipt_for.help_text }}
-											</small>
-										{% endif %}
-									</div>																							
-								</div>
-								
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.receipt_for_month.label_tag }}
-										{% render_field form.receipt_for_month class="form-control" %}
-										{% if form.receipt_for_month.help_text %}
-											<small class="form-text text-muted">
-												{{ form.receipt_for_month.help_text }}
-											</small>
-										{% endif %}
-									</div>																							
-								</div>
-								
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.bill.label_tag }}
-										{% render_field form.bill class="form-control" %}
-										{% if form.bill.help_text %}
-											<small class="form-text text-muted">
-												{{ form.bill.help_text }}
-											</small>
-										{% endif %}
-									</div>																							
-								</div>
-							</div>
-
-							<div class = "row">
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.amount.label_tag }}
-										{% if form.is_bound %}
-											{% if form.amount.errors %}
-									
-												{% render_field form.amount class="form-control is-invalid" %}
-												{% for error in form.amount.errors %}
-													<div class="invalid-feedback">
-													  {{ error }}
-													</div>
-												{% endfor %}
-									
-											{% else %}
-												{% render_field form.amount class="form-control valid" %}
-											{% endif %}
-										{% else %}
-											{% render_field form.amount class="form-control" %}
-										{% endif %}
-									
-										{% if form.amount.help_text %}
-											<small class="form-text text-muted">
-												{{ form.amount.help_text }}
-											</small>
-										{% endif %}	
-										<small id = "adv_text" class="form-text">
+						<div class = "row">
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.receipt_number.label_tag }}
+									{% render_field form.receipt_number|append_attr:"readonly:readonly" class="form-control" %}
+									{% if form.receipt_number.help_text %}
+										<small class="form-text text-muted">
+											{{ form.receipt_number.help_text }}
 										</small>
-									</div>
-								</div>
-								<div class = "col-sm-3">
-									<div class="form-group">
-										{{ form.mode_of_payment.label_tag }}
-										{% if form.is_bound %}
-											{% if form.mode_of_payment.errors %}
-									
-												{% render_field form.mode_of_payment class="form-control is-invalid" %}
-												{% for error in form.mode_of_payment.errors %}
-													<div class="invalid-feedback">
-													  {{ error }}
-													</div>
-												{% endfor %}
-									
-											{% else %}
-												{% render_field form.mode_of_payment class="form-control valid" %}
-											{% endif %}
-										{% else %}
-											{% render_field form.mode_of_payment class="form-control" %}
-										{% endif %}
-									
-										{% if form.mode_of_payment.help_text %}
-											<small class="form-text text-muted">
-												{{ form.mode_of_payment.help_text }}
-											</small>
-										{% endif %}	
-									</div>
-								</div>
-								
-								<div class = "col-sm-6">
-									<div class="form-group">
-										{{ form.payment_reference.label_tag }}
-										{% if form.is_bound %}
-											{% if form.payment_reference.errors %}
-									
-												{% render_field form.payment_reference class="form-control is-invalid" %}
-												{% for error in form.payment_reference.errors %}
-													<div class="invalid-feedback">
-													  {{ error }}
-													</div>
-												{% endfor %}
-									
-											{% else %}
-												{% render_field form.payment_reference class="form-control valid" %}
-											{% endif %}
-										{% else %}
-											{% render_field form.payment_reference class="form-control" %}
-										{% endif %}
-									
-										{% if form.payment_reference.help_text %}
-											<small class="form-text text-muted">
-												{{ form.payment_reference.help_text }}
-											</small>
-										{% endif %}	
-									</div>
-								</div>
-								
+									{% endif %}
+								</div>																							
 							</div>
-							<div class = "text-center">
+						</div>
+						<div class = "row">
+							<div class = "col-sm-3">
+								<h4> Enter Receipt Details </h4>
+							</div>
+						</div>
+						<div class = "row">
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.receipt_date.label_tag }}
+									{% if form.is_bound %}
+										{% if form.receipt_date.errors %}						
+											<input name="receipt_date" class="form-control  is-invalid" id="id_receipt_date" type="date" value= "{{form.receipt_date.value|date:'Y-m-d'}}">
+											{% for error in form.receipt_date.errors %}
+												<div class="invalid-feedback">
+												  {{ error }}
+												</div>
+											{% endfor %}
+								
+										{% else %}
+											<input name="receipt_date" class="form-control  is-valid" id="id_receipt_date" type="date" value= "{{form.receipt_date.value|date:'Y-m-d'}}">
+										{% endif %}
+									{% else %}
+										<input name="receipt_date" class="form-control" id="id_receipt_date" type="date" value= "{{form.receipt_date.value|date:'Y-m-d'}}">
+									{% endif %}
+								
+									{% if form.receipt_date.help_text %}
+										<small class="form-text text-muted">
+											{{ form.receipt_date.help_text }}
+										</small>
+									{% endif %}
+								</div>																							
+							</div>
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.receipt_for.label_tag }}
+									{% render_field form.receipt_for|append_attr:"readonly:readonly" class="form-control" %}
+									{% if form.receipt_for.help_text %}
+										<small class="form-text text-muted">
+											{{ form.receipt_for.help_text }}
+										</small>
+									{% endif %}
+								</div>																							
+							</div>
+							
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.receipt_for_month.label_tag }}
+									{% render_field form.receipt_for_month class="form-control" %}
+									{% if form.receipt_for_month.help_text %}
+										<small class="form-text text-muted">
+											{{ form.receipt_for_month.help_text }}
+										</small>
+									{% endif %}
+								</div>																							
+							</div>
+							
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.bill.label_tag }}
+									{% render_field form.bill class="form-control" %}
+									{% if form.bill.help_text %}
+										<small class="form-text text-muted">
+											{{ form.bill.help_text }}
+										</small>
+									{% endif %}
+								</div>																							
+							</div>
+						</div>
+
+						<div class = "row">
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.amount.label_tag }}
+									{% if form.is_bound %}
+										{% if form.amount.errors %}
+								
+											{% render_field form.amount class="form-control is-invalid" %}
+											{% for error in form.amount.errors %}
+												<div class="invalid-feedback">
+												  {{ error }}
+												</div>
+											{% endfor %}
+								
+										{% else %}
+											{% render_field form.amount class="form-control valid" %}
+										{% endif %}
+									{% else %}
+										{% render_field form.amount class="form-control" %}
+									{% endif %}
+								
+									{% if form.amount.help_text %}
+										<small class="form-text text-muted">
+											{{ form.amount.help_text }}
+										</small>
+									{% endif %}	
+									<small id = "adv_text" class="form-text">
+									</small>
+								</div>
+							</div>
+							<div class = "col-sm-3">
+								<div class="form-group">
+									{{ form.mode_of_payment.label_tag }}
+									{% if form.is_bound %}
+										{% if form.mode_of_payment.errors %}
+								
+											{% render_field form.mode_of_payment class="form-control is-invalid" %}
+											{% for error in form.mode_of_payment.errors %}
+												<div class="invalid-feedback">
+												  {{ error }}
+												</div>
+											{% endfor %}
+								
+										{% else %}
+											{% render_field form.mode_of_payment class="form-control valid" %}
+										{% endif %}
+									{% else %}
+										{% render_field form.mode_of_payment class="form-control" %}
+									{% endif %}
+								
+									{% if form.mode_of_payment.help_text %}
+										<small class="form-text text-muted">
+											{{ form.mode_of_payment.help_text }}
+										</small>
+									{% endif %}	
+								</div>
+							</div>
+							
+							<div class = "col-sm-6">
+								<div class="form-group">
+									{{ form.payment_reference.label_tag }}
+									{% if form.is_bound %}
+										{% if form.payment_reference.errors %}
+								
+											{% render_field form.payment_reference class="form-control is-invalid" %}
+											{% for error in form.payment_reference.errors %}
+												<div class="invalid-feedback">
+												  {{ error }}
+												</div>
+											{% endfor %}
+								
+										{% else %}
+											{% render_field form.payment_reference class="form-control valid" %}
+										{% endif %}
+									{% else %}
+										{% render_field form.payment_reference class="form-control" %}
+									{% endif %}
+								
+									{% if form.payment_reference.help_text %}
+										<small class="form-text text-muted">
+											{{ form.payment_reference.help_text }}
+										</small>
+									{% endif %}	
+								</div>
+							</div>
+								
+							<div class = "text-center mb-5">
 								<button class = "btn btn-primary" type="submit">Save</button>
-							</div>						
-						</form>
+							</div>
+							
+						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>	
 	</div>
@@ -333,9 +333,14 @@
 			});						
 		}
 		
-		if ('{{receipt_type}}' == 'RN'){
-		
+		if ('{{receipt_type}}' == 'RN'){		
 			$("#id_amount").val('{{rent}}');
+			$("#id_receipt_for_month").prop('required', true);
+			$("#id_bill").prop('required', true);
+		}
+		if ('{{receipt_type}}' == 'FD'){		
+			$("#id_receipt_for_month").prop('required', true);
+			$("#id_bill").prop('required', true);
 		}
 
 		

@@ -1,0 +1,153 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load utils %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li class="breadcrumb-item"><a href="{% url 'guest_account_booking' %}">Guest Bill-Receipts Details</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Guest Account</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Booking Number: {{booking.booking_number}}</h3>
+						</div>
+					</div>
+				</div>
+
+				<div class = "row">
+						<!-- <div class="box">
+							<h4>{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}</h4>
+							<h5>{{booking.guest.phone_number}} {{booking.guest.email_id}}</h5>
+							<h5>{{booking.guest.current_address_1}} {{booking.guest.current_address_2}}<br />
+								{{booking.guest.current_city}} {{booking.guest.current_state}} {{booking.guest.current_pin_code|default:''}}<br />
+								{{booking.guest.email_id}} <br />
+								{{booking.guest.phone_number}} <br />
+							</h5>
+						</div> -->
+						{% if booking.guest.guest_photo %}
+						<div class = "col-sm-3">
+							<br />
+								<img id = "modal-photo" class="card-img-top img-display" src="{{ booking.guest.guest_photo.url }}" alt="Photo" style="width:100%">
+						</div>
+							<div class = "col-sm-6">
+						{% else %}
+							<div class = "col-sm-9">
+						{% endif %}
+
+							<div class="card-body">
+								  <h4 id = "modal-name" class="card-title">{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}</h4>
+								  <div class="card-text">
+									{{booking.guest.current_address_1}} {{booking.guest.current_address_2}}<br />
+									{{booking.guest.current_city}} {{booking.guest.current_state}} {{booking.guest.current_pin_code|default:''}}<br />
+									{{booking.guest.email_id}} <br />
+									{{booking.guest.phone_number}} <br />
+								  </div>
+							</div>
+						</div>				
+						<div class = "col-sm-3">
+							<h5 class="card-title">Room/Bed Allocation:</h5>
+							<div class="card-text">
+								{% if room_alloc %}
+									{{room_alloc.block.block_name}} / {{room_alloc.floor.floor_name}} / {{room_alloc.room.room_name}} / {{room_alloc.bed.bed_name}}
+								{% else %}
+									NO ROOM/BED ALLOCATION
+								{% endif %}
+							</div>
+						</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class = "box">
+							<table id = "details" class = "table table-bordered">
+								<thead>
+									<th width="20%" >Number</th>
+									<th width="15%" >Date</th>
+									<th width="15%" >Bill Amount</th>
+									<th width="15%" >Receipt Amount</th>
+									<th width="20%" >Type</th>
+									<th width="15%" >Month</th>
+								</thead>
+								<tbody>
+									{% for t in result_set %}
+									<tr>
+										<td>{{t.id}}</td>
+										<td>{{t.date|date:'m-d-Y'}}</td>
+										<td style="text-align:right">{{t.bill_amt|default_if_none:'-'}}</td>
+										<td style="text-align:right">{{t.rct_amt|default_if_none:'-'}}</td>
+										<td>{{t.type}}</td>
+										<td>{{t.month}}</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+								<tfoot>
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">{{total_bill_amt|default_if_none:'-'}}</td>
+										<td style="text-align:right">{{total_rct_amt|default_if_none:'-'}}</td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tfoot>								
+							</table>
+							<br />
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	
+	<script>
+    $(document).ready(function() {
+      
+        table = $('#details').DataTable( {
+        retrieve: true,
+        paging: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel',
+                messageTop: '{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}',
+                title : "Guest Account Report - Booking No.: {{booking.booking_number}}"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: '{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}',
+                title : "Guest Account Report - Booking No.: {{booking.booking_number}}"
+            },
+            {
+                extend: 'print',
+                messageTop: '{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}',
+                title : "Guest Account Report - Booking No.: {{booking.booking_number}}"
+			}
+        ]
+        
+        } );
+    } );    	
+	
+	</script>
+		
+	{% endblock jscripts %}

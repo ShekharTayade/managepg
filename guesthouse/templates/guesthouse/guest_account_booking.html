@@ -13,7 +13,7 @@
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-								<li aria-current="page" class="breadcrumb-item active">Receipts</li>
+								<li aria-current="page" class="breadcrumb-item active">Manage Booking</li>
 							</ol>
 						</nav>
 					</div>
@@ -21,7 +21,7 @@
 				<div class = "row">
 					<div class = "col-sm-12">
 						<div class="box">
-							<h3>Search, Change & Print Receipts</h3>
+							<h3>Search Bookings for Guest Bills and Receipts Report</h3>
 						</div>
 					</div>				
 					<div class="col-lg-3">
@@ -32,7 +32,7 @@
 						<div id = "tab_navigation" class="collapse show navbar-collapse">
 							<div class="card sidebar-menu mb-4">
 								<div class="card-header">
-									<h3 class="h4 card-title">Search Receipts By</h3>
+									<h3 class="h4 card-title">Search Booking By</h3>
 								</div>
 								<div class="card-body">
 								
@@ -45,7 +45,10 @@
 												<a class="nav-link" data-toggle="tab" href="#name_search" role="tab" aria-controls="Personal Details">Guest Name</a>
 											</li>
 											<li class="nav-item">
-												<a class="nav-link" data-toggle="tab" href="#receipt_number_search" role="tab" aria-controls="Personal Details">Receipts Number</a>
+												<a class="nav-link" data-toggle="tab" href="#booking_number_search" role="tab" aria-controls="Personal Details">Booking Number</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#allocation_search" role="tab" aria-controls="Medical Details">Bookings without Room Allocation</a>
 											</li>
 											<li class="nav-item">
 												<a class="nav-link" data-toggle="tab" href="#email_phone_search" role="tab" aria-controls="Parents/Guardians">Email/Phone Number</a>
@@ -62,30 +65,30 @@
 							<div class="tab-content">
 								<div class="tab-pane fade show active" id="date_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/receipts_by_date.html' %}
+										{% include 'guesthouse/manage_booking_by_date.html' %}
 									</div>
 								</div>
 								<div class="tab-pane fade show " id="name_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/receipts_by_name.html' %}
+										{% include 'guesthouse/manage_booking_by_name.html' %}
 									</div>
 								</div>
-								<div class="tab-pane fade show " id="receipt_number_search" role="tabpanel">
+								<div class="tab-pane fade show " id="booking_number_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/receipts_by_number.html' %}
+										{% include 'guesthouse/manage_booking_by_number.html' %}
 									</div>
 								</div>
 								<div class="tab-pane fade show " id="email_phone_search" role="tabpanel">
 									<div class="col-md-12">
-										{% include 'guesthouse/receipts_by_email_phone.html' %}
+										{% include 'guesthouse/manage_booking_by_email_phone.html' %}
 									</div>
 								</div>
 							</div>
 							<!-- end tab-->
 						</div>
 						<div class="box info-bar">
-							<div id = "receipts_table">
-								{% include 'guesthouse/receipts_table.html' %}
+							<div id = "bookings_table">
+								{% include 'guesthouse/guest_account_bookings_table.html' %}
 							</div>
 						</div>						
 					</div>
@@ -94,9 +97,7 @@
 			</div>
         </div>
     </div>
-	<div id = "delete-confirm">	
-		{% include 'guesthouse/receipt_delete_confirm_modal.html' %}
-	</div>
+
 	{% include 'guesthouse/message-modal_ok.html' %}
 	{% endblock sitecontent %}
 
@@ -125,7 +126,7 @@
 			document.getElementById("date-submit").click();		
 		});
 	
-		function get_receipts(page){
+		function get_bookings(page){
 		
 			var execute_ajax = false;
 			var query_data = {};
@@ -164,7 +165,7 @@
 							$("#msg-modal").modal("show");
 							return;
 						}
-						query_data = {'fromdate':from_date, 'todate':to_date, 'page':page}
+						query_data = {'fromdate':from_date, 'todate':to_date, 'page':page, source : 'GUEST-ACCOUNT'}
 						break;
 					case 'name_search':
 						execute_ajax = true;
@@ -178,26 +179,30 @@
 							return;
 						}							
 
-						query_data = {'f_name':f_name, 'm_name':m_name, 'l_name':l_name, 'page':page}
+						query_data = {'f_name':f_name, 'm_name':m_name, 'l_name':l_name, 'page':page, source :'GUEST-ACCOUNT'}
 						break;
-					case 'receipt_number_search':
+					case 'booking_number_search':
 						execute_ajax = true;
-						var b_num = document.getElementById("receipt_num").value;
+						var b_num = document.getElementById("booking_num").value;
 						
 						if (b_num == '' ) {
-							$("#msg").html("Please enter receipt number");
+							$("#msg").html("Please enter booking number");
 							$("#msg-modal").modal("show");
 							return;
 						}							
 
-						query_data = {'receipt_number':b_num, 'page':page}
+						query_data = {'booking_number':b_num, 'page':page, source:'GUEST-ACCOUNT'}
 						break;
 					case 'email_phone_search':
 						execute_ajax = true;
 						var email_id = document.getElementById("email_id").value;
 						var phone_number = document.getElementById("phone_number").value;
 
-						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page}
+						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page, source:'GUEST-ACCOUNT'}
+						break;
+					case 'booking_number_search':
+						execute_ajax = true;
+
 						break;
 						
 				} // End switch
@@ -207,12 +212,12 @@
 			if (execute_ajax) {
 
 				$.ajax({
-					url: '{% url "get_receipts" %}', 
+					url: '{% url "get_bookings" %}', 
 					dataType: 'text',
 					data: query_data,
 					type: 'POST',
 					success: function (data) {
-						$("#receipts_table").html(data);
+						$("#bookings_table").html(data);
 					},
 					error: function(xhr){
 						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please let us know the details and we will be happy to help sort it out."); 
@@ -232,58 +237,5 @@
 			return ret;
 		}
 	</script>
-
-	<script>
-		function confirm_receipt_delete(rct_id) {
-			if ( rct_id == '' ) {
-				return;
-			}
-			$.ajax({
-				url: '{% url "get_receipt" %}', 
-				dataType: 'text',
-				data: {'rct_id':rct_id} ,
-				type: 'POST',
-				success: function (data) {
-					$("#delete-confirm").html(data);
-					$('#delete-modal').modal('show');
-				},
-				error: function(xhr){
-					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
-					return;
-				}
-			});			
-		}
-	</script>		
 	
-	<script>
-		function delete_receipt(rct_id) {
-			
-			$.ajax({
-				url: '{% url "delete_receipt" %}', 
-				dataType: 'text',
-				data: {'rct_id':rct_id} ,
-				type: 'POST',
-				success: function (data) {
-					status = JSON.parse(data).status
-					rct_no = JSON.parse(data).rct_no
-					switch (status) {
-						case 'NO-RECEIPT':
-							$("#msg").html("Receipt Number is invalid");
-							$("#msg-modal").modal("show");				
-							break;
-						case 'SUCCESS':
-							$("#msg").html("Receipt No. " + rct_no + " is sucessfully deleted");
-							$("#msg-modal").modal("show");
-							$('#delete-modal').modal('hide');
-							break;
-					}
-				},
-				error: function(xhr){
-					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
-					return;
-				}
-			});			
-		
-		}
-	</script>	
 	{% endblock jscripts %}

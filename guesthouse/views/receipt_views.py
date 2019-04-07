@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db.models import Count, Q, Max, Sum
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from datetime import datetime
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -18,14 +19,11 @@ from django.template.loader import render_to_string
 from django.core.files.storage import FileSystemStorage
 
 from .views import *
-from guesthouse.forms import AdvReceiptForm, AdvReceiptForm_AR
+from guesthouse.forms import AdvReceiptForm, AdvReceiptForm_AR, ReceiptForm
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation, Bill, Receipt
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
 from guesthouse.models import Room_allocation, Room_conversion
 
-from weasyprint import HTML, CSS
-from django.template.loader import render_to_string
-from django.core.files.storage import FileSystemStorage
 
 today = datetime.date.today()
 
@@ -539,14 +537,15 @@ def get_net_advance( request):
 		receipt_for = 'BK').aggregate(Sum('amount'))
 	
 	this_date = datetime.datetime.strptime(today.strftime('%Y-%m-%d') + " 23:59:59", "%Y-%m-%d %H:%M:%S")
-	room_alloc = Room_allocation.objects.filter(booking_id = booking_number, 
-		allocation_end_date__gte = this_date).first()
-	if not room_alloc:
-		room_alloc = Room_allocation.objects.filter(booking_id = booking_number, 
-			allocation_end_date__isnull = True).first()
+	room_alloc = Room_allocation.objects.filter(booking_id = booking_number).order_by('updated_date').last()
 	
 	#Net advance amount to be collected = Adv Amount for the room - already paid - blocking amount
-	adv_amt = room_alloc.room.advance 
+	if room_alloc:
+		r_adv_amt = room_alloc.room.advance 
+		adv_amt = room_alloc.room.advance
+	else:
+		r_adv_amt = 0
+		adv_amt = 0
 	if adv_rct['amount__sum']:
 		adv_amt = adv_amt - adv_rct['amount__sum']
 	if blk_rct['amount__sum']:
@@ -554,7 +553,7 @@ def get_net_advance( request):
 	if adv_amt < 0:
 		adv_amt =0
 		
-	return JsonResponse({'net_adv_amt':adv_amt, 'adv_amt':room_alloc.room.advance })	
+	return JsonResponse({'net_adv_amt':adv_amt, 'adv_amt':r_adv_amt })	
 
 @csrf_exempt	
 def get_monthly_adv_rent(request):
@@ -586,3 +585,42 @@ def get_monthly_adv_rent(request):
 
 	return JsonResponse({'adv_rent_with_disc':adv_rent_with_disc})
 	
+@login_required
+def receipt_modify(request, rct_id):
+
+	rct = Receipt.objects.get(pk=rct_id)
+	
+	room_alloc = Room_allocation.objects.filter(booking_id = rct.booking_id).order_by('updated_date').last()
+		
+	form = ReceiptForm(request.POST or None, instance=rct)
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('payment_confirmation',  kwargs={ 'rct_id': rct_id }))
+
+	return render(request, 'guesthouse/receipt_modify.html', {'form': form, 'room_alloc':room_alloc,
+	'receipt_type':rct.receipt_for}) 
+
+@csrf_exempt
+def get_receipt(request):
+
+	rct_id = request.POST.get('rct_id', '')
+	rct = Receipt.objects.get(pk=rct_id)
+	print(rct.booking_id)
+	room_alloc = Room_allocation.objects.filter(booking_id = rct.booking_id).order_by('updated_date').last()
+
+	return render(request, 'guesthouse/receipt_delete_confirm_modal.html', {'room_alloc':room_alloc,
+	'rct':rct}) 
+
+@csrf_exempt
+def delete_receipt(	request):
+
+	rct_id = request.POST.get('rct_id', '')
+	status = 'SUCCESS'
+	try:
+		rct = Receipt.objects.get(pk=rct_id)
+		rct_no = rct.receipt_number
+		rct.delete()
+	except Receipt.DoesNotExist:
+		status = 'NO-RECEIPT'
+		
+	return JsonResponse({'status':status, 'rct_no':rct_no})

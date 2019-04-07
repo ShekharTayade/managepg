@@ -1,0 +1,138 @@
+<!doctype html>
+{% load static %}
+{% load utils %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Invoice</title>
+    <meta name="description" content="Invoice demo sample">
+    <meta name="author" content="Kozea">
+	<link rel="stylesheet" href="{% static 'css/style.default.css' %}">
+  </head>
+
+	<body>
+		
+		<div class = "row text-center">
+			<h2>VACATING FORM DETAILS<h2>
+		</div>
+		<div class = "row">
+			<div class = "box">
+				<table>
+					<tbody>
+						<tr>
+							<td>OCCUPANT NAME:</td> <td> {{room_alloc.guest.first_name}} {{room_alloc.guest.middle_name}} {{room_alloc.guest.last_name}}</td>
+						</tr>
+						<tr>
+							<td>DATE OF JOINING:</td> <td> {{room_alloc.allocation_start_date}}</td>
+						</tr>
+						<tr>
+							<td>TENURE:</td> <td> {{room_alloc.booking.get_tenure_display}}</td>
+						</tr>
+						<tr>
+							<td>VACATING DATE:</td> <td> {{room_alloc.allocation_end_date}}</td>									
+						</tr>
+						<tr>
+						</tr>
+						<tr>
+							<td>1. ALLOTEMENT BLOCK/FLOOR:</td> <td> {{room_alloc.block.block_name}} / {{room_alloc.floor.floor_name}}</td>	
+						</tr>
+						<tr>
+							<td>2. ROOM/BED:</td> <td> {{room_alloc.room.room_name}} / {{room_alloc.bed.bed_name}}</td>	
+						</tr>
+						<tr>
+							<td>3. TYPE: {{room_alloc.room.max_beds}} - Bed Room</td><td>RENT: {{rent}}</td>
+						</tr>
+						<tr>
+							<td>4. ADVANCE: {{advance_amount}}</td>	<td>RC. NO.: {{advance_rct_no}}</td>
+						</tr>
+						<tr>
+							<td>5. REFUND AMOUNT:</td> <td> {{vacate.refund_amount}}</td>									
+						</tr>
+						<tr>
+						</tr>
+						<tr>
+							<td>1. DEDUCTIONS TOWARDS MAINTENANCE:</td> <td> {{vacate.maintenance_deductions}}</td>									
+						</tr>
+						<tr>
+							<td>2. DEDUCTIONS TOWARDS RENT ARREARERS:</td> <td> {{vacate.rent_arrears_deductions}}</td>									
+						</tr>
+						<tr>
+							<td>3. ANY OTHER DEDUCTIONS:</td> <td> {{vacate.other_deductions}}</td>									
+						</tr>
+						<tr>
+							<td>4. RENTAL PAYMENT STATUS:</td> <td> _________</td>									
+						</tr>
+						<tr>
+							<td>5. EXCESS DIFFERENCE AMOUNT PAYABLE:</td> <td> {{vacate.final_payable_amount}}</td>									
+						</tr>
+						<tr>
+							<td>6. FINAL PAYABLE AMOUNT:</td> <td> {{vacate.final_payable_amount}}</td>									
+						</tr>
+							<td></td><td></td>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<td><strong>REFUND DETAILS OF THE GUEST</strong></td><td></td>
+						</tr>
+						</tr>
+							<td>CHEQUE IN FAVOUR OF:</td> <td> {{vacate.refund_cheque_dd_in_favour_of}}</td>									
+						</tr>
+						<tr>
+							<td>BANK A/C NO.:</td> <td> {{vacate.refund_bank_acc_no}}</td>									
+						</tr>
+						<tr>
+							<td>IFSC CODE: {{vacate.refund_ifsc_code}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BRANCH:{{vacate.refund_bank_branch}}</td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<br>
+							<br>
+							<td></td><td>GUEST SIGN:_________</td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+					</tbody>
+				</table>
+				<hr>
+				<table>
+					<tbody>
+						<tr>
+							<td>STATEMENT PREPARED BY:</td> <td> {{vacate.statement_prepared_by}}</td>									
+						</tr>
+						<tr>
+							<td>MANAGEMENT APPROVAL BY:</td> <td> {{vacate.management_approval_by}}</td>									
+						</tr>
+						<tr>
+							<td>APPROVAL AMOUNT CASH/CHEQUE NO.:</td> <td> {% if vacate.refund_cheque_dd_no %} {{vacate.refund_cheque_dd_no}} {% else %} ______________ {% endif %}</td>
+						</tr>
+						<tr>
+							<td>BANK: {{vacate.refund_bank}}</td><td> DATE: {{vacate.vacate_date}}</td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<td></td><td></td>
+						</tr>
+						<tr>
+							<td> SIGNATURE:_____________________</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

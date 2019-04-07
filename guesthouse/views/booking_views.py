@@ -150,7 +150,7 @@ def new_booking(request):
 		
 		if booking_number == '' :
 
-			booking_form = BookingForm(prefix="booking",)
+			booking_form = BookingForm(prefix="booking", initial={'food_option': True})
 
 			guest_form = GuestForm(prefix="guest",
 					initial={'current_state': 'KARNATAKA', 'permanent_state':'KARNATAKA',
@@ -446,16 +446,20 @@ def get_bookings(request):
 	except EmptyPage:
 		bookings = paginator.page(paginator.num_pages)
 	
-	return render(request, 'guesthouse/bookings_table.html', {'count':count, 
-		'bookings': bookings, 'source':source})		
+	if source == "BOOKING":
+		return render(request, 'guesthouse/bookings_table.html', {'count':count, 
+			'bookings': bookings, 'source':source})		
+	elif source == "GUEST-ACCOUNT":
+		return render(request, 'guesthouse/guest_account_bookings_table.html', {'count':count, 
+			'bookings': bookings, 'source':source})		
 	
+			
 @csrf_exempt
 def get_booking_by_number( request ):
 	
 	booking_number = request.POST.get('booking_number', '')
 	
 	booking = {}
-	print(booking_number)
 	
 	if booking_number != '' :
 		try:

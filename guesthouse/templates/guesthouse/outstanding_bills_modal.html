@@ -1,0 +1,50 @@
+<!-- Message Modal -->
+<div id="outstanding_bills" tabindex="-1" role="dialog" aria-labelledby="Outstanding Bills" aria-hidden="true" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Outstanding Bill Details</h5>
+				<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+			</div>
+			<div class="modal-body">
+				<div >
+					<div class = "mb-4">
+						<div class = "col-sm-12">
+							<h4>Booking Number: {% if room_alloc.booking_id %} {{room_alloc.booking_id}} {% else %} Booking does not exist!!{% endif %}</h4>
+						</div>
+					</div>
+					{% if outstanding_bills %}
+					<div class="container">
+						<div class = "row">
+							<table class = "table table-bordered">
+								<thead>
+									<tr>
+										<th width="20%">Bill No.</th>
+										<th width="20%">Bill Dt</th>
+										<th width="20%">Bill For</th>
+										<th width="20%">Month</th>
+										<th width="20%">Amont</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for b in outstanding_bills %}
+									<tr>
+										<td> {{b.bill_number}} </td>
+										<td> {{b.bill_date|date:'d-m-Y'}} </td>
+										<td> {{b.get_bill_for_display}} </td>
+										<td> {{b.bill_for_month}} </td>
+										<td class="pull-right"> {{b.amount}} </td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					{% endif %}
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END: Message modal -->		

@@ -497,7 +497,7 @@ class Vacate(models.Model):
 	maintenance_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	rent_arrears_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	other_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-	rental_payment_status = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	rental_payment_status = models.CharField(max_length = 600, default = '', blank = True)
 	final_payable_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	refund_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	refund_mode_of_payment = models.CharField(max_length = 2, choices=PAYMENT_MODE, blank = True, null=True)

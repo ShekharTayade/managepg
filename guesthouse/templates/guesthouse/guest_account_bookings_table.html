@@ -30,14 +30,12 @@
 											
 											<td>
 												<ul class="list-inline">
-
 													<li class="list-inline-item">
-														<form action = "{% url 'booking_form' i.booking_number %}" method = 'GET'>
-															<button class = "btn btn-link" id = "v_{{i.booking_number}}"
-																data-toggle="tooltip" title="Vacate" 
+														<form action = "{% url 'guest_account_report' i.booking_number %}" method = 'GET'>
+															<button class = "btn btn-link" 
+																data-toggle="tooltip" title="Get Guest Bills and Receipts" 
 																type = "submit">
-																<i class= "fa fa-sign-out fa-lg"></i>
-																<!-- fa fa-external-link fa fa-minus-circle fa fa-power-off fa fa-share-square-o fa fa-sign-out-->
+																<i class= "fa fa-money fa-lg"></i>Get details
 															</button>
 															<input hidden name = "booking_number" value = '{{i.booking_number}}' />
 														</form>

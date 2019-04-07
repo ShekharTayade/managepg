@@ -6,6 +6,7 @@
 									<thead>
 										<tr>
 											<th width="10%">Receipt No.</th>
+											<th width="10%">Booking No.</th>
 											<th width="10%">Amount</th>
 											<th width="25%">Name</th>
 											<th width="25%">Receipt Type</th>
@@ -16,10 +17,11 @@
 									<tbody>
 										{% for i in receipts %}
 										<tr>
-											<td>{{i.receipt_number}}</td>
+											<td>{{i.receipt_number}}<br/><small> {{i.receipt_date|date:'d-m-y'}}</small></td>
+											<td>{{i.booking_id}}</td>
 											<td>{{i.amount}}</td>
 											<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}</td>
-											<td><small>{{i.get_receipt_for_display}}<br/> {{i.receipt_date|date:'d-M-Y'}}</small></td>
+											<td><small>{{i.get_receipt_for_display}}</small></td>
 											<td><small>
 												{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
 												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
@@ -35,6 +37,24 @@
 															<i class= "fa fa-print fa-lg"></i>
 														</a>
 													</li>
+													<li class="list-inline-item">
+														<a {% if i.receipt_for != 'AR' %} href = "{% url 'receipt_modify' i.id %}"{% endif %}
+															class = "btn btn-link" 
+															data-toggle="tooltip" title="Change Receipt" 
+															{% if i.receipt_for == 'AR' %}disabled{% endif %}
+															type = "{% if i.receipt_for != 'AR' %} submit {% endif %}">
+															<i class= "fa fa-edit fa-lg"></i>
+														</a>
+													</li>
+													<li class="list-inline-item">
+														<button class = "btn btn-link" 
+															style = "cursor: pointer; color:red;"
+															data-toggle="tooltip" title="Delete Booking" 
+															onclick = "confirm_receipt_delete('{{i.id}}');"
+															type = "button">
+															<i class="fa fa-trash-o fa-lg"></i>
+														</button>											
+													</li>												
 												</ul>
 											</td>
 										</tr>
