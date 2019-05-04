@@ -1,0 +1,231 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load utils %}
+{% load widget_tweaks %}
+{% load l10n %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<form id="bed_form" class = "form-group" method = "post">
+				{% csrf_token %}
+				{% render_field form.room_name|append_attr:"hidden:hidden" class="form-control" %}
+				{% render_field form.block|append_attr:"hidden:hidden" class="form-control" %}
+				{% render_field form.floor|append_attr:"hidden:hidden" class="form-control" %}
+
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li class="breadcrumb-item"><a href="{% url 'room_conversion' %}">Room Conversion</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Convert Room: {{room.room_name}}</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class="box">
+					<div class = "row">
+						<div class = "col-sm-12">
+							<h3>Convert Room: {{room.room_name}} </h3>
+							<span class = "pull-left"><strong>Room: {{room.room_name}}, Block: {{room.block}}, Floor: {{room.floor}}</strong></span>
+							<span class = "pull-right"><strong>Available From:</strong> {{ room.available_from }} &nbsp;&nbsp;&nbsp;<strong>To:</strong> {{ room.available_to }}</span>
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-2">
+							Rent: {{ room.rent_per_bed }}
+						</div>
+						<div class = "col-sm-3">
+							No of Beds: {{room.max_beds}}
+						</div>
+						<div class = "col-sm-3">		
+							Advance: {{room.advance}}
+						</div>
+						<div class = "col-sm-4">						
+							Short Term Rent: {{room.short_term_rent_per_bed }}
+						</div>
+					</div>
+				</div>
+				<div class = "box">
+					<div class = "row">
+						<p><strong>Room Details After Conversion:</strong></p>
+					</div>	
+					<div class = "row">
+						{% if form.errors or validation_msg%}
+						<br />
+						<div id="errors" class="alert alert-warning alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<div class="inner">
+								{% if form.errors or booking_form.errors or room_alloaction_form.errors %}
+									<p>There were issues in the information you entered. Please correct following:</p>
+								{% endif %}
+								<!-- Error messaging -->
+								{{ form.non_field_errors }}
+								<ul>
+									<!-- Forms -->
+									{% for field in form %}
+										{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+									{% endfor %}
+
+									<!-- Validations -->
+									{% for v in validation_msg %}
+										<li>{{v}}</li>
+									{% endfor %}
+									
+								</ul>
+							</div>
+						</div>
+						{% endif %} 
+						{% if err_flag %}
+						<br />
+						<div id="errors" class="alert alert-warning alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<div class="inner">
+								{{err_msg}}
+							</div>
+						</div>
+						{% endif %}
+					</div>
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								{{ form.available_from.label_tag }}
+								<input id="id_available_from" name = "available_from" type="date"
+									class = "form-control" value = "{{form.available_from.value|date:'Y-m-d'}}">
+								{% if form.available_from.help_text %}
+									<small class="form-text text-muted">
+										{{ form.available_from.help_text }}
+									</small>
+								{% endif %}
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								{{ form.available_to.label_tag }}
+								<input id="id_available_to" name = "available_to" type="date"
+									class = "form-control" value = "{{form.available_to.value|date:'Y-m-d'}}">
+								{% if form.available_to.help_text %}
+									<small class="form-text text-muted">
+										{{ form.available_to.help_text }}
+									</small>
+								{% endif %}
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								{{ form.rent_per_bed.label_tag }}
+								{% render_field form.rent_per_bed class="form-control" %}
+								{% if form.rent_per_bed.help_text %}
+									<small class="form-text text-muted">
+										{{ form.rent_per_bed.help_text }}
+									</small>
+								{% endif %}
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								<label> No. of Beds:</label>
+								{% render_field form.max_beds class="form-control" %}
+								{% if form.max_beds.help_text %}
+									<small class="form-text text-muted">
+										{{ form.max_beds.help_text }}
+									</small>
+								{% endif %}
+							</div>																							
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								{{form.advance.label_tag}}
+								{% render_field form.advance class="form-control" %}
+								{% if form.advance.help_text %}
+									<small class="form-text text-muted">
+										{{ form.advance.help_text }}
+									</small>
+								{% endif %}
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								<label>Short Term Rent:</label>
+								{% render_field form.short_term_rent_per_bed class="form-control" %}
+								{% if form.short_term_rent_per_bed.help_text %}
+									<small class="form-text text-muted">
+										{{ form.short_term_rent_per_bed.help_text }}
+									</small>
+								{% endif %}
+							</div>																							
+						</div>
+					</div>
+				</div>
+
+				<input hidden name = "room_id" value = "{{room.room_id}}">
+				<div class = "box">
+					<div id = "beds_data">
+					</div>
+				</div>
+				<div class = "row mb-3">
+					<div class = "col-sm-12">
+						<div class = "text-center">
+							{% if not conv_flag %}
+							<button class = "btn btn-primary" type="submit">
+								Convert
+							</button>
+							{% else %}
+								<h3>This room already has been converted</h3>
+								<button class = "btn btn-primary" onclick="">
+									Cancel
+								</button>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock sitecontent %}
+	
+
+
+	{% block jscripts %}
+	
+	<script>
+
+    $(document).ready(function() {
+		var cnt = $("#id_max_beds").val();
+		set_beds_div(cnt);
+	});
+	
+	$("#id_max_beds").on('change', function() {
+		set_beds_div(this.value);
+	});
+	</script>
+	
+	<script>
+	
+	function set_beds_div(cnt){
+	
+		var txt = '<label><strong>Beds:</strong></label> <div class = "row"> ' + 
+						'<div class = "col-sm-2"><label>Bed Name:</label></div>' + 
+						'<div class = "col-sm-3"><label>Available From:</label></div>' + 
+						'<div class = "col-sm-3"><label>Available To:</label></div>' + 
+					'</div>' ;
+		for (i = 1; i <= cnt; i++) { 
+			row = '<div class = "row">' +
+						'<div class = "col-sm-2"> <input name = "bed_' +  i.toString() + '" class="form-control" type = "text" value = "S' + i.toString() + '"> </div>' + 
+						'<div class = "col-sm-3"> <input name = "date_from_' + i.toString() + '" class="form-control" type="date" value = "{{ room.available_from|date:"Y-m-d" }}"> </div>' + 
+						'<div class = "col-sm-3"> <input name = "date_to_' + i.toString() + '" class="form-control" type="date" value= "{{ room.available_to|date:"Y-m-d" }}"> </div>' + 
+				  '</div>' ;
+			txt = txt + row;
+		}
+		//txt = txt + '  </form>'
+		$("#beds_data").html(txt);
+	}
+	</script>
+	{% endblock jscripts %}
+	

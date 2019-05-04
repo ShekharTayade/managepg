@@ -9,6 +9,8 @@ from django.db import IntegrityError, DatabaseError, Error
 
 from django.urls import resolve
 from django.contrib import messages
+
+from guesthouse.models import Employee
    
 def guesthouselogin(request):
 
@@ -23,6 +25,7 @@ def guesthouselogin(request):
 		email = request.POST['email']
 		next = request.POST['curr_pg']
 		
+
 		user = authenticate(request, email=email, username=username, password=password)
        
 		if user is not None :
@@ -35,12 +38,19 @@ def guesthouselogin(request):
 			return redirect(next)
         
 		else :
-
 			messages.add_message(request, messages.ERROR, 'Your credentials did not match. Please try again.')		
 			return redirect(next)
 			#return render(request, 'eStore/estore_base.html', {
 			#	'username' : request.user.username, 'auth_user' : 'FALSE'})
 	else:
-		
-		messages.add_message(request, messages.ERROR, 'Unauthozied login tried.')		
 		return render(request, 'guesthouse/guesthouse_base.html')
+
+def is_manager(user):
+	
+	return user.employee.is_manager or user.is_staff
+
+def is_ceo(user):
+	
+	return user.employee.is_manager or user.is_staff or user.employee.is_ceo
+	
+	

@@ -1,0 +1,252 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li class="breadcrumb-item"><a href="{% url 'print_bills' %}">Search and Modify Bills</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Bill - Modify</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Bill - Modify</h3>
+						</div>
+					</div>
+				</div>
+				<div class = "box">
+					<div class = "row">
+						<div class = "col-sm-3">
+							<h4>Guest Details </h4>
+						</div>
+					</div>
+					
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Booking Number:
+								<input readonly class = "form-control" value = "{{room_alloc.booking_id}}">
+							</div>																							
+						</div>
+						<div class = "col-sm-6">
+							<div class="form-group">
+								Name:
+								<input readonly class = "form-control" value = "{{room_alloc.guest.first_name}} {{room_alloc.guest.middle_name}} {{room_alloc.guest.last_name}}">
+							</div>																							
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Block:
+								<input readonly class = "form-control" value = "{{room_alloc.block.block_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Floor:
+								<input readonly class = "form-control" value = "{{room_alloc.floor.floor_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Room:
+								<input readonly class = "form-control" value = "{{room_alloc.room.room_name}}">
+							</div>
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Bed:
+								<input readonly class = "form-control" value = "{{room_alloc.bed.bed_name}}">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class = "box">
+					<form method = "post" class="form-horizontal">
+						{% csrf_token %}
+						{% render_field form.guest|append_attr:"hidden:hidden" type="text" class="form-control"%}
+						{% render_field form.booking|append_attr:"hidden:hidden" type="text" class="form-control"%}
+						<!-- /Error messaging -->
+						<div class = "box">
+							{% if form.errors or validation_msg%}
+							<div id="errors" class="alert alert-warning alert-dismissable">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<div class="inner">
+									{% if form.errors %}
+										<p>There were issues in the information you entered. Please correct following:</p>
+									{% endif %}
+									<!-- Error messaging -->
+									{{ form.non_field_errors }}
+									<ul>
+										<!-- Forms -->
+										{% for field in form %}
+											{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+										{% endfor %}
+
+										<!-- Validations -->
+										{% for v in validation_msg %}
+											<li>{{v}}</li>
+										{% endfor %}
+										
+									</ul>
+								</div>
+							</div>
+							{% endif %} 
+
+							<div class = "row">
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_number.label_tag }}
+										{% render_field form.bill_number|append_attr:"readonly:readonly" class="form-control" %}
+										{% if form.bill_number.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_number.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+							</div>
+							<div class = "row">
+								<div class = "col-sm-3">
+									<h4> Update Bill Details </h4>
+								</div>
+							</div>
+							<div class = "row">
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_date.label_tag }}
+										{% if form.is_bound %}
+											{% if form.bill_date.errors %}						
+												<input name="bill_date" class="form-control  is-invalid" id="id_bill_date" type="date" value= "{{form.bill_date.value|date:'Y-m-d'}}">
+												{% for error in form.bill_date.errors %}
+													<div class="invalid-feedback">
+													  {{ error }}
+													</div>
+												{% endfor %}
+									
+											{% else %}
+												<input name="bill_date" class="form-control  is-valid" id="id_bill_date" type="date" value= "{{form.bill_date.value|date:'Y-m-d'}}">
+											{% endif %}
+										{% else %}
+											<input name="bill_date" class="form-control" id="id_bill_date" type="date" value= "{{form.bill_date.value|date:'Y-m-d'}}">
+										{% endif %}
+									
+										{% if form.bill_date.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_date.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_for.label_tag }}
+										{% render_field form.bill_for|append_attr:"readonly:readonly" class="form-control" %}
+										{% if form.bill_for.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_for.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+								
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_for_month.label_tag }}
+										{% render_field form.bill_for_month class="form-control" %}
+										{% if form.bill_for_month.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_for_month.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+								
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.amount.label_tag }}
+										{% if form.is_bound %}
+											{% if form.amount.errors %}
+									
+												{% render_field form.amount class="form-control is-invalid" %}
+												{% for error in form.amount.errors %}
+													<div class="invalid-feedback">
+													  {{ error }}
+													</div>
+												{% endfor %}
+									
+											{% else %}
+												{% render_field form.amount class="form-control valid" %}
+											{% endif %}
+										{% else %}
+											{% render_field form.amount class="form-control" %}
+										{% endif %}
+									
+										{% if form.amount.help_text %}
+											<small class="form-text text-muted">
+												{{ form.amount.help_text }}
+											</small>
+										{% endif %}	
+										<small id = "adv_text" class="form-text">
+										</small>
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class = "text-center mb-3">
+								<button class = "btn btn-primary" type="submit">Save</button>
+							</div>							
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>
+	
+	$( document ).ready(function() {
+
+		$("#id_bill_for > option").each(function() {
+			if (this.value == '{{bill_type}}') {
+				$('#id_bill_for option[value="'+ this.value + '"]').attr("disabled", false);
+			} else {
+				$('#id_bill_for option[value="'+ this.value + '"]').attr("disabled", true);
+			}
+		});
+		
+		if ('{{bill_type}}' == 'RN'){		
+			$("#id_bill_for_month").prop('required', true);
+			$("#id_bill").prop('required', true);
+			if ( $("#id_bill_for_month").val() != '' ){
+				$("#id_bill_for_month").change();
+			}
+		}
+		if ('{{bill_type}}' == 'FD'){		
+			$("#id_bill_for_month").prop('required', true);
+			$("#id_bill").prop('required', true);
+			$("#id_bill_for_month").change();
+		}
+	
+	});
+
+	
+	</script>
+	{% endblock jscripts %}	

@@ -39,14 +39,17 @@
 								
 									<div class="container">
 										<ul class="nav nav-tabs" id="myTab" role="tablist">
+											<!-- <li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#room_search" role="tab" aria-controls="Personal Details">Room</a>
+											</li> -->
+											<li class="nav-item active">
+												<a class="nav-link" data-toggle="tab" href="#booking_number_search" role="tab" aria-controls="Personal Details">Booking Number</a>
+											</li>
 											<li class="nav-item">
-												<a class="nav-link active" data-toggle="tab" href="#date_search" role="tab" aria-controls="Name, Address & Contact">Date Range</a>
+												<a class="nav-link" data-toggle="tab" href="#date_search" role="tab" aria-controls="Name, Address & Contact">Date Range</a>
 											</li>
 											<li class="nav-item">
 												<a class="nav-link" data-toggle="tab" href="#name_search" role="tab" aria-controls="Personal Details">Guest Name</a>
-											</li>
-											<li class="nav-item">
-												<a class="nav-link" data-toggle="tab" href="#booking_number_search" role="tab" aria-controls="Personal Details">Booking Number</a>
 											</li>
 											<li class="nav-item">
 												<a class="nav-link" data-toggle="tab" href="#allocation_search" role="tab" aria-controls="Medical Details">Bookings without Room Allocation</a>
@@ -64,7 +67,17 @@
 					<div class = "col-lg-9">
 						<div class="box info-bar">
 							<div class="tab-content">
-								<div class="tab-pane fade show active" id="date_search" role="tabpanel">
+								<div class="tab-pane fade show" id="room_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/manage_booking_by_room.html' %}
+									</div>
+								</div>
+								<div class="tab-pane fade show active" id="booking_number_search" role="tabpanel">
+									<div class="col-md-12">
+										{% include 'guesthouse/manage_booking_by_number.html' %}
+									</div>
+								</div>
+								<div class="tab-pane fade show " id="date_search" role="tabpanel">
 									<div class="col-md-12">
 										{% include 'guesthouse/manage_booking_by_date.html' %}
 									</div>
@@ -73,14 +86,7 @@
 									<div class="col-md-12">
 										{% include 'guesthouse/manage_booking_by_name.html' %}
 									</div>
-								</div>
-								<div class="tab-pane fade show " id="booking_number_search" role="tabpanel">
-									<div class="col-md-12">
-										{% include 'guesthouse/manage_booking_by_number.html' %}
-									</div>
-								</div>
-								
-								
+								</div>								
 								<div class="tab-pane fade show " id="allocation_search" role="tabpanel">
 									<div class="col-md-12">
 										{% include 'guesthouse/manage_booking_by_allocation.html' %}
@@ -135,7 +141,9 @@
 			document.getElementById("noalloc_todate").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
 
 			// Trigger the inital fetch of orders
-			document.getElementById("date-submit").click();		
+			if (document.getElementsByClassName('active') == 'date_search') {
+				document.getElementById("date-submit").click();		
+			}
 		});
 	
 		function get_bookings(page){
@@ -243,7 +251,10 @@
 
 						query_data = {'email_id':email_id, 'phone_number':phone_number, 'page':page}
 						break;
-					case 'booking_number_search':
+					case 'room_search':
+						execute_ajax = true;
+						var room_name = document.getElementById("room_name").value;
+						query_data = {'room_name':room_name, 'page':page}
 						execute_ajax = true;
 
 						break;

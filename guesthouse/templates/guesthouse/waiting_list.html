@@ -1,0 +1,106 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load l10n %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Waiting List</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Waiting List Report</h3>
+							as of <span id="dt"></span>
+						</div>
+					</div>
+				</div>
+				
+				<div class = "box">
+					<div id ="display-bookings">
+						{{count}} found in waiting list
+						<table id = "bookings" class = "table table-bordered">
+							<thead>
+								<tr>
+									<th width="10%">Booking No.</th>
+									<th width="15%">Start Date</th>
+									<th width="15%">End Date</th>
+									<th width="30%">Name</th>
+									<th width="30%">Contact</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for i in bookings %}
+								<tr>	
+									<td>{{i.booking_number}}</td>
+									<td>{{i.check_in_date|date:'d-M-Y'}}</td>
+									<td>{{i.check_out_date|date:'d-M-Y'}}</td>
+									<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}</td>
+									<td><small>
+										{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
+										{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
+										</small>
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>
+		var today = new Date();
+		var dt =  today.getDate() + "-" + today.getMonth() + "-" + today.getFullYear();
+
+        table = $('#bookings').DataTable( {
+        retrieve: true,
+        paging: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel', 
+                messageTop: 'as of ' + dt,
+                title : "Waiting List Report"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: 'as of ' + dt,
+                title : "Waiting List Report"
+            },
+            {
+                extend: 'print',
+                messageTop: 'as of ' + dt,
+                title : "Waiting List Report"
+			}
+        ]
+        
+        } );	
+	</script>
+	<script>
+    $(document).ready(function() {		
+		$("#dt").html(dt);
+	});
+	</script>
+	{% endblock jscripts %}

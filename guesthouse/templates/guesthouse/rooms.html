@@ -1,0 +1,237 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load utils %}
+{% load widget_tweaks %}
+{% load l10n %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Rooms</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Rooms</h3>
+							Manage Room Details
+						</div>
+					</div>
+				</div>
+					
+				<div class = "box">
+					<form id="submit-form" action = "{% url 'room_modify' %}" method = "GET">
+					<input hidden id="r-id">
+					
+					<div class = "row">
+						<div class = "col-sm-4">
+							<div class="form-group">
+								Block:
+								<div id = "blocks-div">
+									<select id = "blocks" class = "form-control">
+									{% for b in blocks %}
+										<option value = "{{b.block_id}}">{{b.block_name}}</option>
+									{% endfor %}
+										<option value = "0" selected></option>
+									</select>
+								</div>
+							</div>														
+						</div>
+						<div class = "col-sm-4">
+							Floor:
+							<div class="form-group">
+								<div id = "floors-div">
+
+								</div>
+							</div>														
+						</div>
+						
+						<div class = "col-sm-4">
+							Room:
+							<div class="form-group">
+								<div id = "rooms-div">
+
+								</div>
+							</div>														
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-12">
+							<div class = "text-center">
+								<button type = "submit" class = "btn btn-primary">
+									Modify Room
+								</button>
+							</div>
+						</div>
+					</div>
+					</form>
+				</div>
+				
+				<!-- <div id = "room_details">
+					{% include "guesthouse/room_detailsForm.html" %}
+				</div> -->
+				<div id = "beds-div" class = "mb-5">
+				</div>					
+			</div>
+		</div>	
+	</div>
+	{% include 'guesthouse/message-modal_ok.html' %}
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>
+		$( document ).ready(function() {
+
+		});
+    </script>
+
+	<script>
+		$("#blocks").on('change', function() {
+			$.ajax({
+				url: '{% url "get_floors_by_block" %}', 
+				data: {'block_id':this.value},
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					elements = JSON.parse(data);
+					floors = elements.floors;
+					var txt = "<select onchange= 'get_rooms_by_floor(this.value);' id='floors' name ='floors' class='form-control' >";
+					for (i = 0; i < floors.length; i++) {
+						txt += "<option value = '" + floors[i].floor_id + "'>" + floors[i].floor_name + "</option>";
+					};
+					txt += "<option selected value = ''>" + "</option>";
+					txt += "</select>"; 
+					$("#floors-div").html(txt);
+					$("#room_details").hide();
+					$("#conv_details").hide();
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});
+			
+			
+		});		
+
+	</script>
+	<script>
+		function get_rooms_by_floor(floor_id) {
+
+			$.ajax({
+				url: '{% url "get_rooms_by_floor" %}', 
+				data: {'floor_id':floor_id},
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					elements = JSON.parse(data);
+					rooms = elements.rooms;
+					var txt = "<select onchange= 'get_beds_by_room(this.value); get_room_details(this.value);' id='rooms' name ='rooms' class='form-control' >";
+					for (i = 0; i < rooms.length; i++) {
+						txt += "<option value = '" + rooms[i].room_id + "'>" + rooms[i].room_name + "</option>";
+					};
+					txt += "<option selected value = ''>" + "</option>";
+					txt += "</select>"; 
+					$("#rooms-div").html(txt);
+					$("#room_details").hide();
+					$("#conv_details").hide();
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});			
+		}	
+	
+	</script>
+	
+	<script>
+		function get_room_details(room_id){
+			$.ajax({
+				url: '{% url "room_detailsForm"  %}', 
+				data: {'room_id':room_id},
+				dataType: 'text', 
+				success: function (data) {
+
+					$("#room_details").html(data);
+					$("#room_details").show();
+
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});					
+		
+		}
+	
+	</script>
+
+	<script>
+		function get_beds_by_room(room_id) {
+			$.ajax({
+				url: '{% url "get_beds_by_room" %}', 
+				data: {'room_id':room_id},
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					elements = JSON.parse(data);
+					beds = elements.beds;
+					
+					
+					var txt = '<label><strong>Beds:</strong></label> <div class = "row"> ' + 
+									'<div class = "col-sm-2"><label>Bed Name:</label></div>' + 
+									'<div class = "col-sm-3"><label>Available From:</label></div>' + 
+									'<div class = "col-sm-3"><label>Available To:</label></div>' + 
+								'</div>' ;
+					for (i = 0; i < beds.length; i++) { 
+						row = '<div class = "row">' +
+									'<div class = "col-sm-2"> <input readonly name = "bed_' +  beds[i].bed_name + '" class="form-control" type = "text" value = "' + beds[i].bed_name + '"> </div>' + 
+									'<div class = "col-sm-3"> <input readonly name = "date_from_' + beds[i].available_from + '" class="form-control" type="date" value = "' + beds[i].available_from + '"> </div>' + 
+									'<div class = "col-sm-3"> <input readonly name = "date_to_' + beds[i].available_to + '" class="form-control" type="date" value= "' + beds[i].available_to + '"> </div>' + 
+							  '</div>' ;
+						txt = txt + row;
+					}
+					
+					
+					/* var txt = "<select id='beds' name ='beds' class='form-control' >";
+					for (i = 0; i < beds.length; i++) {
+						txt += "<option value = '" + beds[i].bed_id + "'>" + beds[i].bed_name + "</option>";
+					};
+					txt += "<option selected value = ''>" + "</option>";
+					txt += "</select>"; */
+					$("#beds-div").html(txt);
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});
+		}
+	</script>	
+			
+	<script>
+		$("#blocks").on('change', function() {
+			$("#floors").val('');
+			$("#rooms").val('');
+			$("#room_details").hide();
+		});
+		$("#floor").on('change', function() {
+			$("#rooms").val('');
+			$("#room_details").hide();
+		});
+	</script>
+
+
+	{% endblock jscripts %}

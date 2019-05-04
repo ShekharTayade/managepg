@@ -23,83 +23,168 @@
 					<div class = "col-sm-12">
 						<div class="box">
 							<h3>Bills-Receipt Dashboard</h3>
-							Bills and receipts dashboard for the bookings currently active
+							Bills and receipts dashboard for the bookings currently active <br />
+							<span style = "font-size:10px; font-weight:600">(Figures shown are cummulative from the start of each booking)</span>
 						</div>
 					</div>
 				</div>
-
-				<h4 class="box"><span class = "text-primary"><strong>Total Occupancy: {{percent}}%</strong></span></h4>
-				<div class = "box">
+				<!-- <div class = "box">
 					<div id = "barchart">
 					</div>
-				</div>
+				</div> -->
 				<div class = "box">
 					<div class = "row">
 						<table class = "table table-bordered">
+							<thead>
+								<tr>
+									<th width="10%">Block</th>
+									<th width="7%"></th>
+									<th style = "text-align:right;" width="10%">Advance</th>
+									<th style = "text-align:right;" width="10%">Rent</th>
+									<th style = "text-align:right;" width="10%">Food</th>
+									<th style = "text-align:right;" width="10%">O/s-31st Mar</th>
+									<th style = "text-align:right;" width="10%">Outstanding</th>
+									<th>Bill & Receipt Amount Chart</th>
+								</tr>
+							</thead>							
+							<tbody>
+								{% for b in blocks %}
+								<tr>
+									<td rowspan="2"><strong>{{b.block__block_name}}</strong></td>
+									<td>Due</td>
+									{% for a in tda %}
+										{% if a.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{a.adv_due|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in trd %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{t.rent_due|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in tfd %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{t.food_due|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in to31 %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style = "text-align:right">{{t.os_31mar|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in toa %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td  rowspan="2" style = "text-align:right"><strong>{{t.outstanding_amt|floatformat:"0"|default_if_none:'-'}}</strong></td>
+										{% endif %}
+									{% endfor %}
+									<td rowspan = "2"><span id = "chart_{{b.block__block_name}}"></span></td>
+								</tr>
+								<tr>
+									<td>Receipt</td>
+									{% for a in taa %}
+										{% if a.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{a.adv_rct|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in tra %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{t.rn_rct|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in tfa %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{t.food_rct|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+									{% for t in tor %}
+										{% if t.block__block_name == b.block__block_name %}
+											<td style = "text-align:right;">{{t.os_received|floatformat:"0"|default_if_none:'-'}}</td>
+										{% endif %}
+									{% endfor %}
+								</tr>
+								{% endfor %}
+							</tbody>
 							<tbody>
 								<tr>
-									<td style = "text-align:right">Advance: {{total_advance|localize|default_if_none:'-'}}</td>
-									<td style = "text-align:right">Unpaid Bills amt: {{total_unpaid_bills|localize|default_if_none:'-'}}</td>
-									<td style = "text-align:right">Total Bill Amt: {{total_bills|localize|default_if_none:'-'}}</td>
-									<td style = "text-align:right">Total Receipt Amt: {{total_rcts|localize|default_if_none:'-'}}</td>
-									<td style = "text-align:right">Outstanding Amt: {{outstanding|localize|default_if_none:'-'}}</td>
+									<td rowspan="2"><strong>TOTAL</strong></td>
+									<td>Due</td>
+									<td style = "text-align:right;" >{{total_due_adv.adv_due|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right;" >{{total_rent_due.rent_due|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right;">{{total_food_due.food_due|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right;">{{total_outstanding_31Mar.os_31mar|floatformat:"0"|default_if_none:'-'}}</td>
+									<td rowspan="2" style = "text-align:right;"><strong>{{total_outstanding_amt.outstanding_amt|floatformat:"0"|default_if_none:'-'}}</strong></td>
+									<td rowspan = "2"><span id = "chart_total"></span></td>
+								</tr>
+								<tr>
+									<td>Receipt</td>
+									<td style = "text-align:right;">{{total_adv_amt.adv_rct|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right;">{{total_rent_amt.rn_rct|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right;">{{total_food_amt.food_rct|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right;">{{total_os_amt.os_received|floatformat:"0"|default_if_none:'-'}}</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 				</div>
-				
-						
-
-				<div class = " box mb-3">
-					<div class = "text-primary"><h4>All Details <i class = "fa fa-chevron-right"></i></h4></div>
+				<div class = "box">	
+					<div class="table table-responsive">
+						<div class = "text-primary"><h4>Details <i class = "fa fa-chevron-right"></i></h4></div>
+						<p class="text-muted">{% if dashboard|length > 0 %} {{ dashboard|length }} bookings found {% else %} No bookings found{% endif %}</p>
+						<table id = "bookingsTbl" class="table table-responsive">
+							<thead>
+								<tr>
+									<th width="20%">Booking No.</th>
+									<th width="30%">Name</th>
+									<th width="10%">Advance Due</th>
+									<th width="10%">Adv Received</th>
+									<th width="10%">Rent Due</th>
+									<th width="10%">Rent Rcvd</th>
+									<th width="10%">Food Chgr Due</th>
+									<th width="10%">Food Chgr Rcvd</th>
+									<th width="10%">O/s 31st Mar</th>											
+									<th width="10%">O/s Rcvd</th>											
+									<th width="10%">Outstanding Amount</th>											
+								</tr>
+							</thead>
+							<tbody>
+								{% for i in dashboard %}
+								<tr>
+									<td><a style="text-decoration:underline;" href="{% url 'guest_account_report' i.booking_id %}" >{{i.booking_id}}</a></td>
+									<td><small>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}<small></td>
+									<td style = "text-align:right">{{i.expected_advance|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.advance_rct|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.expected_rent|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.rent_rct|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.expected_food_charges|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.food_charges_rct|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.outstanding_31Mar|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.os_received|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{i.outstanding_amont|floatformat:"0"|default_if_none:'-'}}</td>
+								</tr>
+								{% empty %}
+								<tr>
+									<td colspan = "5" ><strong>No Bookings Found!</strong></td>
+								</tr>
+								{% endfor bookings %}										
+							</tbody>
+							<tfoot>
+								<tr>
+									<td></td>
+									<td></td>
+									<td style = "text-align:right">{{total_due_adv|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{total_adv_amt|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{total_rent_due|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{total_rent_amt|floatformat:"0"|default_if_none:'-'}}</td>									
+									<td style = "text-align:right">{{total_food_due|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{total_food_amt|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{total_outstanding_31Mar|floatformat:"0"|default_if_none:'-'}}</td>
+									<td style = "text-align:right">{{total_outstanding_amt|floatformat:"0"|default_if_none:'-'}}</td>
+									
+								</tr>
+							</tfoot>
+						</table>
+					</div>
 				</div>
-				<p class="text-muted">{% if result_set|length > 0 %} {{ result_set|length }} bookings found {% else %} No bookings found{% endif %}</p>
-						
-				<div class="table table-responsive">
-					<table id = "bookingsTbl" class="table table-responsive">
-						<thead>
-							<tr>
-								<th width="20%">Booking No.</th>
-								<th width="30%">Name</th>
-								<th width="10%">Advance</th>
-								<th width="10%">Unpaid Bill Amt</th>
-								<th width="10%">Total Bill Amt</th>
-								<th width="10%">Total Rct Amt</th>
-								<th width="10%">Outstanding</th>											
-							</tr>
-						</thead>
-						<tbody>
-							{% for i in result_set %}
-							<tr>
-								<td><a href="{% url 'guest_account_report' i.booking_number %}" >{{i.booking_number}}</a></td>
-								<td>{{i.guest_name}}</td>
-								<td style = "text-align:right">{{i.advance|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{i.unpaid_bill_amt|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{i.total_bills|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{i.total_receipts|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{i.outstanding|default_if_none:'-'}}</td>
-							</tr>
-							{% empty %}
-							<tr>
-								<td colspan = "5" ><strong>No Bookings Found!</strong></td>
-							</tr>
-							{% endfor bookings %}										
-						</tbody>
-						<tfoot>
-							<tr>
-								<td></td>
-								<td></td>
-								<td style = "text-align:right">{{total_advance|localize|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{total_unpaid_bills|localize|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{total_bills|localize|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{total_rcts|localize|default_if_none:'-'}}</td>
-								<td style = "text-align:right">{{outstanding|localize|default_if_none:'-'}}</td>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-
 			</div>
 		</div>	
 	</div>
@@ -108,42 +193,8 @@
 
 
 	{% block jscripts %}
-	<script>	
-    google.charts.load("current", {packages:["corechart"]});
-    
-    google.charts.setOnLoadCallback(drawChart);
 	
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-            ["Total", "Amount", { role: "style" } ],
-            ["Bill Amount", {{total_bills}}, "#b87333"],
-            ["Receipt Amount", {{total_rcts}}, "green"],
-            ["Advance Amount", {{total_advance}}, "grey"],
-        ]);  
 
-        var view = new google.visualization.DataView(data);
-        view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 1,
-                         type: "string",
-                         role: "annotation" },
-                       2]);
-
-        var options = {
-            title: "Bill & Receipts",
-            bar: {groupWidth: "95%"},
-            legend: { position: "none" },
-            is3D: true,
-            animation: {"startup": true}
-        };
-        var chart = new google.visualization.BarChart(document.getElementById("barchart"));
-        chart.draw(view, options);
-	}
-        	
-    </script>	
-	
-	
-	
 	<script>
     $(document).ready(function() {
       
@@ -152,6 +203,7 @@
         paging: true,
         //dom: 'lBfrtip',
         dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+		lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         buttons: [
            'copy', 
             {
@@ -175,4 +227,134 @@
         } );
     } );    
     </script>	
+	
+	<script type="text/javascript">	
+    google.charts.load("current", {packages:["corechart"]});  
+    google.charts.setOnLoadCallback(drawChart);
+	
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ["Total", "Amount", { role: "style" } ],
+        ["Bill Amount", {{total_due|unlocalize|default_if_none:'0'}}, "#b87333"],
+        ["Receipt Amount", {{total_rcts|unlocalize|default_if_none:'0'}}, "green"]
+      ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "Amount Due and Receipts",
+        width: 300,
+        height: 200,
+		fontSize: 14,
+        bar: {groupWidth: "80%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("chart_total"));
+      chart.draw(view, options);	
+	}
+	/*
+        var data = google.visualization.arrayToDataTable([
+          ['Total', 'Amount'],
+          ['Bill Amount', {{total_due|unlocalize}}],
+          ['Receipt Amount', {{total_rcts|unlocalize}}]
+        ]);
+
+        var options = {
+          title: "Total Due: " + "{{total_due|floatformat:'0'}}",
+          is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById("piechart"));
+        chart.draw(data, options);
+      }	
+	*/
+    </script>	
+
+	<script type="text/javascript">	
+		
+    google.charts.load("current", {packages:["corechart"]});  
+    google.charts.setOnLoadCallback(drawChart);
+	
+	
+    function drawChart() {
+	
+	// for each block
+	{% for b in blocks %}
+		var rent = 0;
+		{% for t in trd %}
+			{% if t.block__block_name == b.block__block_name %}
+				{% if t.rent_due %}			
+					rent = {{t.rent_due|unlocalize|default_if_none:'0'}} ;
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+		var food = 0;
+		{% for t in tfd %}
+			{% if t.block__block_name == b.block__block_name %}
+				{% if t.food_due %}
+					food = {{t.food_due|unlocalize|default_if_none:'0'}} ;
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+		var os_31mar = 0;
+		{% for t in to31 %}
+			{% if t.block__block_name == b.block__block_name %}
+				{% if t.os_31mar %}
+					os_31mar  = {{t.os_31mar|unlocalize|default_if_none:'0'}} ;
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+		
+		total_due = Math.round(rent + food + os_31mar) ;
+		
+		var	rent_rct = 0;
+		{% for t in tra %}
+			{% if t.block__block_name == b.block__block_name %}
+				{% if t.rn_rct %}
+					rent_rct = {{t.rn_rct|unlocalize|default_if_none:"0"}};
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+		var food_rct = 0;
+		{% for t in tfa %}
+			{% if t.block__block_name == b.block__block_name %}
+				{% if t.food_rct %}
+					food_rct = {{t.food_rct|unlocalize|default_if_none:"0"}};
+				{% endif %}
+			{% endif %}
+		{% endfor %}		
+		total_rcts = Math.round(rent_rct + food_rct);
+		
+		var data = google.visualization.arrayToDataTable([
+			["Total", "Amount", { role: "style" } ],
+			["Bill Amount", total_due, "#b87333"],
+			["Receipt Amount", total_rcts, "green"]
+		  ]);
+
+		  var view = new google.visualization.DataView(data);
+		  view.setColumns([0, 1,
+						   { calc: "stringify",
+							 sourceColumn: 1,
+							 type: "string",
+							 role: "annotation" },
+						   2]);
+
+		  var options = {
+			bar: {groupWidth: "80%"},
+			width: 300,
+			height: 200,
+			fontSize: 14,
+			legend: { position: "none" },
+		  };
+		  var chart = new google.visualization.BarChart(document.getElementById("chart_{{b.block__block_name}}"));
+		  chart.draw(view, options);	
+	{% endfor %}
+	}
+	</script>
 	{% endblock jscripts %}

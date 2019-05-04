@@ -41,7 +41,6 @@ def vacate_form (request, booking_number):
 	if not room_alloc:
 		return render(request, 'guesthouse/vacate_form.html', {'room_alloc':room_alloc,
 		'booking_number':booking_number} )
-
 		
 	############################################	
 	## Check if any vacate process done earlier
@@ -61,16 +60,15 @@ def vacate_form (request, booking_number):
 	balance = 0
 	payable_amount = 0
 	refund_amount = 0
-
-				
+	
 	if room_alloc.allocation_end_date:
 		alloc_end_dt = room_alloc.allocation_end_date
 	else :
-		alloc_end_dt = today	
-	
+		alloc_end_dt = today
+		
 	# Process the check out and get the detail amounts
 	process_result = process_vacate(booking_number, alloc_end_dt)
-
+	
 	if process_result['err_flg']:
 		err_flg = True
 		err_msg = process_result['err_msg']
@@ -82,11 +80,14 @@ def vacate_form (request, booking_number):
 		balance = process_result['balance']
 		payable_amount = process_result['payable_amount']
 		refund_amount = process_result['refund_amount']
-	
+		rent_arrears = process_result['rent_arrears']
+
 	if vacate:	
-		vacate_form = Vacate_form(initial={'vacate_date':alloc_end_dt}, instance=vacate)
+		vacate_form = Vacate_form(initial={'vacate_date':alloc_end_dt,
+			'rent_arrears_deductions':rent_arrears}, instance=vacate)
 	else:
-		vacate_form = Vacate_form(initial={'vacate_date':alloc_end_dt, 'rent_arrears_deductions':payable_amount})
+		vacate_form = Vacate_form(initial={'vacate_date':alloc_end_dt, 
+			'rent_arrears_deductions':rent_arrears})
 	
 	# Get outstanding bills
 	result = get_outstanding_bills(request, booking_number)
@@ -102,7 +103,7 @@ def vacate_form (request, booking_number):
 		'outstanding_bills_amount':outstanding_bills_amount, 'vacate_id':vacate_id} )
 
 @csrf_exempt		
-def set_vacate_date(reqeust):
+def set_vacate_date(request):
 	err_flg = False
 	err_msg = ''
 	unpaid_amount = 0
@@ -114,12 +115,14 @@ def set_vacate_date(reqeust):
 		if vacate_date != '':
 			alloc_end_date = datetime.datetime.strptime(vacate_date, "%Y-%m-%d").date()
 			if booking_number != '':
-				process_result = get_process_vacate(booking_number, alloc_end_date)
-				if process_result['err_flag']:
+				process_result = process_vacate(booking_number, alloc_end_date)
+				if process_result['err_flg']:
 					err_flg = True
 					err_msg = process_result['err_msg']
 				else :
-					unpaid_amount = process_result['unpaid_amount']
+					payable_amount = process_result['payable_amount']
+					refund_amount = process_result['refund_amount']
+					rent_arrears = process_result['rent_arrears']
 			else:
 				err_flg = True
 				err_msg = 'BOOKING-REQUIRED'
@@ -131,10 +134,8 @@ def set_vacate_date(reqeust):
 			err_msg = 'WRONG-DATE-FORMAT'
 		
 	
-	return JsonResponse({'err_flg':err_flg, 'err_msg':err_msg, 'adv_amount':adv_amount,
-		'rent':rent, 'adv_rct_no':adv_rct_no, 'balance':balance, 'payable_amount':payable_amount,
-		'refund_amount':refund_amount, 'unpaid_amount':unpaid_amount})
-	
+	return JsonResponse({'err_flg':err_flg, 'err_msg':err_msg, 'payable_amount':payable_amount,
+			'refund_amount':refund_amount, 'rent_arrears': rent_arrears})	
 		
 # Update the allocation end date / Check out date and get rent and bill charges since last bill
 def process_vacate(booking_number, alloc_end_date):
@@ -181,29 +182,32 @@ def process_vacate(booking_number, alloc_end_date):
 		room_conv = Room_conversion.objects.filter(room_id = room_alloc.room_id, available_from__lte = alloc_end_dt,
 					available_to__gte = alloc_end_dt).first()
 		if room_conv:
-			rent = room_conv.rent_per_bed
+			if room_alloc.booking.tenure == 'LT':
+				rent = room_conv.rent_per_bed
+			else :
+				rent = room_conv.short_term_rent_per_bed
 		else:
-			rent = room_alloc.room.rent_per_bed
-	
-	# Check the latest bill month
-	max_month = Bill.objects.filter( booking_id = booking_number ).aggregate( max_month=Max('bill_for_month') )
+			if room_alloc.booking.tenure == 'LT':			
+				rent = room_alloc.room.rent_per_bed
+			else:
+				rent = room_alloc.room.short_term_rent_per_bed				
 
-	if max_month:
-		max_bill_month = max_month['max_month']
-	else:
-		max_bill_month = ''
+	# Check the latest bill month
+	#max_month = Bill.objects.filter( booking_id = booking_number ).aggregate( max_month=Max('bill_for_month') )
+	#if max_month:
+	#	max_bill_month = max_month['max_month']
+	#else:
+	#	max_bill_month = ''
 		
 	# Check out Month
 	year = str(alloc_end_date.year)
 	mth = alloc_end_date.strftime('%m')
 	alloc_end_month = year + '-' + mth
 	
-	# If the month for Check Out date is same as max_month then billing for this month is done.
-	# If not, then we do the billing now.
-	if alloc_end_month != max_month:
-		err_flg = generate_bills_for_month(alloc_end_month, booking_number)
-		if err_flg :
-			err_msg = 'A system error occured while billing for ' + booking_number + ' for month ' + alloc_end_month
+	# Run billing to ensure lat month billing is done.
+	err_flg = generate_bills_for_month(alloc_end_month, booking_number)
+	if err_flg :
+		err_msg = 'A system error occured while billing for ' + booking_number + ' for month ' + alloc_end_month
 	
 	########################
 	## 	Get net payable
@@ -220,10 +224,10 @@ def process_vacate(booking_number, alloc_end_date):
 	if rcts['rct_sum']:
 		rct_amt = rcts['rct_sum']
 	balance = Decimal( bill_amt - rct_amt - adv_amount)
+	rent_arrears = bill_amt - rct_amt
 			
 	payable_amount = 0
-	refund_amount = 0
-	
+	refund_amount = 0	
 	if balance > 0:
 		payable_amount = balance
 	else:
@@ -246,7 +250,7 @@ def process_vacate(booking_number, alloc_end_date):
 
 	return ({'unpaid_amount':unpaid_amount, 'err_flg':err_flg, 'err_msg':err_msg, 'adv_amount':adv_amount,
 		'rent':rent, 'adv_rct_no':adv_rct_no, 'balance':balance, 'payable_amount':payable_amount,
-		'refund_amount':refund_amount})
+		'refund_amount':refund_amount, 'rent_arrears':rent_arrears})
 	
 def vacate_confirm(request):
 

@@ -37,6 +37,12 @@
 					<div class = "row">
 						<div class = "col-sm-3">
 							<div class="form-group">
+								Room:
+								<input class = "form-control" id = 'room_name'>
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
 								Booking Number:
 								<input class = "form-control" id = 'booking_number'>
 							</div>																							
@@ -64,7 +70,7 @@
 						<div class = "col-sm-3">
 							<div class="form-group">
 								<button class = "btn btn-primary" 
-								onclick = "get_details()" type= "button">
+								onclick = "get_details(1)" type= "button">
 									Fetch Details
 								</button>
 							</div>
@@ -82,26 +88,28 @@
 
 		</div>
 	</div>
+	{% include 'guesthouse/message-modal_ok.html' %}
 	{% endblock sitecontent %}
 
 
 	{% block jscripts %}
 	
 	<script>
-		function get_details(){
+		function get_details(pg){
 			booking_num = $('#booking_number').val();
+			room_name = $('#room_name').val()
 			first_name = $('#first_name').val();
 			middle_name = $('#middle_name').val();
 			last_name = $('#last_name').val();
-			if ( booking_num == '' && first_name == '' && middle_name == '' && last_name == ''){
-				$("#msg").html("Please enter booking number or guest name to fetch room allocation.");
+			if ( room_name == '' && booking_num == '' && first_name == '' && middle_name == '' && last_name == ''){
+				$("#msg").html("Please enter room, booking number or guest name to fetch room allocation.");
 				$("#msg-modal").modal("show");				
 				return;
 			}
 			
 			$.ajax({
 				url: '{% url "choose_booking_for_payment" %}', 
-				data: {'booking_num':booking_num, 'first_name':first_name, 'middle_name':middle_name, 'last_name':last_name, 'receipt_type':'{{receipt_type}}' },
+				data: {'room_name': room_name, 'booking_num':booking_num, 'first_name':first_name, 'middle_name':middle_name, 'last_name':last_name, 'receipt_type':'{{receipt_type}}', 'page': pg },
 				dataType: 'text', 
 				type: 'POST',
 				success: function (data) {

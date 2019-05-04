@@ -336,14 +336,10 @@
 		if ('{{receipt_type}}' == 'RN'){		
 			$("#id_amount").val('{{rent}}');
 			$("#id_receipt_for_month").prop('required', true);
-			$("#id_bill").prop('required', true);
 		}
 		if ('{{receipt_type}}' == 'FD'){		
 			$("#id_receipt_for_month").prop('required', true);
-			$("#id_bill").prop('required', true);
 		}
-
-		
 	});
 
 	
@@ -363,13 +359,17 @@
 					success: function (data) {
 						elements = JSON.parse(data);
 						bills = elements.bills;
+						var bill_amt;
 						var txt = "<select id='id_bill' name ='bill' class='form-control' >";
 						for (i = 0; i < bills.length; i++) {
 							txt += "<option value = '" + bills[i].bill_number + "'> #" + bills[i].bill_number + " (Rs." + bills[i].amount + ")</option>";
+							bill_amt = bills[i].amount;
 						};
 						txt += "<option selected value = ''>" + "</option>";
 						txt += "</select>"; 
 						$("#id_bill").html(txt);
+						$("#id_bill option:first").prop("selected", "selected");
+						$("#id_amount").val(bill_amt);
 					},
 					error: function(xhr){
 						alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 

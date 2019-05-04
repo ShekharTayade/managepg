@@ -1,0 +1,109 @@
+{% load widget_tweaks %}
+{% if form %}
+<div class = "box">
+	<form id="room_form" method = "POST" action="{% url 'room_modify' %}">
+	{% csrf_token %}
+	{% render_field form.block|append_attr:"hidden:hidden" class="form-control" %}
+	{% render_field form.floor|append_attr:"hidden:hidden" class="form-control" %}
+	<input hidden name = "room_id" value = "{{room_id}}">
+	<input hidden name = "conv_flag" value = "{{conv_flag}}">
+	<p><strong>Room {{ form.room_name.value }} </strong> 
+	{% if conv_flag %}
+		<span style = "padding-left:5em" > CONVERTED: 
+		<small>( This room has been converted. So the changes you make here will be applied to the converted room. )</small>
+		</span>
+	{% endif %}
+	</p>
+	<div class = "row">
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{ form.available_from.label_tag }}
+				{% render_field form.available_from|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.available_from.help_text %}
+					<small class="form-text text-muted">
+						{{ form.available_from.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{ form.available_to.label_tag }}
+				{% render_field form.available_to|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.available_to.help_text %}
+					<small class="form-text text-muted">
+						{{ form.available_to.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				<label>Beds:</label>
+				{% render_field form.max_beds|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.max_beds.help_text %}
+					<small class="form-text text-muted">
+						{{ form.max_beds.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{ form.rent_per_bed.label_tag }}
+				{% render_field form.rent_per_bed class="form-control" %}
+				{% if form.rent_per_bed.help_text %}
+					<small class="form-text text-muted">
+						{{ form.rent_per_bed.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{form.advance.label_tag}}
+				{% render_field form.advance class="form-control" %}
+				{% if form.advance.help_text %}
+					<small class="form-text text-muted">
+						{{ form.advance.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				<label>Short Term Advance:</label>
+				{% render_field form.short_term_advance class="form-control" %}
+				{% if form.short_term_advance.help_text %}
+					<small class="form-text text-muted">
+						{{ form.short_term_advance.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				<label>Short Term Rent:</label>
+				{% render_field form.short_term_rent_per_bed class="form-control" %}
+				{% if form.short_term_rent_per_bed.help_text %}
+					<small class="form-text text-muted">
+						{{ form.short_term_rent_per_bed.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+	</div>	
+	
+	<div class = "row">
+		<div class = "col-sm-12">
+			<div class = "text-center">
+				<button class = "btn btn-primary" type = "submit">
+					Save Details
+				</button>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+{% endif %}

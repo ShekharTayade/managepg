@@ -18,10 +18,14 @@ from django.template.loader import render_to_string
 from django.core.files.storage import FileSystemStorage
 
 from .views import *
-from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm
+from guesthouse.forms import BookingForm, GuestForm, Room_allocationForm, VacationPeriod
+
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation 
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
-from guesthouse.models import Room_conversion, Bed_conversion
+from guesthouse.models import Room_conversion, Bed_conversion, Vacation_period
+from guesthouse.models import Closing_balance, Bill, Receipt
+
+from guesthouse.decorators import user_is_manager
 
 today = datetime.datetime.today()
 
@@ -316,12 +320,7 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 				msg.append("Room Allocation -> Check-out should be later than check-in")
 				result = False
 
-			diff = (check_out.year - check_in.year) * 12 + check_out.month - check_in.month
-			if booking_form.data['booking-tenure'] == 'LT':
-				if diff < 12:
-					msg.append("Room Allocation -> Long Term stay can't be less than 1 year")
-					result = False
-					
+			diff = (check_out.year - check_in.year) * 12 + check_out.month - check_in.month					
 			if booking_form.data['booking-tenure'] == 'ST':
 				if diff > 1:
 					msg.append("Room Allocation -> Short Term stay can't be more than 1 month")
@@ -433,8 +432,7 @@ def get_bookings(request):
 
 	if booking_number:
 		bookings_list = bookings_list.filter(booking_number__iexact = booking_number)
-	
-	
+
 	count = bookings_list.count()
 
 	paginator = Paginator(bookings_list, 5)
@@ -449,9 +447,15 @@ def get_bookings(request):
 	if source == "BOOKING":
 		return render(request, 'guesthouse/bookings_table.html', {'count':count, 
 			'bookings': bookings, 'source':source})		
+	if source == "VAC-PERIOD":
+		return render(request, 'guesthouse/vac_period_table.html', {'count':count, 
+			'bookings': bookings, 'source':source})		
 	elif source == "GUEST-ACCOUNT":
 		return render(request, 'guesthouse/guest_account_bookings_table.html', {'count':count, 
 			'bookings': bookings, 'source':source})		
+	else:
+		return render(request, 'guesthouse/bookings_table.html', {'count':count, 
+			'bookings': bookings, 'source':source})			
 	
 			
 @csrf_exempt
@@ -661,6 +665,9 @@ def delete_booking(request):
 		return JsonResponse({'status':"ALLOC-DONE"})
 	else:
 		if booking:
+			bill = Bill.objects.filter(booking_id = booking_number).delete()
+			rct = Receipt.objects.filter(booking_id = booking_number).delete()
+			bal = Closing_balance.objects.filter(booking_id = booking_number).delete()
 			booking = Booking.objects.filter(booking_number = booking_number)
 			booking.delete()
 			# Delete any room that has no allocation done
@@ -670,6 +677,7 @@ def delete_booking(request):
 	return JsonResponse({'status':"SUCCESS"})
 
 @login_required
+@user_is_manager
 def change_room_bed(request):
 
 	msg = ''
@@ -819,4 +827,125 @@ def booking_form(request, booking_number):
 			return response		
 	
 	return render(request, 'guesthouse/booking_form.html', {'room':room, 'gh':gh, 'bk_num':bk_num} )	
+
+	
+@login_required
+def blocking_details(request):
+	
+	return render(request, 'guesthouse/cancel_blocking.html')
+
+
+@csrf_exempt	
+def get_blocking(request):
+	booking_num = request.POST.get('booking_num','')
+	first_name = request.POST.get('first_name','')
+	middle_name = request.POST.get('middle_name','')
+	last_name = request.POST.get('last_name','')
+	receipt_type = request.POST.get('receipt_type','')
+	page = request.POST.get('page', 1)
+	
+	room_alloc = Room_allocation.objects.filter(allocation_start_date__gt = today)	
+
+	if booking_num != '' :
+		room_alloc = room_alloc.filter(booking_id = booking_num)
+	if first_name != '' :
+		room_alloc = room_alloc.filter(guest__first_name__iexact = first_name)
+	if middle_name != '' :
+		room_alloc = room_alloc.filter(guest__middle_name__iexact = middle_name)
+	if last_name != '' :
+		room_alloc = room_alloc.filter(guest__last_name__iexact = last_name)
+
+	count = room_alloc.count()		
+		
+	paginator = Paginator(room_alloc, 5)
+	rooms = paginator.get_page(page)
+	try:
+		rooms = paginator.page(page)
+	except PageNotAnInteger:
+		rooms = paginator.page(1)
+	except EmptyPage:
+		rooms = paginator.page(paginator.num_pages)		
+		
+	return render(request, 'guesthouse/blocking_table.html', 
+			{'rooms':rooms, 'count':count, 'receipt_type':receipt_type} )	
+
+@csrf_exempt			
+def cancel_blocking(request):
+	booking_number = request.POST.get('booking_number', '')
+	status = ''
+	if booking_number == '':
+		return JsonResponse({'status':"NO-BOOKING"})
+	
+	try:
+		bill = Bill.objects.filter(booking_id = booking_number).delete()
+		rct = Receipt.objects.filter(booking_id = booking_number).delete()
+		bal = Closing_balance.objects.filter(booking_id = booking_number).delete()
+		booking = Booking.objects.get(pk=booking_number).delete()
+
+	except Booking.DoesNotExist:
+		booking = None
+
+	return JsonResponse({'status':"SUCCESS"})		
+
+@login_required
+def search_booking_vac_period(request):
+	
+	return render(request, 'guesthouse/search_booking_vacation_period.html')
+
+@login_required	
+def vac_period(request, booking_number):
+	err_flag = False
+	msg = ""
+
+	if request.method == 'POST':
+		booking_number = request.POST.get('booking', '')
+		vac = Vacation_period.objects.filter(booking_id = booking_number).order_by('updated_date').last()
+		if vac :
+			form = VacationPeriod(request.POST.copy(), instance = vac)
+		else:
+			form = VacationPeriod(request.POST.copy())
+		
+		if form.data['start_date']:
+			start_date = datetime.datetime.strptime(form.data['start_date'], "%Y-%m-%d").date()
+		else:		
+			start_date = None
+			
+		if form.data['end_date']:
+			end_date = datetime.datetime.strptime(form.data['end_date'], "%Y-%m-%d").date()
+		else:		
+			end_date = None
+			
+		if start_date > end_date:
+			err_flag = True
+			msg = "End date can't be less than start date"
+		else:
+			if form.is_valid():
+				vac = form.save(commit=False)				
+				vac.save()
+				msg = "Changes saved successfully"
+		if start_date:
+			form.data['start_date'] = start_date
+		if end_date:
+			form.data['end_date'] = end_date
+	else:
+		# booking_number = request.GET.get('booking_number', '')
+		if booking_number != '':
+			vac = Vacation_period.objects.filter(booking_id = booking_number).order_by('updated_date').last()
+			if vac :
+				form = VacationPeriod(instance = vac)
+			else:
+				form = VacationPeriod(initial={'start_date':today.date()})			
+		else:
+			form = VacationPeriod(initial={'start_date':today.date()})
+
+	if booking_number != '' :
+		room_alloc = Room_allocation.objects.filter(
+			Q( Q(booking_id = booking_number, bed_id__isnull = False) &
+				Q(allocation_end_date__gt = today.date()) | Q(allocation_end_date__isnull = True) )
+			).select_related('guest', 'booking',
+				'block', 'floor','room','bed').order_by('-updated_date').first()	
+			
+	return render(request, 'guesthouse/vac_period.html', 
+			{'form':form, 'booking_number':booking_number, 'err_flag':err_flag, 'msg':msg,
+			'room_alloc':room_alloc} )	
 	

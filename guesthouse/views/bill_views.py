@@ -2,8 +2,10 @@ from django.shortcuts import render,redirect
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db.models import Count, Q, Max, Sum
+from django.db.models import ProtectedError
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls import reverse
 
 from datetime import datetime
 import datetime
@@ -18,6 +20,7 @@ from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation, Bill,
 from guesthouse.models import Receipt, Food_price, Vacation_period, Tax, Closing_balance
 from guesthouse.models import Generate_number_by_month, Billing_error, Month_closing_error
 
+from guesthouse.forms import BillForm
 
 ## Checks if the vacation period ends in the current month 
 ## and return the number of vacation days
@@ -85,6 +88,9 @@ def get_rent_for_month(month, booking_number):
 	
 	month_rent = 0
 	for r in rooms:
+		#if allocation start date is null then we don't generate bill
+		if not r.allocation_start_date:
+			continue
 		# If allocation end date is null, then let's set end date to a long period so it get considered for
 		# current month
 		if not r.allocation_end_date:
@@ -116,23 +122,40 @@ def get_rent_for_month(month, booking_number):
 			rent = 0
 			room_conv = Room_conversion.objects.filter(room_id = r.room_id, available_from__lte = curr_month_1st,
 					available_to__gte = curr_month_1st).first()
+			
+			'''
 			if room_conv:
 				rent = room_conv.rent_per_bed
 			else:
 				rent = r.room.rent_per_bed
+			'''
+			if room_conv:
+				if r.booking.tenure == 'LT':
+					rent = room_conv.rent_per_bed
+				else :
+					rent = room_conv.short_term_rent_per_bed
+			else:
+				if r.booking.tenure == 'LT':			
+					rent = r.room.rent_per_bed
+				else:
+					rent = r.room.short_term_rent_per_bed
 			
+				
 			if r.allocation_start_date <= curr_month_1st and allocation_end_date >= month_end_date :
 				# Take the full month rent
 				month_rent =  month_rent + rent
 			else :
 				# Take partial month rent
 				month_rent = month_rent + (rent/month_days) * curr_month_rent_days
-	
+		# If booking is not valid for current month, then no billing
+		else:
+			month_rent = 0
+			
 	return round(month_rent)
 	
 def get_food_charges_for_month(month, booking_number):
 	curr_month_1st =  datetime.datetime.strptime(month + '-01', "%Y-%m-%d").date()
-	
+
 	booking = Booking.objects.get(booking_number = booking_number)
 	if not booking:
 		return 0
@@ -161,6 +184,10 @@ def get_food_charges_for_month(month, booking_number):
 		rooms = rooms.filter(
 			Q(allocation_end_date__isnull = True) | Q(allocation_end_date__gte = curr_month_1st ) )
 		for r in rooms:
+			#if allocation start date is null then we don't generate bill
+			if not r.allocation_start_date:
+				continue
+				
 			# If allocation end date is null, then let's set end date to a long period so it get considered for
 			# current month
 			if not r.allocation_end_date:
@@ -193,8 +220,11 @@ def get_food_charges_for_month(month, booking_number):
 				else :
 					# Take partial month food charge	
 					food_charge =  (food_charge/month_days) * curr_month_rent_days	
-			
-	return food_charge   ## Including tax
+
+			# No food bill if booking not valid in the current month
+			else:
+				food_charge = 0
+	return round(food_charge)   ## Including tax
 	
 def get_advance_rent_month(month, booking_number):
 	curr_month_1st =  datetime.datetime.strptime(month + '-01', "%Y-%m-%d").date()
@@ -222,8 +252,15 @@ def get_bills_for_month(request):
 	return JsonResponse({'bills':list(bills)}, safe=False)
 	
 
-def generate_month_bills(month):	
+def generate_month_bills(month):
 	err_flag = False
+
+	###############################################
+	# Generate bill only after Mar 2019
+	###############################################
+	if month <= "2019-03":
+		return err_flag
+		
 	today = datetime.datetime.today()
 	
 	if month == '':
@@ -245,41 +282,55 @@ def generate_month_bills(month):
 				bill_for = 'RN')
 		
 		# Generates bill only if not already generated
-		if c_bill.count() == 0 :	
+		if True:
+			#c_bill.count() == 0 :	
 			try:
 				rent = get_rent_for_month(month, b.booking_number)
 				# Check if any rent is already paid
+				'''
 				rct = Receipt.objects.filter(booking_id = b.booking_number, receipt_for_month = month, receipt_for = 'RN')
 				rent_paid = 0
 				bill_number = ''
 				for r in rct:
 					rent_paid = rent_paid + r.amount
-					
+				'''	
 				# Check if any advance rent paid
-				adv_rent = get_advance_rent_month(month, b.booking_number)
+				#adv_rent = get_advance_rent_month(month, b.booking_number)
 
-				net_rent = rent - (rent_paid - adv_rent)
-				if net_rent < 0:
-					net_rent = 0
-				if net_rent > 0:
-					# Check if rent bill is already generated
-					rn_bill = Bill.objects.filter(bill_for_month = month, 
-						bill_for = 'RN', booking = b, guest = b.guest)
-					# Generate the bill only if not already generated
-					if not rn_bill:				
-						bill_number = get_next_bill_number()
-						rent_bill = Bill(
-							bill_number = bill_number,
-							bill_date = today,
-							bill_for_month = month, 
-							guest = b.guest,
-							booking = b,
-							bill_for = 'RN',
-							amount = net_rent,
-							created_date = datetime.datetime.now(),
-							updated_date = datetime.datetime.now()	
-						)
-						rent_bill.save()
+				net_rent = rent
+				
+				# Check if rent bill is already generated
+				rn_bill = Bill.objects.filter(bill_for_month = month, 
+					bill_for = 'RN', booking = b, guest = b.guest).last()
+				# Generate the bill if not already generated, else update it
+				if not rn_bill:				
+					bill_number = get_next_bill_number()
+					rent_bill = Bill(
+						bill_number = bill_number,
+				
+				bill_date = today,
+						bill_for_month = month, 
+						guest = b.guest,
+						booking = b,
+						bill_for = 'RN',
+						amount = net_rent,
+						created_date = datetime.datetime.now(),
+						updated_date = datetime.datetime.now()	
+					)
+				else:
+					rent_bill = Bill(
+						bill_number = rn_bill.bill_number,
+						bill_date = today,
+						bill_for_month = month, 
+						guest = b.guest,
+						booking = b,
+						bill_for = 'RN',
+						amount = net_rent,
+						created_date = datetime.datetime.now(),
+						updated_date = datetime.datetime.now()	
+					)
+				
+				rent_bill.save()
 				
 			except Exception as error:
 				err_flag = True
@@ -312,34 +363,46 @@ def generate_month_bills(month):
 				food_charges = get_food_charges_for_month(month, b.booking_number)
 				
 				# Check if any food charges are already paid
+				'''
 				rct = Receipt.objects.filter(booking_id = b.booking_number, receipt_for_month = month, receipt_for = 'FD')
 				fdrct = 0
 				bill_number = ''
 				if rct :
 					for r in rct:
 						fdrct = fdrct + r.amount
-				
-				food_charges = food_charges - fdrct
-				if food_charges > 0:	
-					# Check if food bill is already generated
-					fd_bill = Bill.objects.filter(bill_for_month = month, 
-						bill_for = 'FD', booking = b, guest = b.guest)
-					# Generate the bill only if not already generated
-					if not fd_bill:				
-						bill_number = get_next_bill_number()
-						food_bill = Bill(
-							bill_number = bill_number,
-							bill_date = today,
-							bill_for_month = month, 
-							guest = b.guest,
-							booking = b,
-							bill_for = 'FD',
-							amount = food_charges,
-							created_date = datetime.datetime.now(),
-							updated_date = datetime.datetime.now()	
-						)	
-						
-						food_bill.save()
+				'''
+				food_charges = food_charges
+				# Check if food bill is already generated
+				fd_bill = Bill.objects.filter(bill_for_month = month, 
+					bill_for = 'FD', booking = b, guest = b.guest).last()
+				# Generate the bill if not already generated, else update
+				if not fd_bill:				
+					bill_number = get_next_bill_number()
+					food_bill = Bill(
+						bill_number = bill_number,
+						bill_date = today,
+						bill_for_month = month, 
+						guest = b.guest,
+						booking = b,
+						bill_for = 'FD',
+						amount = food_charges,
+						created_date = datetime.datetime.now(),
+						updated_date = datetime.datetime.now()	
+					)
+				else:
+					food_bill = Bill(
+						bill_number = fd_bill.bill_number,
+						bill_date = today,
+						bill_for_month = month, 
+						guest = b.guest,
+						booking = b,
+						bill_for = 'FD',
+						amount = food_charges,
+						created_date = datetime.datetime.now(),
+						updated_date = datetime.datetime.now()	
+					)	
+
+				food_bill.save()
 			except Exception as error:
 				err_flag = True
 				print (error)
@@ -452,7 +515,7 @@ def process_month_closing(month):
 		curr_cls = Closing_balance.objects.filter(booking = b, closing_balance_month = month)
 		
 		# perform closing only if not already done
-		if curr_cls.count() == 0:
+		if curr_cls == 0:
 			bills = Bill.objects.filter(booking = b).aggregate(bill_sum=Sum('amount'))
 			rcts = Receipt.objects.filter(
 				booking = b, receipt_for__in = rct_types_for_billing).aggregate(rct_sum=Sum('amount'))
@@ -492,6 +555,13 @@ def process_month_closing(month):
 def generate_bills_for_month(month, booking_number):
 	
 	err_flag = False
+	###############################################
+	# Generate bill only after Mar 2019
+	###############################################
+	if month <= "2019-03":
+		return err_flag
+
+
 	today = datetime.datetime.today()
 	
 	if month == '':
@@ -513,7 +583,8 @@ def generate_bills_for_month(month, booking_number):
 	# GENERATE RENT BILL
 	#############################################
 	# Generates bill only if not already generated
-	if c_bill.count() == 0 :	
+	if True:
+		#c_bill.count() == 0 :	
 		try:
 			rent = get_rent_for_month(month, booking_number)
 			# Check if any rent is already paid
@@ -529,11 +600,12 @@ def generate_bills_for_month(month, booking_number):
 			net_rent = rent - rent_paid - adv_rent
 			if net_rent < 0:
 				net_rent = 0
+			
 			if net_rent > 0:
 				# Check if rent bill is already generated
 				rn_bill = Bill.objects.filter(bill_for_month = month, 
-					bill_for = 'RN', booking = booking, guest = booking.guest)
-				# Generate the bill only if not already generated
+					bill_for = 'RN', booking = booking, guest = booking.guest).last()
+				# Generate the bill if not already generated, else update it
 				if not rn_bill:				
 					bill_number = get_next_bill_number()
 					rent_bill = Bill(
@@ -547,7 +619,20 @@ def generate_bills_for_month(month, booking_number):
 						created_date = datetime.datetime.now(),
 						updated_date = datetime.datetime.now()	
 					)
-					rent_bill.save()
+				else:
+					rent_bill = Bill(
+						bill_number = rn_bill.bill_number,
+						bill_date = today,
+						bill_for_month = month, 
+						guest = booking.guest,
+						booking = booking,
+						bill_for = 'RN',
+						amount = net_rent,
+						created_date = datetime.datetime.now(),
+						updated_date = datetime.datetime.now()	
+					)
+				
+				rent_bill.save()
 			
 		except Exception as error:
 			err_flag = True
@@ -574,7 +659,8 @@ def generate_bills_for_month(month, booking_number):
 			bill_for = 'FD')
 
 	# Generates bill only if not already generated
-	if f_bill.count() == 0 :
+	if True:
+		#f_bill.count() == 0 :
 		try:
 			food_charges = get_food_charges_for_month(month, booking.booking_number)
 			
@@ -590,7 +676,7 @@ def generate_bills_for_month(month, booking_number):
 			if food_charges > 0:	
 				# Check if food bill is already generated
 				fd_bill = Bill.objects.filter(bill_for_month = month, 
-					bill_for = 'FD', booking = booking, guest = booking.guest)
+					bill_for = 'FD', booking = booking, guest = booking.guest).last()
 				# Generate the bill only if not already generated
 				if not fd_bill:				
 					bill_number = get_next_bill_number()
@@ -605,8 +691,20 @@ def generate_bills_for_month(month, booking_number):
 						created_date = datetime.datetime.now(),
 						updated_date = datetime.datetime.now()	
 					)	
-					
-					food_bill.save()
+				else:
+					food_bill = Bill(
+						bill_number = fd_bill.bill_number,
+						bill_date = today,
+						bill_for_month = month, 
+						guest = booking.guest,
+						booking = booking,
+						bill_for = 'FD',
+						amount = food_charges,
+						created_date = datetime.datetime.now(),
+						updated_date = datetime.datetime.now()	
+					)	
+				
+				food_bill.save()
 		except Exception as error:
 			err_flag = True
 			print (error)
@@ -651,4 +749,164 @@ def match_advance_rent(month):
 				booking_id = b.booking_id, guest_id = b.guest_id).update(bill = b)
 				
 	return ()
+	
+	
+@login_required	
+def print_bills(request):
+	
+	return render(request, 'guesthouse/print_bills.html', {} )
+	
+	
+@csrf_exempt
+@login_required
+def get_bills(request):
+	startDt = ''
+	endDt = ''
+	booking_number = ''
+	bill_number = ''
+	
+	page = request.POST.get('page', 1)
+
+	from_date = request.POST.get("fromdate", '')
+	if from_date != '' :
+		startDt = datetime.datetime.strptime(from_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")	
+	to_date = request.POST.get("todate", '')
+	if to_date != '' :
+		endDt = datetime.datetime.strptime(to_date + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+
+	f_name = request.POST.get("f_name", '')
+	m_name = request.POST.get("m_name", '')
+	l_name = request.POST.get("l_name", '')
+	
+	email_id = request.POST.get("email_id", '')
+	phone_number = request.POST.get("phone_number", '')
+
+	bill_number = request.POST.get("bill_number", '')	
+	booking_number = request.POST.get("booking_number", '')	
+
+	
+	bills_list = Bill.objects.all().select_related('guest', 'booking').order_by('created_date')
+	
+	if startDt:
+		bills_list = bills_list.filter(created_date__gte = startDt)
+	if endDt:
+		bills_list = bills_list.filter(created_date__lte = endDt)
+
+	if f_name:
+		bills_list = bills_list.filter(guest__first_name__iexact = f_name)
+	if m_name:
+		bills_list = bills_list.filter(guest__middle_name__iexact = m_name)
+	if l_name:
+		bills_list = bills_list.filter(guest__last_name__iexact = l_name)
+	
+	if email_id:
+		bills_list = bills_list.filter(guest__email_id__iexact = email_id)
+	if phone_number:
+		bills_list = bills_list.filter(guest__phone_number__iexact = phone_number)
+
+	if bill_number:
+		bills_list = bills_list.filter(bill_number = bill_number)
+	if booking_number:
+		bills_list = bills_list.filter(booking_id = booking_number)
+	
+	count = bills_list.count()
+
+	paginator = Paginator(bills_list, 5)
+	try:
+		bills = paginator.page(page)
+	except PageNotAnInteger:
+		bills = paginator.page(1)
+	except EmptyPage:
+		bills = paginator.page(paginator.num_pages)
+	
+	return render(request, 'guesthouse/bills_table.html', {'count':count, 
+		'bills': bills})		
+		
+@csrf_exempt
+def get_bill(request):
+
+	bill_number = request.POST.get('bill_number', '')
+	bill = Bill.objects.get(pk=bill_number)
+	
+	room_alloc = Room_allocation.objects.filter(booking_id = bill.booking_id).order_by('updated_date').last()
+
+	return render(request, 'guesthouse/bill_delete_confirm_modal.html', {'room_alloc':room_alloc,
+	'bill':bill}) 
+
+@csrf_exempt
+def delete_bill(request):
+
+	bill_number = request.POST.get('bill_number', '')
+	status = 'SUCCESS'
+	try:
+		bill = Bill.objects.get(pk=bill_number)
+		bill_number = bill.bill_number
+		bill.delete()
+	except Bill.DoesNotExist:
+		status = 'NO-RECEIPT'
+	except ProtectedError:
+		status = 'RCT-EXISTS'
+		
+	return JsonResponse({'status':status, 'bill_number':bill_number})
+
+@login_required
+def bills_for_booking(request, month, booking_number):
+
+	err_flag = generate_bills_for_month(month, booking_number) 
+	
+	if err_flag:
+		msg = "An error occured while billing. Please contact support team"
+	else:
+		msg = "Bills generated successfully for booking number " + booking_number + ", for " + month + " month."
+
+	return render(request, 'guesthouse/generte_bill_for_booking.html', {'err_flag':err_flag,
+		'msg':msg} )
+
+@login_required
+def bill_form(request, bill_number):
+
+	bill = Bill.objects.get(pk=bill_number)
+	
+	room_alloc = Room_allocation.objects.filter(booking_id = bill.booking_id).order_by('updated_date').last()
+		
+	form = BillForm(request.POST or None, instance=bill)
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('bill_modify_confirmation',  kwargs={ 'bill_number': bill_number }))
+
+	return render(request, 'guesthouse/bill_form.html', {'form':form, 'room_alloc':room_alloc,
+	'bill_type':bill.bill_for})
+
+@login_required
+def bill_modify_confirmation(request, bill_number):
+	bill = Bill.objects.get(pk=bill_number)
+	form = BillForm(instance=bill)
+	return render(request, 'guesthouse/bill_modify_confirmation.html', {'form':form})
+
+		
+@login_required	
+def bills_for_month(request):
+	return render(request, 'guesthouse/generate_bills.html')
+
+@csrf_exempt
+def generate_bill_month(request):	
+	status = ''
+	msg = ''
+	month = request.POST.get("month", '')
+	if month == '':
+		status = "01"
+		msg = "Invalid month: " + month 
+		return JsonResponse({'status':status, 'msg':msg}, safe=False)
+	 
+	err_flag = generate_month_bills(month)
+	if err_flag == True:		
+		status = "XX"
+		msg = "An Error Occured while Billing"
+	else:
+		status = "00"
+		msg = "Bill generation completed for " + month 
+		
+	return JsonResponse({'status':status, 'msg':msg}, safe=False)
+	
+	
 	

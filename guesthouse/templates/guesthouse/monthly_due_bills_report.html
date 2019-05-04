@@ -1,0 +1,176 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load l10n %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Monthly Due Bills Report</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Month Due Bills Report</h3>
+						</div>
+					</div>
+				</div>
+				
+				<div class = "box">
+					<form id = "form">
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								<label>Month:</lable>
+								<input class = "form-control" id = 'month' type = 'text' pattern = '^([12]\d{3}-(0[1-9]|1[0-2]))'>
+								<small style="color:grey;">Enter 'YYYY-MM' Ex. 2019-04</small>
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								<br />
+								<button class = "btn btn-primary" 	
+									id = "date-submit"
+									type = "submit"
+									onclick = "get_details()" type= "button">
+									Fetch Details
+								</button>
+							</div>
+						</div>
+						<div class = "col-sm-6">
+							<div class="form-group">
+								<span style = "display:none" id="processing">
+									<img src ="{% static 'img/ajax-loader.gif' %}">
+								</span>
+							</div>
+						</div>
+					</div>
+					</form>
+				</div>
+				<div id ="display-bills">
+					{% include 'guesthouse/monthly_due_bills_table.html' %}
+				</div>
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	
+	<script>
+    $(document).ready(function() {		
+		var today = new Date();
+		var to_mn = today.getMonth();
+		var to_mn = to_mn + 1; //Javascript month start from 0
+		var to_yy = today.getFullYear();			
+		
+		document.getElementById("month").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn));
+
+		// Trigger the inital fetch of orders
+		document.getElementById("date-submit").click();		
+
+		// Get the input field
+		var input = document.getElementById("month");
+
+		// Execute a function when the user releases a key on the keyboard
+		input.addEventListener("keyup", function(event) {
+		  // Number 13 is the "Enter" key on the keyboard
+		  if (event.keyCode === 13) {
+			// Cancel the default action, if needed
+			event.preventDefault();
+			// Trigger the button element with a click
+			document.getElementById("date-submit").click();
+		  }
+		});		
+		
+		
+		
+    } );    	
+	</script>	
+	
+	<script>
+		$('#form').submit(function (e) {
+			e.preventDefault();
+		});	
+	</script>
+
+	<script>
+	function set_datatable(){ 
+        table = $('#billsTbl').DataTable( {
+        retrieve: true,
+        paging: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel', 
+                messageTop: 'Due Bills for ' + $('#month').val(),
+                title : "Due Bills"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: 'Due Bills for ' + $('#month').val(),
+                title : "Due Bills"
+            },
+            {
+                extend: 'print',
+                messageTop: 'Due Bills for ' + $('#month').val(),
+                title : "Due Bills"
+			}
+        ]
+        
+        } );
+	}
+	</script>
+	
+	<script>	
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}		
+	</script>	
+	
+	<script>
+		function get_details(){
+			$("#processing").show(100);
+			var month = $('#month').val();
+			
+			$.ajax({
+				url: '{% url "monthly_due_bills_table" %}', 
+				data: {'month':month},
+				dataType: 'text', 
+				type: 'GET',
+				success: function (data) {
+					$("#processing").hide(100);
+					$("#display-bills").html(data);
+					set_datatable();
+				},
+				error: function(xhr){
+					$("#processing").hide(100);
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});
+		}
+	</script>
+	
+	
+	{% endblock jscripts %}

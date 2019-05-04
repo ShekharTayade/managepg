@@ -1,0 +1,177 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}<!-- Message Modal -->
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Search Blocking</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Search Booking for Blocked Room/Bed</</h3>
+						</div>
+					</div>
+				</div>
+
+				
+				
+				<div class = "box">
+					<div class = "row">
+						<div class = "col-sm-3">
+							<h4> Enter Guest Details </h4>
+						</div>
+					</div>
+					
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Booking Number:
+								<input class = "form-control" id = 'booking_number'>
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Guest First Name:
+								<input class = "form-control" id = 'first_name'>
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Guest Middle Name:
+								<input class = "form-control"  id = 'middle_name'>
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								Guest Last Name:
+								<input class = "form-control"  id = 'last_name'>
+							</div>																							
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								<button class = "btn btn-primary" 
+								onclick = "get_details(1)" type= "button">
+									Fetch Details
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>	
+
+				<div class = "box">
+					<div id = "display-bookings">
+						{% include 'guesthouse/blocking_table.html' %}
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	<div id = "delete-confirm">
+		{% include 'guesthouse/delete_confirm_message.html' %}	
+	</div>
+	{% include 'guesthouse/message-modal_ok.html' %}	
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	
+	<script>
+		function get_details(pg){
+			booking_num = $('#booking_number').val();
+			first_name = $('#first_name').val();
+			middle_name = $('#middle_name').val();
+			last_name = $('#last_name').val();
+			if ( booking_num == '' && first_name == '' && middle_name == '' && last_name == ''){
+				$("#msg").html("Please enter booking number or guest name to fetch room allocation.");
+				$("#msg-modal").modal("show");				
+				return;
+			}
+			
+			$.ajax({
+				url: '{% url "get_blocking" %}', 
+				data: {'booking_num':booking_num, 'first_name':first_name, 'middle_name':middle_name, 'last_name':last_name, 'receipt_type':'{{receipt_type}}', 'page' : pg },
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					$("#display-bookings").html(data);
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});
+		
+		}
+	</script>
+
+	<script>
+		function confirm_booking_delete(booking_number) {
+			if ( booking_number == '' ) {
+				return;
+			}
+			$.ajax({
+				url: '{% url "get_booking_by_number" %}', 
+				dataType: 'text',
+				data: {'booking_number':booking_number} ,
+				type: 'POST',
+				success: function (data) {
+					$("#delete-confirm").html(data);
+					$('#delete-modal').modal('show');
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
+					return;
+				}
+			});			
+		}
+	</script>	
+
+	<script>
+		function delete_blocking(booking_number) {
+			
+			$.ajax({
+				url: '{% url "cancel_blocking" %}', 
+				dataType: 'text',
+				data: {'booking_number':booking_number} ,
+				type: 'POST',
+				success: function (data) {
+					status = JSON.parse(data).status
+					switch (status) {
+						case 'NO-BOOKING':
+							$("#msg").html("Booking Number is invalid");
+							$("#msg-modal").modal("show");				
+							break;
+						case 'SUCCESS':
+							$("#msg").html("Booking number " + booking_number + " is sucessfully deleted");
+							$("#msg-modal").modal("show");
+							$('#delete-modal').modal('hide');
+							get_details(1);
+							break;
+					}
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Reach out the support team and we will be happy to help."); 
+					return;
+				}
+			});			
+		
+		}
+	</script>
+		
+	{% endblock jscripts %}	

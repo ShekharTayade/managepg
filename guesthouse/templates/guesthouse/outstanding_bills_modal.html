@@ -13,7 +13,6 @@
 							<h4>Booking Number: {% if room_alloc.booking_id %} {{room_alloc.booking_id}} {% else %} Booking does not exist!!{% endif %}</h4>
 						</div>
 					</div>
-					{% if outstanding_bills %}
 					<div class="container">
 						<div class = "row">
 							<table class = "table table-bordered">
@@ -35,12 +34,15 @@
 										<td> {{b.bill_for_month}} </td>
 										<td class="pull-right"> {{b.amount}} </td>
 									</tr>
+									{% empty %}										
+									<tr>
+										<td colspan="5"> No outstanding bills!!</td>
+									</tr>
 									{% endfor %}
 								</tbody>
 							</table>
 						</div>
 					</div>
-					{% endif %}
 					
 				</div>
 			</div>

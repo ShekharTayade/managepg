@@ -1,0 +1,143 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Bill Generation</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Generate Bills</h3>
+							<h5>This will generates( or update bills, if already generated) for a given month</h5>
+						</div>
+					</div>
+				</div>
+				<div class = "box">
+					<form onsubmit = "event.preventDefault(); generate();">
+						<div class = "row">
+							<div class = "col-sm-3">
+								<div class="form-group">
+									<label> Generated Bills for Month:</label>
+									<input type = "text" 
+										id = "gen_month"
+										class = "form-control"
+										pattern = "^([12]\d{3}-(0[1-9]|1[0-2]))"
+										required>
+									<small>Enter billing month YYYY-MM (Ex. 2019-01)</small>
+								</div>
+							</div>
+							<div class = "col-sm-3">
+								<div class="form-group">
+									<label>&nbsp;</label>
+									<div class = "text-center mb-3">
+										<button class = "btn btn-primary" 
+										type="submit">
+											Generate Bills
+										</button>
+									</div>							
+								</div>
+							</div>
+							<div class = "col-sm-6">
+								<div class="form-group">
+									<span style = "display:none" id="processing">
+										<img src ="{% static 'img/ajax-loader.gif' %}">
+									</span>
+									<div class="form-group">
+										<label>&nbsp;</label>									
+										<input id="msg" readonly class = "form-control">
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+			</div>
+		</div>
+	</div>
+	
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>	
+		$( document ).ready(function() {
+			var d = new Date();
+			var year = d.getFullYear().toString();
+			var d = new Date();
+			var mth = d.getMonth() + 1;
+
+			var month = zeroPad(mth);
+			document.getElementById("gen_month").value = year + "-" + month;
+			
+			$("#msg").hide(100);
+		});	
+	</script>
+	
+	<script>
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}
+	</script>
+	
+	<script>
+		function generate(){
+			
+			$("#processing").show(100);
+			$("#msg").hide(100);			
+			month = document.getElementById("gen_month").value;
+			match = month.match(/[12]\d{3}-(0[1-9]|1[0-2])/);
+			if( match ) {
+			$.ajax({
+					url: '{% url "generate_bill_month" %}', 
+					dataType: 'text',
+					data: {'month':month} ,
+					type: 'POST',
+					success: function (data) {
+						$("#processing").hide(100);
+						var status = JSON.parse(data).status
+						var msg = JSON.parse(data).msg
+						if (status.toUpperCase() == '00'){
+							$("#msg").val(msg);
+							$("#msg").show(100);
+						} else{					
+							if ( status.toUpperCase() == 'XX') {
+								$("#msg").val(msg);
+								$("#msg").show(100);
+							}
+						}
+					},
+					error: function(xhr){
+						$("#processing").hide(100);
+						$("#msg").val("A system error occured. Please contact the support team."); 
+						return;
+					}
+				});			
+			
+			} else {
+				$("#msg").val = "Please enter month in correct format";
+				$("#msg").show(100);
+			}
+			$("#processing").hide(100);
+		}
+	</script>
+	
+	<script>
+		function 
+	{% endblock jscripts %}	

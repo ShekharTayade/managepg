@@ -1,0 +1,79 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}<!-- Message Modal -->
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Room Conversion Confirmation</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "box">
+					<div class = "row">
+						<div class = "col-sm-12">
+							<h4>Room Conversion Confirmation</h4>
+						</div>
+					</div>
+				</div>
+				<div class="box">
+					<div class = "row">
+						<div class = "col-sm-12">
+							<h4>Converted Room: {{room_conv.room_name}} </h4>
+							<span class = "pull-left"><strong>Room: {{room_conv.room_name}}, Block: {{room_conv.block}}, Floor: {{room_conv.floor}}</strong></span>
+							<span class = "pull-right"><strong>Available From:</strong> {{ room_conv.available_from }} &nbsp;&nbsp;&nbsp;<strong>To:</strong> {{ room_conv.available_to }}</span>
+						</div>
+					</div>
+					<div class = "row">
+						<div class = "col-sm-2">
+							Rent: {{ room_conv.rent_per_bed }}
+						</div>
+						<div class = "col-sm-3">
+							No of Beds: {{room_conv.max_beds}}
+						</div>
+						<div class = "col-sm-3">		
+							Advance: {{room_conv.advance}}
+						</div>
+						<div class = "col-sm-4">						
+							Short Term Rent: {{room_conv.short_term_rent_per_bed }}
+						</div>
+					</div>
+				</div>
+				<div class = "box">
+
+					<label><strong>Beds:</strong></label> <div class = "row">
+						<div class = "col-sm-2"><label>Bed Name:</label></div> 
+						<div class = "col-sm-3"><label>Available From:</label></div>
+						<div class = "col-sm-3"><label>Available To:</label></div>
+					</div>				
+					{% for b in bed_conv %}
+					<div class = "row">
+						<div class = "col-sm-2"> <input readonly class="form-control" type = "text" value = "{{b.bed_name}}"> </div>
+						<div class = "col-sm-3"> <input readonly class="form-control" type="date" value = "{{ b.available_from|date:'Y-m-d' }}"> </div>
+						<div class = "col-sm-3"> <input readonly class="form-control" type="date" value= "{{ b.available_to|date:'Y-m-d' }}"> </div>
+					</div>					
+					{% endfor %}
+				</div>
+				<div class = "row mb-3">
+					<div class = "col-sm-12">
+					<div class = "text-center">
+						<a class = "btn btn-primary" href = "{% url 'index' %}">OK </a>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	{% endblock jscripts %}	

@@ -122,17 +122,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Asia/Calcutta'
-
-USE_I18N = True
-
 USE_L10N = True
-
+LANGUAGE_CODE = 'en_IN'
 USE_TZ = True
-
-
+TIME_ZONE = 'Asia/Calcutta'
+USE_THOUSAND_SEPARATOR = True
+THOUSAND_SEPARATOR = ','
 NUMBER_GROUPING = (3, 2, 0)
 
 ACCOUNT_EMAIL_REQUIRED=True

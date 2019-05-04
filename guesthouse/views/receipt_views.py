@@ -48,7 +48,8 @@ def booking_details_for_payment(request, receipt_type):
 @csrf_exempt
 @login_required	
 def choose_booking_for_payment(request):
-	
+
+	room_name = request.POST.get('room_name','')
 	booking_num = request.POST.get('booking_num','')
 	first_name = request.POST.get('first_name','')
 	middle_name = request.POST.get('middle_name','')
@@ -61,9 +62,9 @@ def choose_booking_for_payment(request):
 	#	return JsonResponse({ 'room_alloc' : room_alloc})
 
 	bookings_list = Room_allocation.objects.all().select_related('guest', 'booking').order_by('created_date')
-
-	count = bookings_list.count()
 		
+	if room_name != '' :
+		bookings_list = bookings_list.filter(room__room_name = room_name)
 	if booking_num != '' :
 		bookings_list = bookings_list.filter(booking_id = booking_num)
 	if first_name != '' :
@@ -73,8 +74,10 @@ def choose_booking_for_payment(request):
 	if last_name != '' :
 		bookings_list = bookings_list.filter(guest__last_name__iexact = last_name)
 
+	count = bookings_list.count()
+
 	paginator = Paginator(bookings_list, 5)
-	bookings = paginator.get_page(page)
+	#bookings = paginator.get_page(page)
 	try:
 		bookings = paginator.page(page)
 	except PageNotAnInteger:
@@ -465,6 +468,7 @@ def get_receipts(request):
 	startDt = ''
 	endDt = ''
 	booking_number = ''
+	receipt_number = ''
 	
 	page = request.POST.get('page', 1)
 
@@ -483,6 +487,7 @@ def get_receipts(request):
 	phone_number = request.POST.get("phone_number", '')
 
 	receipt_number = request.POST.get("receipt_number", '')	
+	booking_number = request.POST.get("booking_number", '')	
 
 	
 	rcts_list = Receipt.objects.all().select_related('guest', 'booking').order_by('created_date')
@@ -498,16 +503,16 @@ def get_receipts(request):
 		rcts_list = rcts_list.filter(guest__middle_name__iexact = m_name)
 	if l_name:
 		rcts_list = rcts_list.filter(guest__last_name__iexact = l_name)
-
 	
 	if email_id:
 		rcts_list = rcts_list.filter(guest__email_id__iexact = email_id)
 	if phone_number:
 		rcts_list = rcts_list.filter(guest__phone_number__iexact = phone_number)
 
-
 	if receipt_number:
-		rcts_list = rcts_list.filter(receipt_number__iexact = receipt_number)
+		rcts_list = rcts_list.filter(receipt_number = receipt_number)
+	if booking_number:
+		rcts_list = rcts_list.filter(booking_id = booking_number)
 	
 	
 	count = rcts_list.count()
@@ -540,12 +545,34 @@ def get_net_advance( request):
 	room_alloc = Room_allocation.objects.filter(booking_id = booking_number).order_by('updated_date').last()
 	
 	#Net advance amount to be collected = Adv Amount for the room - already paid - blocking amount
+	r_adv_amt = 0
+	adv_amt = 0
 	if room_alloc:
-		r_adv_amt = room_alloc.room.advance 
-		adv_amt = room_alloc.room.advance
-	else:
-		r_adv_amt = 0
-		adv_amt = 0
+		room = Room.objects.filter( available_from__lte = today,
+			available_to__gte = today, room_ = room_alloc.room_id,
+			rates_effective_from__lte = today, rates_effective_to__gte = today ).first()
+		
+		room_conv = Room_conversion.objects.filter( available_from__lte = today,
+			available_to__gte = today, room_id = room_alloc.room_id,
+			rates_effective_from__lte = today, rates_effective_to__gte = today ).first()
+			
+		if room_conv :
+			if room_alloc.booking.tenure == 'LT':
+				r_adv_amt = room_conv.advance 
+				adv_amt = room_conv.advance
+			else :
+				r_adv_amt = room_conv.short_term_advance 
+				adv_amt = room_conv.short_term_advance
+		else:
+			if room_alloc.booking.tenure == 'LT':
+				if room:
+					r_adv_amt = room.advance 
+					adv_amt = room.advance
+			else :
+				if room: 
+					r_adv_amt = room.short_term_advance 
+					adv_amt = room.short_term_advance
+
 	if adv_rct['amount__sum']:
 		adv_amt = adv_amt - adv_rct['amount__sum']
 	if blk_rct['amount__sum']:
@@ -605,7 +632,6 @@ def get_receipt(request):
 
 	rct_id = request.POST.get('rct_id', '')
 	rct = Receipt.objects.get(pk=rct_id)
-	print(rct.booking_id)
 	room_alloc = Room_allocation.objects.filter(booking_id = rct.booking_id).order_by('updated_date').last()
 
 	return render(request, 'guesthouse/receipt_delete_confirm_modal.html', {'room_alloc':room_alloc,

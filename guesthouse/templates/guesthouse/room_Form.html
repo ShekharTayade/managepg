@@ -1,0 +1,94 @@
+{% load widget_tweaks %}
+{% if form %}
+<div class = "box">
+	<p><strong>Room : {{form.room_name.value}}</strong> </p>
+	<div class = "row">
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{ form.available_from.label_tag }}
+				{% render_field form.available_from|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.available_from.help_text %}
+					<small class="form-text text-muted">
+						{{ form.available_from.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{ form.available_to.label_tag }}
+				{% render_field form.available_to|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.available_to.help_text %}
+					<small class="form-text text-muted">
+						{{ form.available_to.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{ form.rent_per_bed.label_tag }}
+				{% render_field form.rent_per_bed|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.rent_per_bed.help_text %}
+					<small class="form-text text-muted">
+						{{ form.rent_per_bed.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+
+		<div class = "col-sm-2">
+			<div class="form-group">
+				<label>Beds:</label>
+				{% render_field form.max_beds|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.max_beds.help_text %}
+					<small class="form-text text-muted">
+						{{ form.max_beds.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-2">
+			<div class="form-group">
+				{{form.advance.label_tag}}
+				{% render_field form.advance|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.advance.help_text %}
+					<small class="form-text text-muted">
+						{{ form.advance.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+	</div>
+	<div class = "row">	
+		<div class = "col-sm-2">
+			<div class="form-group">
+				<label>Short Term Rent:</label>
+				{% render_field form.short_term_rent_per_bed|append_attr:"readonly:readonly" class="form-control" %}
+				{% if form.short_term_rent_per_bed.help_text %}
+					<small class="form-text text-muted">
+						{{ form.short_term_rent_per_bed.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+	</div>	
+	
+	<div class = "row">
+		<div class = "col-sm-12">
+			<div class = "text-center">
+				{% if not conv_flag %}
+				<a class = "btn btn-primary" href = "{% url 'convert_room' room_id %}">
+					Convert this Room
+				</a>
+				{% else %}
+					<h3>This room already has been converted</h3>
+					<button class = "btn btn-primary" onclick="get_conversion('{{room_id}}')">
+						Get Conversion Details
+					</button>
+				{% endif %}
+			<div>
+		</div>
+	</div>
+</div>
+{% endif %}

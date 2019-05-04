@@ -1,0 +1,147 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Bill Modified</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Bill Modified</h3>
+						</div>
+					</div>
+				</div>
+	
+				<div class = "box">
+					<form method = "post" class="form-horizontal">
+						<!-- /Error messaging -->
+						<div class = "box">
+							<div class = "row">
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_number.label_tag }}
+										{% render_field form.bill_number|append_attr:"readonly:readonly" class="form-control" %}
+										{% if form.bill_number.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_number.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+							</div>
+							<div class = "row">
+								<div class = "col-sm-3">
+									<h4> Bill Details </h4>
+								</div>
+							</div>
+							<div class = "row">
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_date.label_tag }}
+										{% if form.is_bound %}
+											{% if form.bill_date.errors %}						
+												<input readonly name="bill_date" class="form-control  is-invalid" id="id_bill_date" type="date" value= "{{form.bill_date.value|date:'Y-m-d'}}">
+												{% for error in form.bill_date.errors %}
+													<div class="invalid-feedback">
+													  {{ error }}
+													</div>
+												{% endfor %}
+									
+											{% else %}
+												<input readonly name="bill_date" class="form-control  is-valid" id="id_bill_date" type="date" value= "{{form.bill_date.value|date:'Y-m-d'}}">
+											{% endif %}
+										{% else %}
+											<input readonly name="bill_date" class="form-control" id="id_bill_date" type="date" value= "{{form.bill_date.value|date:'Y-m-d'}}">
+										{% endif %}
+									
+										{% if form.bill_date.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_date.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_for.label_tag }}
+										{% render_field form.bill_for|append_attr:"readonly:readonly" class="form-control" %}
+										{% if form.bill_for.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_for.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+								
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.bill_for_month.label_tag }}
+										{% render_field form.bill_for_month|append_attr:"readonly:readonly" class="form-control" %}
+										{% if form.bill_for_month.help_text %}
+											<small class="form-text text-muted">
+												{{ form.bill_for_month.help_text }}
+											</small>
+										{% endif %}
+									</div>																							
+								</div>
+								
+								<div class = "col-sm-3">
+									<div class="form-group">
+										{{ form.amount.label_tag }}
+										{% if form.is_bound %}
+											{% if form.amount.errors %}
+									
+												{% render_field form.amount|append_attr:"readonly:readonly" class="form-control is-invalid" %}
+												{% for error in form.amount.errors %}
+													<div class="invalid-feedback">
+													  {{ error }}
+													</div>
+												{% endfor %}
+									
+											{% else %}
+												{% render_field form.amount|append_attr:"readonly:readonly" class="form-control valid" %}
+											{% endif %}
+										{% else %}
+											{% render_field form.amount|append_attr:"readonly:readonly" class="form-control" %}
+										{% endif %}
+									
+										{% if form.amount.help_text %}
+											<small class="form-text text-muted">
+												{{ form.amount.help_text }}
+											</small>
+										{% endif %}	
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class = "text-center mb-3">
+								<a href = "{% url 'index' %}" class = "btn btn-primary" >Ok</a>
+							</div>							
+						</div>
+					</form>
+				</div>
+			</div>
+        </div>
+    </div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+
+	{% endblock jscripts %}

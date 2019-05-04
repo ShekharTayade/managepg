@@ -1,0 +1,31 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+		<div id="all">
+			<div id="content" class= " h-25" style="background-color:#fff">
+				<div class="container">
+					<div class="row">    
+						<div class="box">
+							<div class="col-lg-12">
+								<h3>Authorization Required</h3>
+							</div>
+						</div>
+					</div>
+					<div class="row">            
+						<div class="col-lg-12">
+							<p class="text-weight-strong">You do not have authorization to access this page.</p>
+							<p>
+								{{ exception }}
+							</p>
+							<div class = "text-center mb-3"><span style=""><a href="{% url 'index' %} "><i class="fa fa-home">Home</i></a></span></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		{% endblock sitecontent %}		
+		
+		{% block jscripts %}
+		{% endblock jscripts %}		

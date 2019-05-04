@@ -60,7 +60,7 @@
 				<div class = "row">
 					<div class= "col-sm-12">
 						<span style = "font-size:20px;">
-						Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}}</span> <br />
+						Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}} only</span> <br />
 						from Mr/Miss/Mrs &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{rct.guest.first_name}} {{rct.guest.middle_name}} {{rct.guest.last_name}}</span> <br />
 						Residing at &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">Block: '{{room_alloc.block.block_name}}', floor: '{{room_alloc.floor.floor_name}}', Room: '{{room_alloc.room.room_name}}', Bed: '{{room_alloc.bed.bed_name}}'</span><br />
 						for the month of {{rct.receipt_for_month|month_name|default:'N/A'}}.
@@ -83,6 +83,7 @@
 				</div>
 				<br />
 				<br />
+				<div class = "text-center"><small>This is compter generated receipt and does not need signature</small></div>
 				<div class = "row">
 					<div class = "col-sm-12 text-center">
 						<a href = "{% url 'payment_confirmation_pdf' rct.id %}" class = "btn btn-primary">Print</a>

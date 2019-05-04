@@ -42,7 +42,7 @@
 	</doc_dt>
 
 	<doc_txt>
-			Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}}</span> <br />
+			Received sum of rupees &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{amount|title}} only</span> <br />
 			from Mr/Miss/Mrs &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">{{rct.guest.first_name}} {{rct.guest.middle_name}} {{rct.guest.last_name}}</span> <br />
 			Residing at &nbsp;&nbsp;&nbsp;&nbsp;<span style = "text-decoration:underline">Block: '{{room_alloc.block.block_name}}', floor: '{{room_alloc.floor.floor_name}}', Room: '{{room_alloc.room.room_name}}', Bed: '{{room_alloc.bed.bed_name}}'</span><br />
 			towards the {{receipt_type}} for months {% for r in rcts %} {{r.receipt_for_month|month_name}},  {% endfor %}.
@@ -59,6 +59,12 @@
 		</footer_center>
 		<footer_right>
 			For SAM Atithi Pavathi
-		<footer_right>
+		</footer_right>
+		<br/>
+		<br/>
+		<br/>
+		<footer_center>
+			<small>Compter generated receipt, does not need signature</small>
+		</footer_center>		
 	</doc_footer>
 	

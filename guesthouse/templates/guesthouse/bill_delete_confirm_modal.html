@@ -1,0 +1,85 @@
+<!-- Message Modal -->
+<div id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="Delete Message" aria-hidden="true" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Review Receipt Details</h5>
+				<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+			</div>
+			<div class="modal-body">
+				<div >
+					<div class = "mb-4">
+						<div class = "col-sm-12">
+							<div class = "box">
+								<h4>Bill Number: {% if bill %} {{bill.bill_number}}{% else %} Bill does not exist!!{% endif %}<small> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date: {{bill.bill_date|date:'d-M-Y'}} </small></h4>		 
+								<p> <strong>{{bill.get_bill_for_display }}</strong></p>
+								{% if bill.bill_for_month %} Month: {{bill.bill_for_month}} {% endif %} 
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Amount: {{bill.amount}}
+							</div>
+						</div>
+					</div>
+					{% if bill %}
+					<div class="container">
+						<div class = "row">
+							<div class = "col-sm-6">
+								<div class="card">
+									<div class = "row">
+										{% if bill.booking.guest.guest_photo %}
+										<div class = "col-sm-4">
+											<br />
+											<img id = "modal-photo" class="card-img-top img-display" src="{{ rct.booking.guest.guest_photo.url }}" alt="Photo" style="width:100%">
+										</div>
+										<div class = "col-sm-8">
+										{% else %}
+											<div class = "col-sm-12">
+											{% endif %}
+											<div class="card-body">
+												  <h4 id = "modal-name" class="card-title">{{bill.booking.guest.first_name}} {{bill.booking.guest.middle_name}} {{bill.booking.guest.last_name}}</h4>
+												  <div class="card-text">
+													{{bill.booking.guest.current_address_1}} {{bill.booking.guest.current_address_2}}<br />
+													{{bill.booking.guest.current_city}} {{bill.booking.guest.current_state}} {{bill.booking.guest.current_pin_code|default:''}}<br />
+													{{bill.booking.guest.email_id}} <br />
+													{{bill.booking.guest.phone_number}} <br />
+												  </div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class = "col-sm-6">
+								<div class="card">
+									<div class="card-body">
+										<h4 class="card-title">Booking Details</h4>
+										<div class="card-text">
+											Booking Number : {{bill.booking.booking_id}} <br />
+											Booking Date : {{bill.booking.created_date}} <br />
+											Tenure : {% if bill.booking.tenure == 'LT' %} Long Term {% elif bill.booking.tenure == 'ST'%} Short Term {% endif %}<br />
+											Check-in/out: {{bill.booking.check_in_date | date:"d-M-Y"}}  / {{bill.booking.check_out_date | date:"d-M-Y"}}<br />
+											Allocation: {{bill.block.block_name}} / {{room_alloc.floor.floor_name}} / {{room_alloc.room.room_name}} / {{room_alloc.bed.bed_name}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>	
+					<br />
+					<div class = "pull-left">
+						<button class="btn btn-primary pull-left" 
+							onclick="delete_bill('{{ bill.bill_number }}');">
+							<i class="fa fa-trash-o"></i> Delete
+						</button>
+					</div>
+					<div class = "pull-right">
+						<button class="btn btn-primary pull-right" 
+							onclick="$('#delete-modal').modal('hide');">
+							<i class="fa fa-close"></i>Cancel
+						</button>
+					</div>	
+					{% endif %}
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END: Message modal -->		

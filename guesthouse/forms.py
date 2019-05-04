@@ -14,7 +14,8 @@ from django.utils.safestring import mark_safe
 from django.forms import ImageField
 
 from guesthouse.models import Booking, Guest, Room_allocation, Pin_code
-from guesthouse.models import Receipt, Bill, Vacate
+from guesthouse.models import Receipt, Bill, Vacate, Room, Room_conversion
+from guesthouse.models import Bed, Bed_conversion, Vacation_period
 
 from guesthouse.validators import validate_image_size, validate_india_mobile_no, validate_yyyy_mm
 
@@ -34,7 +35,6 @@ class BookingForm(forms.ModelForm):
 		widget=forms.TextInput(),
 		required=False
 	)		
-
 
 	class Meta:
 		model = Booking
@@ -265,4 +265,46 @@ class ReceiptForm(forms.ModelForm):
 		model = Receipt	
 		fields = ('__all__')
 		
+class RoomForm(forms.ModelForm):
+
+	class Meta:
+		model = Room	
+		exclude = ('rates_effective_from', 'rates_effective_to')
+
+class Room_convForm(forms.ModelForm):
+
+	class Meta:
+		model = Room_conversion
+		exclude = ('rates_effective_from', 'rates_effective_to')
+
+class BedForm(forms.ModelForm):
+
+	class Meta:
+		model = Bed
+		fields = ('__all__')		
+
+class Bed_convForm(forms.ModelForm):
+
+	class Meta:
+		model = Bed_conversion
+		fields = ('__all__')
+
+class BillForm(forms.ModelForm):
+	bill_for_month = forms.CharField(
+		widget=forms.TextInput(),
+		required=False,
+		help_text='YYYY-MM (Ex. 2019-01)',
+		validators=[validate_yyyy_mm]
+	)
+	class Meta:
+		model = Bill
+		fields = ('__all__')
 		
+class VacationPeriod(forms.ModelForm):
+	class Meta:
+		model = Vacation_period
+		fields = ('__all__')
+
+
+
+	

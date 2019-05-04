@@ -1,6 +1,7 @@
 {% extends 'guesthouse/guesthouse_base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load l10n %}
 	<!-- Only Override the site content block -->
 	{% block sitecontent %}
     <div id="all">
@@ -161,6 +162,7 @@
 											<input id = "id_vacate_date" name = "vacate_date" 
 												value = "{{form.vacate_date.value|date:'Y-m-d'}}" 
 												type = "date"
+												onchange = "set_vacate_date(this.value, '{{room_alloc.booking_id}}');"
 												class="form-control is-invalid">
 											{% for error in form.vacate_date.errors %}
 												<div class="invalid-feedback">
@@ -172,12 +174,14 @@
 											<input id = "id_vacate_date" name = "vacate_date" 
 												value = "{{form.vacate_date.value|date:'Y-m-d'}}" 
 												type = "date"
+												onchange = "set_vacate_date(this.value, '{{room_alloc.booking_id}}');"
 												class="form-control is-valid">
 										{% endif %}
 									{% else %}
 											<input id = "id_vacate_date" name = "vacate_date" 
 												value = "{{form.vacate_date.value|date:'Y-m-d'}}" 
 												type = "date"
+												onchange = "set_vacate_date(this.value, '{{room_alloc.booking_id}}');"
 												class="form-control">
 									{% endif %}
 									
@@ -258,22 +262,20 @@
 								</div>		
 							</div>
 						</div>
-						{% if outstanding_bills %}
 						<div class = "row">
 							<div class = "col-sm-4">
 							</div>
 							<div class = "col-sm-4">
-								<!--<a href = "#outstanding_bills">Outstanding bills details</a>-->
-								<button type="button" class="btn btn-link" data-toggle="modal" data-target="#outstanding_bills">Outstanding bills details</button>
+							<small><button type="button" class="btn btn-link" data-toggle="modal" data-target="#outstanding_bills">View outstanding bills details</button></small>
 							</div>
 						</div>
-						{% endif %}
 					</div>
 					
 					<div class = "box" id = "settlement">
 						<p class = "text-primary"><strong>Settlement Amount</strong></p>
 						<div class = "row">
 							<div class = "col-sm-3">
+
 							</div>
 							<div class = "col-sm-3">
 								<div class = "box">
@@ -282,7 +284,7 @@
 										<input id = "id_final_payable_amount"
 											name = "final_payable_amount"
 											readonly class = "form-control" 
-											value = "{{payable_amount}}">
+											value = "{{payable_amount|floatformat:'2'}}">
 									</div>
 								</div>
 							</div>						
@@ -293,7 +295,7 @@
 										<input readonly class = "form-control" 
 											id = "id_refund_amount"
 											name = "refund_amount"
-											value = "{{refund_amount}}">
+											value = "{{refund_amount|floatformat:'2'}}">
 									</div>
 								</div>
 							</div>						
@@ -590,6 +592,15 @@
 			enable_disable_refund_fields($(this).val());
 		});		
 	
+		$("#id_maintenance_deductions").on('change', function() {
+			update_amounts();
+		});
+		$("#id_rent_arrears_deductions").on('change', function() {
+			update_amounts();
+		});
+		$("#id_other_deductions").on('change', function() {
+			update_amounts();
+		});
 	});	
 	
 	function enable_disable_refund_box(){
@@ -645,5 +656,69 @@
 				break;
 		}
 	}
+	</script>
+	
+	<script>		
+		function update_amounts(){
+			
+			maintenance = parseFloat($("#id_maintenance_deductions").val())
+			if ( isNaN(maintenance) ){
+				maintenance = 0
+			}
+			rent_arr = parseFloat($("#id_rent_arrears_deductions").val())
+			if ( isNaN(rent_arr) ){
+				rent_arr = 0
+			}
+			others = parseFloat($("#id_other_deductions").val())
+			if ( isNaN(others) ){
+				others = 0
+			}
+			advance = {{adv_amount|unlocalize}}
+			if ( isNaN(advance) ){
+				advance = 0
+			}
+			
+			net_amt = advance - (rent_arr + maintenance + others)
+			
+			if (net_amt > 0){
+				$("#id_refund_amount").val(net_amt);
+				$("#id_final_payable_amount").val('0');
+			} else{
+				pay = net_amt * -1;
+				$("#id_final_payable_amount").val(pay);
+				$("#id_refund_amount").val('0');
+			}
+		}
+	</script>		
+	
+	<script>
+	
+		function set_vacate_date(v_date, booking_number) {
+			$.ajax({
+				url: '{% url "set_vacate_date" %}', 
+				data: {'vacate_date':v_date, 'booking_number':booking_number},
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					result = JSON.parse(data);
+					var rent_arr = result.rent_arrears;
+					var payable_amount = result.payable_amount;
+					var refund_amount = result.refund_amount;
+					
+					$("#id_maintenance_deductions").val('0');
+					$("#id_rent_arrears_deductions").val(rent_arr);
+					$("#id_other_deductions").val('0');
+					$("#id_final_payable_amount").val(payable_amount);
+					$("#id_refund_amount").val(refund_amount);
+					
+					update_amounts();
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});			
+		}				
+
 	</script>
 	{% endblock jscripts %}

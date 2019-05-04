@@ -1,0 +1,125 @@
+{% load widget_tweaks %}
+
+{% if room_convForm %}
+
+<div class = "box">
+	<p><strong>Conversion Details:</strong> 
+	
+	{% if room_convForm.errors or validation_msg%}
+	<div id="errors" class="alert alert-warning alert-dismissable">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		<div class="inner">
+			{% if room_convForm.errors or booking_room_convForm.errors or room_alloaction_room_convForm.errors %}
+				<p>There were issues in the inroom_convFormation you entered. Please correct following:</p>
+			{% endif %}
+			<!-- Error messaging -->
+			{{ room_convForm.non_field_errors }}
+			<ul>
+				<!-- Forms -->
+				{% for field in room_convForm %}
+					{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+				{% endfor %}
+
+				<!-- Validations -->
+				{% for v in validation_msg %}
+					<li>{{v}}</li>
+				{% endfor %}
+				
+			</ul>
+		</div>
+	</div>
+	{% endif %} 
+
+	<div class = "row">
+		<div class = "col-sm-3">
+			<div class="form-group">
+				{{ room_convForm.room_name.label_tag }}
+				{% render_field room_convForm.room_name|append_attr:"readonly:readonly" class="form-control" %}
+				{% if room_convForm.room_name.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.room_name.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-3">
+			<div class="form-group">
+				{{ room_convForm.available_from.label_tag }}
+				{% render_field room_convForm.available_from class="form-control" %}
+				{% if room_convForm.available_from.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.available_from.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-3">
+			<div class="form-group">
+				{{ room_convForm.available_to.label_tag }}
+				{% render_field room_convForm.available_to class="form-control" %}
+				{% if room_convForm.available_to.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.available_to.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-3">
+			<div class="form-group">
+				{{ room_convForm.rent_per_bed.label_tag }}
+				{% render_field room_convForm.rent_per_bed class="form-control" %}
+				{% if room_convForm.rent_per_bed.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.rent_per_bed.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+	</div>
+	<div class = "row">
+		<div class = "col-sm-3">
+			<div class="form-group">
+				<label> No. of Beds in the Room:</label>
+				{% render_field room_convForm.max_beds class="form-control" %}
+				{% if room_convForm.max_beds.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.max_beds.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-3">
+			<div class="form-group">
+				{{room_convForm.advance.label_tag}}
+				{% render_field room_convForm.advance class="form-control" %}
+				{% if room_convForm.advance.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.advance.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+		<div class = "col-sm-3">
+			<div class="form-group">
+				{{room_convForm.short_term_rent_per_bed.label_tag}}
+				{% render_field room_convForm.short_term_rent_per_bed class="form-control" %}
+				{% if room_convForm.short_term_rent_per_bed.help_text %}
+					<small class="form-text text-muted">
+						{{ room_convForm.short_term_rent_per_bed.help_text }}
+					</small>
+				{% endif %}
+			</div>																							
+		</div>
+	</div>
+	<div class = "row">
+		<div class = "col-sm-12">
+			<div class = "text-center">
+				<button class = "btn btn-primary" onclick="confirm_cancel_conversion('{{room_id}}', '{{room_convForm.room_name.value}}');">
+					Cancel Conversion
+				</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+{% endif %}

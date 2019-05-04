@@ -69,16 +69,16 @@
 									<div class="col-md-12 col-lg-12 products-showing">
 										<div class = "text-center">
 											{% if bookings.has_previous %}
-												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('1');"><i class="fa fa-chevron-left"></i> First</button>  
-												<button type = "button" class="btn btn-sm btn-primary"  onclick="get_bookings('{{ bookings.previous_page_number }}');">Prev</button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_details('1');"><i class="fa fa-chevron-left"></i> First</button>  
+												<button type = "button" class="btn btn-sm btn-primary"  onclick="get_details('{{ bookings.previous_page_number }}');">Prev</button>
 											{% else %}
 												<button type = "button" class="btn btn-sm btn btn-secondary disabled" href="#"><i class = "fa fa-chevron-left"></i> First</button>
 												<button type = "button" class="btn btn-sm btn btn-secondary disabled"  href="#">Prev</button>
 											{% endif %}
 											Showing Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
 											{% if bookings.has_next %}
-												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('{{ bookings.next_page_number }}');">Next</button>
-												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bookings('{{ bookings.paginator.num_pages }}');">Last <i class = "fa fa-chevron-right"></i></button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_details('{{ bookings.next_page_number }}');">Next</button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_details('{{ bookings.paginator.num_pages }}');">Last <i class = "fa fa-chevron-right"></i></button>
 											{% else %}
 												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Next</button>
 												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Last <i class = "fa fa-chevron-right"></i></button>

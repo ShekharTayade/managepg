@@ -82,7 +82,7 @@
 								</thead>
 								<tbody>
 									{% for t in result_set %}
-									<tr>
+									<tr {% if t.type == 'Advance Payment' %} style = "background-color:gainsboro" {% endif %}>
 										<td>{{t.id}}</td>
 										<td>{{t.date|date:'m-d-Y'}}</td>
 										<td style="text-align:right">{{t.bill_amt|default_if_none:'-'}}</td>

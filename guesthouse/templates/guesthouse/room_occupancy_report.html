@@ -37,9 +37,11 @@
 							<thead>
 								<th width="10%">Block</th>
 								<th width="10%" style="text-align:right">Total Beds</th>
-								<th width="10%" style="text-align:right">Occupied Beds</th>
-								<th width="10%" style="text-align:right">% Occupancy</th>
-								<th width="10%" style="text-align:right">Blocked Beds</th>
+								<th width="10%" style="text-align:right">Occupied</th>
+								<th width="10%" style="text-align:right; border-right:1px solid gainsboro;">Occupancy %</th>
+								<th width="10%" style="text-align:right">Occupancy - LT</th>
+								<th width="10%" style="text-align:right">Occupancy - ST</th>
+								<th width="10%" style="text-align:right">Blocked</th>
 							</thead>
 							<tbody>
 								{% for t in blocks_total %}
@@ -47,11 +49,25 @@
 									<td >{{t.block__block_name}}</td>
 									<td style="text-align:right">{{t.total_beds}}</td>
 									{% for o in blocks_occ %}
-										{% if t.block__block_name == o.block__block_name %}
+										{% if t.block__block_name == o.block__block_name %}									
 											<td style="text-align:right">{{o.occupied_beds}}</td>
-											<td style="text-align:right">{{t.total_beds|percent:o.occupied_beds}}%</td>
 										{% endif %}
 									{% endfor %}			
+									{% for o in blocks_occ %}
+										{% if t.block__block_name == o.block__block_name %}									
+											<td style="text-align:right;  border-right:1px solid gainsboro;">{{t.total_beds|percent:o.occupied_beds}}%</td>
+										{% endif %}
+									{% endfor %}			
+									{% for o in lt_blocks_occ %}
+										{% if t.block__block_name == o.block__block_name %}
+											<td style="text-align:right">{{o.lt_occupied_beds}}</td>
+										{% endif %}
+									{% endfor %}	
+									{% for o in st_blocks_occ %}
+										{% if t.block__block_name == o.block__block_name %}
+											<td style="text-align:right">{{o.st_occupied_beds}}</td>
+										{% endif %}
+									{% endfor %}
 									{% for b in blocks_blkd %}
 										{% if t.block__block_name == b.block__block_name %}
 											<td style="text-align:right">{{b.blocked_beds}}</td>
@@ -64,8 +80,10 @@
 								<tr>
 									<th>TOTAL</th>
 									<th style="text-align:right">{{total_beds}}</th>
-									<th style="text-align:right">{{occupied_beds}}</th>
-									<th style="text-align:right">{{percent}}%</th>
+									<th style="text-align:right">{{lt_occupied_beds|add:st_occupied_beds}}</th>
+									<th style="text-align:right;  border-right:1px solid gainsboro;">{{percent}}%</th>
+									<th style="text-align:right">{{lt_occupied_beds}}</th>
+									<th style="text-align:right">{{st_occupied_beds}}</th>
 									<th style="text-align:right">{{blocked_beds}}</th>
 								</tr>
 							</tfoot>								
@@ -73,11 +91,9 @@
 						<br />
 					</div>
 				</div>
-				<div class = " box mb-3">
-					<div class = "text-primary"><h4>All Details <i class = "fa fa-chevron-right"></i></h4></div>
-				</div>
 				
 				<div class = "box mb-5">
+					<div class = "text-primary"><h4>All Details <i class = "fa fa-chevron-right"></i></h4></div>
 						<table id = "details" class = "table table-bordered">
 							<thead>
 								<th width="10%">Block</th>
@@ -137,7 +153,8 @@
     function drawChart() {
         var data = google.visualization.arrayToDataTable([
             ["Total Beds", "Beds", { role: "style" } ],
-            ["Occupied", {{occupied_beds}}, "#b87333"],
+            ["Occupied(LT)", {{lt_occupied_beds}}, "#b87333"],
+            ["Occupied(ST)", {{st_occupied_beds}}, "#b87333"],
             ["Blocked", {{blocked_beds}}, "amber"],
             ["Vacant", {{vacant_beds}}, "green"],
         ]);   

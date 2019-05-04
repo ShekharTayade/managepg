@@ -1,0 +1,44 @@
+<!-- Message Modal -->
+<div id="cancel-modal" tabindex="-1" role="dialog" aria-labelledby="Cancel Message" aria-hidden="true" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Confirm Conversion Cancellation</h5>
+				<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+			</div>
+			<div class="modal-body">
+				<div >
+					<div class = "mb-4">
+						<div class = "col-sm-12">
+							<h4>Room: <span id = "cancel-rm-name"></span></h4>
+						</div>
+					</div>
+					<div class="container">
+						<div class = "box">
+							<h4>Are you sure you want to cancel this room conversion?</h4>
+							Any bills generated for current month and receipts accepted for those bills
+							will remain as it is!! <br />
+							After conversion, the room will revert back to the original. 
+						</div>
+					</div>	
+					<br />
+					<div class = "pull-left">
+						<button class="btn btn-primary pull-left" 
+							onclick="cancel_conversion();">
+							<i class="fa fa-trash-o"></i> Cancel Conversion
+						</button>
+					</div>
+					<div class = "pull-right">
+						<button class="btn btn-primary pull-right" 
+							onclick="$('#cancel-modal').modal('hide');">
+							<i class="fa fa-close"></i>Don't Cancel Conversion
+						</button>
+					</div>	
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END: Message modal -->		

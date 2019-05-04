@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Country(models.Model):
@@ -111,16 +112,19 @@ class Floor(models.Model):
 	
 class Room(models.Model):
 	room_id = models.AutoField(primary_key=True)
-	room_name = models.CharField(max_length = 100, blank=False, null=False, unique=True)
+	room_name = models.CharField(max_length = 100, blank=False, null=False)
 	floor = models.ForeignKey(Floor, models.CASCADE, null=False)
 	block = models.ForeignKey(Block, models.CASCADE, null=False)
-	available_from = models.DateField(null=True)
-	available_to = models.DateField(null=True)
+	available_from = models.DateField(null=False, blank=False)
+	available_to = models.DateField(null=False, blank=False)
 	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	max_beds = models.IntegerField(null=False)
 	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	short_term_rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
-
+	short_term_advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	rates_effective_from = models.DateField(null=True, blank=True)
+	rates_effective_to = models.DateField(null=True, blank=True)
+	
 	def __str__(self):
 		return self.room_name
 
@@ -130,12 +134,15 @@ class Room_conversion(models.Model):
 	room_name = models.CharField(max_length = 100, blank=False, null=False, unique=True)
 	floor = models.ForeignKey(Floor, models.CASCADE, null=False)
 	block = models.ForeignKey(Block, models.CASCADE, null=False)
-	available_from = models.DateField(null=True)
-	available_to = models.DateField(null=True)
+	available_from = models.DateField(null=True, blank=False)
+	available_to = models.DateField(null=True, blank=False)
 	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	max_beds = models.IntegerField(null=False)
 	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
 	short_term_rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	short_term_advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	rates_effective_from = models.DateField(null=False, blank=False)
+	rates_effective_to = models.DateField(null=False, blank=False)
 
 	def __str__(self):
 		return self.room_name
@@ -363,8 +370,8 @@ class Vacation_period (models.Model):
 	id = models.AutoField(primary_key=True)
 	guest = models.ForeignKey(Guest, models.PROTECT, null=False)
 	booking = models.ForeignKey(Booking, models.PROTECT, null=False)
-	start_date = models.DateField(null = False)
-	end_date = models.DateField(null = False)
+	start_date = models.DateField(null = False, blank=False)
+	end_date = models.DateField(null = False, blank=False)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)			
 
@@ -382,6 +389,7 @@ class Bill(models.Model):
 		('AR', 'Advance Rent Payment'),
 		('BK', 'Blocking Advance'),
 		('FD', 'Food Service'),
+		('OS', 'Outstanding'),
 		('OT', 'Other Services'),
 	)	
 
@@ -413,6 +421,7 @@ class Receipt(models.Model):
 		('AR', 'Advance Rent Payment'),
 		('BK', 'Blocking Advance'),
 		('FD', 'Food Service'),
+		('OS', 'Outstanding'),
 		('OT', 'Other Services'),
 	)
 	id = models.AutoField(primary_key=True)  # Receipt_number is not the PK, as there can be multiple records with same receipt_number for AR case
@@ -482,6 +491,7 @@ class Occupancy_dashboard(models.Model):
 	block = models.ForeignKey(Block, models.DO_NOTHING, null=False, blank=False)
 	occupied =  models.BooleanField(default=False)
 	blocked =  models.BooleanField(default=False)
+	tenure = models.CharField(max_length = 2, blank=True)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)
 	
 class Vacate(models.Model):
@@ -513,3 +523,35 @@ class Vacate(models.Model):
 	management_approval_by = models.CharField(max_length = 500, default = '', blank = True)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
 	updated_date = models.DateTimeField(auto_now=True, null=False)	
+	
+class Bills_receipts_dashboard(models.Model):
+	id = models.AutoField(primary_key=True)
+	booking = models.ForeignKey(Booking, models.DO_NOTHING, null=False, blank=False)
+	guest = models.ForeignKey(Guest, models.DO_NOTHING, null=False, blank=False)
+	bed = models.ForeignKey(Bed, models.DO_NOTHING, null=False, blank=False)
+	room = models.ForeignKey(Room, models.DO_NOTHING, null=False, blank=False)
+	floor = models.ForeignKey(Floor, models.DO_NOTHING, null=False, blank=False)
+	block = models.ForeignKey(Block, models.DO_NOTHING, null=False, blank=False)
+	expected_advance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True) 
+	advance_rct = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True) 
+	expected_rent = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True) 
+	rent_rct = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True) 
+	expected_food_charges = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True) 
+	food_charges_rct = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True) 
+	outstanding_31Mar = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	os_received = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	outstanding_amont = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+	created_date = models.DateTimeField(auto_now_add=True, null=False)
+	
+class Employee(models.Model):
+	DEPT_CHOICES = (
+		(1, 'Transport'),
+		(2, 'PG'),
+		(3, 'Accounts'),
+	)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	department = models.PositiveSmallIntegerField(choices=DEPT_CHOICES, null=True)
+	is_manager = models.BooleanField('manager status', default=False)
+	is_ceo = models.BooleanField('ceo status', default=False)
+	
+  

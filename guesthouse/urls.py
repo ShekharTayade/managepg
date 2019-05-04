@@ -66,6 +66,11 @@ urlpatterns =[
 	path('vacate_form/<str:booking_number>/', views.vacate_form, name='vacate_form'),
 	url(r'^vacate_confirm/$', views.vacate_confirm, name='vacate_confirm'),
 	path('vacate_print/<int:vacate_id>/', views.vacate_print, name='vacate_print'),
+	url(r'^set_vacate_date/$', views.set_vacate_date, name='set_vacate_date'),
+
+	url(r'^blocking_details/$', views.blocking_details, name='blocking_details'),
+	url(r'^ajax/get_blocking/$', views.get_blocking, name='get_blocking'),
+	url(r'^ajax/cancel_blocking/$', views.cancel_blocking, name='cancel_blocking'),
 	
 
 	url(r'^bills_receipts_report/$', views.bills_receipts_report, name='bills_receipts_report'),
@@ -73,7 +78,42 @@ urlpatterns =[
 	url(r'^ajax/get_bed_occupant_details/$', views.get_bed_occupant_details, name='get_bed_occupant_details'),
 	url(r'^guest_account_booking/$', views.guest_account_booking, name='guest_account_booking'),
 	path('guest_account_report/<str:booking_number>/', views.guest_account_report, name='guest_account_report'),
-			
+	url(r'^booking_report/$', views.booking_report, name='booking_report'),
+	url(r'^ajax/booking_report_Table/$', views.booking_report_table, name='booking_report_table'),
+	url(r'^waiting_list/$', views.waiting_list, name='waiting_list'),	
+	url(r'^monthly_due_bills_report/$', views.monthly_due_bills_report, name='monthly_due_bills_report'),	
+	url(r'^monthly_due_bills_table/$', views.monthly_due_bills_table, name='monthly_due_bills_table'),	
+
+
+	
+	url(r'^print_bills/$', views.print_bills, name='print_bills'),
+	url(r'^ajax/get_bills/$', views.get_bills, name='get_bills'),
+	url(r'^ajax/get_bill/$', views.get_bill, name='get_bill'),
+	url(r'^ajax/delete_bill/$', views.delete_bill, name='delete_bill'),
+	path('bill_form/<str:bill_number>/', views.bill_form, name='bill_form'),
+	path('bill_modify_confirmation/<str:bill_number>/', views.bill_modify_confirmation, name='bill_modify_confirmation'),
+	url(r'^generate_bills/$', views.bills_for_month, name='bills_for_month'),
+	url(r'^ajax/generate_bill_month/$', views.generate_bill_month, name='generate_bill_month'),
+	
+	url(r'^room_conversion/$', views.room_conversion, name='room_conversion'),
+	url(r'^ajax/get_floors_by_block/$', views.get_floors_by_block, name='get_floors_by_block'),
+	url(r'^ajax/get_rooms_by_floor/$', views.get_rooms_by_floor, name='get_rooms_by_floor'),
+	url(r'^ajax/get_beds_by_room/$', views.get_beds_by_room, name='get_beds_by_room'),
+	url(r'^ajax/get_room_conversion/$', views.get_room_conversion, name='get_room_conversion'),
+	url(r'^ajax/get_room_details/$', views.get_room_details, name='get_room_details'),
+	url(r'^ajax/room_form/$', views.room_form, name='room_form'),
+	url(r'^ajax/room_conv_form/$', views.room_conv_form, name='room_conv_form'),
+	path('convert_room/<int:room_id>/', views.convert_room, name='convert_room'),
+	path('room_conversion_confirmation/<int:room_id>/', views.room_conversion_confirmation, name='room_conversion_confirmation'),
+	url(r'^ajax/cancel_conversion/$', views.cancel_conversion, name='cancel_conversion'),
+
+	url(r'^manage_room/$', views.manage_room, name='manage_room'),
+	url(r'^ajax/room_detailsForm/$', views.room_detailsForm, name='room_detailsForm'),
+	url(r'^room_modify/$', views.room_modify, name='room_modify'),
+
+	url(r'^search_booking_vac_period/$', views.search_booking_vac_period, name='search_booking_vac_period'),
+	path('vac_period/<str:booking_number>/', views.vac_period, name='vac_period'),
+	
 ]
 	
 if settings.DEBUG:

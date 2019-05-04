@@ -1,0 +1,91 @@
+							{% csrf_token %}
+							<h1>Bills</h1>
+							<p class="text-muted">{% if count > 0 %} {{ count }} bills found {% else %} 0 bills found{% endif %}</p>
+							<div class="table table-responsive">
+								<table id = "receiptsTbl" class="table table-responsive">
+									<thead>
+										<tr>
+											<th width="10%">Bill No.</th>
+											<th width="10%">Booking No.</th>
+											<th width="10%">Month</th>
+											<th width="10%">Amount</th>
+											<th width="25%">Name</th>
+											<th width="15%">Bill Type</th>
+											<th width="15%">Contact</th>
+											<th width="5%"></th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for i in bills %}
+										<tr>
+											<td>{{i.bill_number}}<br/><small> {{i.bill_date|date:'d-m-y'}}</small></td>
+											<td>{{i.booking_id}}</td>
+											<td>{{i.bill_for_month}}</td>
+											<td>{{i.amount}}</td>
+											<td>{{i.guest.first_name}} {{i.guest.middle_name}} {{i.guest.last_name}}</td>
+											<td><small>{{i.get_bill_for_display}}</small></td>
+											<td><small>
+												{% if i.guest.phone_number %} Ph: {{i.guest.phone_number}} {% endif %}
+												{% if i.guest.email_id %}<br /> Email:{{i.guest.email_id}} {% endif %}
+												</small>
+											</td>
+											<td>	
+												
+												<ul class = "list-inline">
+													<li class="list-inline-item">
+														<button class = "btn btn-link" 
+															style = "cursor: pointer; color:red;"
+															data-toggle="tooltip" title="Delete Bill" 
+															onclick = "confirm_bill_delete('{{i.bill_number}}');"
+															type = "button">
+															<i class="fa fa-trash-o fa-lg"></i>
+														</button>											
+													</li>												
+													<li class="list-inline-item">
+														<a class = "btn btn-link" 
+															href = "{% url 'bill_form' i.bill_number %}" 
+															style = "cursor: pointer; color:red;"
+															data-toggle="tooltip" title="Modify Bill" 
+															type = "button">
+															<i class="fa fa-edit fa-lg"></i>
+														</a>											
+													</li>												
+												</ul>
+												
+											</td>
+										</tr>
+										{% empty %}
+										<tr>
+											<td colspan = "5" ><strong>No Bills Found!</strong></td>
+										</tr>
+										{% endfor receipts %}
+										
+										
+									</tbody>
+									<tfoot>
+									</tfoot>
+								</table>
+							</div>
+							<div class="box info-bar">
+								<div class="row">
+									<div class="col-md-12 col-lg-12 products-showing">
+										<div class = "text-center">
+											{% if bills.has_previous %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bills('1');"><i class="fa fa-chevron-left"></i> First</button>  
+												<button type = "button" class="btn btn-sm btn-primary"  onclick="get_bills('{{ bills.previous_page_number }}');">Prev</button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled" href="#"><i class = "fa fa-chevron-left"></i> First</button>
+												<button type = "button" class="btn btn-sm btn btn-secondary disabled"  href="#">Prev</button>
+											{% endif %}
+											Showing Page {{ bills.number }} of {{ bills.paginator.num_pages }}
+											{% if bills.has_next %}
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bills('{{ bills.next_page_number }}');">Next</button>
+												<button type = "button" class="btn btn-sm btn-primary" onclick="get_bills('{{ bills.paginator.num_pages }}');">Last <i class = "fa fa-chevron-right"></i></button>
+											{% else %}
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Next</button>
+												<button type = "button" class="btn btn-sm btn-secondary disabled" href="#">Last <i class = "fa fa-chevron-right"></i></button>
+											{% endif %}				
+										</div>
+									</div>
+								</div>
+							</div>
