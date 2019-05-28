@@ -43,6 +43,11 @@ def guesthouselogin(request):
 			#return render(request, 'eStore/estore_base.html', {
 			#	'username' : request.user.username, 'auth_user' : 'FALSE'})
 	else:
+		# This is required as front checks for message object and displays
+		# login dialog box only when the message objects is present
+		if not request.user.is_authenticated:
+			messages.add_message(request, messages.INFO, 'Nothing')		
+		
 		return render(request, 'guesthouse/guesthouse_base.html')
 
 def is_manager(user):

@@ -1,0 +1,118 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load utils %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li class="breadcrumb-item"><a href="{% url 'monthly_bills_receipts_report' %}">Bills-Receipts - Month</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Monthly Bills-Receipts Report</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Month: {{month}}</h3>
+						</div>
+					</div>
+				</div>
+
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class = "box">
+							<table id = "details" class = "table table-bordered">
+								<thead>
+									<th width="10%" >Booking No.</th>
+									<th width="25%" >Name</th>
+									<th width="10%" >Room</th>
+									<th width="10%" >Doc Number</th>
+									<th width="10%" >Date</th>
+									<th width="10%" >Bill Amount</th>
+									<th width="10%" >Receipt Amount</th>
+									<th width="15%" >Type</th>
+								</thead>
+								<tbody>
+									{% for t in result_set %}
+									<tr >
+										<td><a style="text-decoration:underline;" href="{% url 'guest_account_report' t.booking_id %}" >{{t.booking_id}}</a></td>
+										<td>{{t.guest_name}}</td>
+										<td>{{t.alloc}}</td>
+										<td>{{t.id}}</td>
+										<td>{{t.date|date:'m-d-Y'}}</td>
+										<td style="text-align:right">{{t.bill_amt|default_if_none:'-'}}</td>
+										<td style="text-align:right">{{t.rct_amt|default_if_none:'-'}}</td>
+										<td>{{t.type}}</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+								<tfoot>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">{{total_bill_amt|default_if_none:'-'}}</td>
+										<td style="text-align:right">{{total_rct_amt|default_if_none:'-'}}</td>
+										<td></td>
+									</tr>
+								</tfoot>								
+							</table>
+							<br />
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	
+	<script>
+    $(document).ready(function() {
+      
+        table = $('#details').DataTable( {
+        retrieve: true,
+        paging: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel',
+                messageTop: '{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}',
+                title : "Guest Account Report - Booking No.: {{booking.booking_number}}"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: '{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}',
+                title : "Guest Account Report - Booking No.: {{booking.booking_number}}"
+            },
+            {
+                extend: 'print',
+                messageTop: '{{booking.guest.first_name}} {{booking.guest.middle_name}} {{booking.guest.last_name}}',
+                title : "Guest Account Report - Booking No.: {{booking.booking_number}}"
+			}
+        ]
+        
+        } );
+    } );    	
+	
+	</script>
+		
+	{% endblock jscripts %}

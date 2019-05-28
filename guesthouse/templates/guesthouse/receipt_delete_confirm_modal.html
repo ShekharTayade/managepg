@@ -1,3 +1,4 @@
+{% load l10n %}
 <!-- Message Modal -->
 <div id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="Delete Message" aria-hidden="true" class="modal fade">
 	<div class="modal-dialog modal-lg">
@@ -66,7 +67,7 @@
 					<br />
 					<div class = "pull-left">
 						<button class="btn btn-primary pull-left" 
-							onclick="delete_receipt('{{ rct.id }}');">
+							onclick="delete_receipt('{{ rct.id|unlocalize }}');">
 							<i class="fa fa-trash-o"></i> Delete
 						</button>
 					</div>

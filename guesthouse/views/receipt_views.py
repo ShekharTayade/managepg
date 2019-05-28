@@ -19,11 +19,14 @@ from django.template.loader import render_to_string
 from django.core.files.storage import FileSystemStorage
 
 from .views import *
+from guesthouse.views import bill_views
+
 from guesthouse.forms import AdvReceiptForm, AdvReceiptForm_AR, ReceiptForm
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation, Bill, Receipt
 from guesthouse.models import Generate_number_by_month, Bed, Room, Floor, Block
 from guesthouse.models import Room_allocation, Room_conversion
 
+from guesthouse.views import user_is_manager
 
 today = datetime.date.today()
 
@@ -336,7 +339,7 @@ def payment_confirmation_AR(request, rct_no):
 		room_alloc = Room_allocation.objects.filter(booking_id = rct.booking_id, 
 			allocation_end_date__isnull = True).first()
 	
-	amount = num2words(rct.amount)
+	amount = num2words(rct.amount*4)
 	
 	return render(request, 'guesthouse/payment_confirmation_AR.html', {'rct':rct, 'rcts':rcts, 
 		'gh':gh, 'room_alloc':room_alloc, 'amount':amount, 'receipt_type':receipt_type})		
@@ -399,7 +402,7 @@ def payment_confirmation_pdf_AR(request, rct_no):
 		room_alloc = Room_allocation.objects.filter(booking_id = rct.booking_id, 
 			allocation_end_date__isnull = True).first()
 	
-	amount = num2words(rct.amount)
+	amount = num2words(rct.amount*4)
 
 		
 	html_string = render_to_string('guesthouse/payment_confirmation_pdf_AR.html', {'rct':rct, 
@@ -548,6 +551,11 @@ def get_net_advance( request):
 	r_adv_amt = 0
 	adv_amt = 0
 	if room_alloc:
+		rent = 0
+		rent_adv = bill_views.get_room_adv_rent(room_alloc.alloc_id)			
+		adv_amt = rent_adv['advance']	
+		r_adv_amt = rent_adv['advance']	
+		'''
 		room = Room.objects.filter( available_from__lte = today,
 			available_to__gte = today, room_ = room_alloc.room_id,
 			rates_effective_from__lte = today, rates_effective_to__gte = today ).first()
@@ -572,7 +580,7 @@ def get_net_advance( request):
 				if room: 
 					r_adv_amt = room.short_term_advance 
 					adv_amt = room.short_term_advance
-
+	'''
 	if adv_rct['amount__sum']:
 		adv_amt = adv_amt - adv_rct['amount__sum']
 	if blk_rct['amount__sum']:
@@ -613,6 +621,7 @@ def get_monthly_adv_rent(request):
 	return JsonResponse({'adv_rent_with_disc':adv_rent_with_disc})
 	
 @login_required
+@user_is_manager
 def receipt_modify(request, rct_id):
 
 	rct = Receipt.objects.get(pk=rct_id)
@@ -638,6 +647,7 @@ def get_receipt(request):
 	'rct':rct}) 
 
 @csrf_exempt
+@user_is_manager
 def delete_receipt(	request):
 
 	rct_id = request.POST.get('rct_id', '')

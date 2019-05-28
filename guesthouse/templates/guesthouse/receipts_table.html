@@ -1,3 +1,4 @@
+							{% load l10n %}
 							{% csrf_token %}
 							<h1>Receipts</h1>
 							<p class="text-muted">{% if count > 0 %} {{ count }} receipts found {% else %} 0 receipts found{% endif %}</p>
@@ -50,7 +51,7 @@
 														<button class = "btn btn-link" 
 															style = "cursor: pointer; color:red;"
 															data-toggle="tooltip" title="Delete Receipt" 
-															onclick = "confirm_receipt_delete('{{i.id}}');"
+															onclick = "confirm_receipt_delete('{{i.id|unloalize}}');"
 															type = "button">
 															<i class="fa fa-trash-o fa-lg"></i>
 														</button>											

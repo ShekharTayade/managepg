@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="robots" content="all,follow">
+		<!-- Bootstrap CSS-->
+		<link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+				
+		<!-- Font Awesome CSS-->
+		<link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">
+		<!-- Google fonts - Roboto -->
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100">
+		<!-- Custom stylesheet -->
+		<link rel="stylesheet" href="{% static  'css/custom.css' %}">
+		<!-- theme stylesheet-->
+		<link rel="stylesheet" href="{% static 'css/style.default.css' %}" id="theme-stylesheet">
+		<!-- theme stylesheet-->
+		<link rel="stylesheet" href="{% static 'css/home-page-style.css' %}" id="theme-stylesheet">
+
+	</head>
+
+	<body>
+        <div class="container">
+			<div class="row">
+				Dear <strong> {{guest_name}}</strong>,
+				<br />
+			</div>
+			<div class = "row">
+				<br />
+				The payment for {{bill.get_bill_for_display}} is now overdue for the month of {{bill.bill_for_month}}.<br/>
+				Please make the payment at the earliest.
+				<br />
+				<br />
+				<br />
+				<br />
+				<p>With warm regards,<br />
+					SAM Atithi Pvathi<br/>			
+				</p>
+			</div>
+		</div>
+
+	</body>
+</html>

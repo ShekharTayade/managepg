@@ -154,7 +154,7 @@ def new_booking(request):
 		
 		if booking_number == '' :
 
-			booking_form = BookingForm(prefix="booking", initial={'food_option': True})
+			booking_form = BookingForm(prefix="booking", initial={'food_option': True, 'food_preference':'VEG'})
 
 			guest_form = GuestForm(prefix="guest",
 					initial={'current_state': 'KARNATAKA', 'permanent_state':'KARNATAKA',
@@ -325,7 +325,15 @@ def applyBookingValidations(guest_form, booking_form, room_allocation_form):
 				if diff > 1:
 					msg.append("Room Allocation -> Short Term stay can't be more than 1 month")
 					result = False
-	
+
+		if 'booking-food_option' not in booking_form.data:
+			msg.append("Personal Details  -> Please check Food option. It is mandatory.")
+			result = False
+		if not (booking_form.data['booking-food_preference'] == 'VEG' or booking_form.data['booking-food_preference'] == 'NON-VEG'):
+			msg.append("Personal Details  -> Please select Food preference.")
+			result = False
+			
+					
 	if room_allocation_form:
 		if booking_form:
 			if booking_form.data['booking-check_in_date'] != '' and room_allocation_form.data['room-bed'] == '':
@@ -690,8 +698,12 @@ def change_room_bed(request):
 		room_allocation = Room_allocation.objects.filter(
 			booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
 				'block', 'floor','room','bed').order_by('-updated_date').first()
-	
+
+		return render(request, 'guesthouse/change_room_bed.html', 
+			{'room_allocation':room_allocation, 'msg':msg} )	
+			
 	elif request.method == 'POST':	
+	
 		booking_number = request.POST.get('booking_number', '')
 		check_in_str = request.POST.get('check_in_date', '')
 		check_out_str = request.POST.get('check_out_date', '')
@@ -710,6 +722,8 @@ def change_room_bed(request):
 		room_allocation = Room_allocation.objects.filter(
 			booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
 				'block', 'floor','room','bed').order_by('-updated_date').first()
+
+		curr_booking = Booking.objects.get(pk = booking_number)
 
 		if block_id == [''] or floor_id == [''] or room_id == [''] or bed_id == ['']:
 			msg = "Block, Floor, Room and Bed are required"
@@ -732,18 +746,21 @@ def change_room_bed(request):
 					if check_in_date >= check_out_date:
 						msg = "Check-out should be greater than check-in date"
 						err_flag = True
+
+				if check_in_date.date() <= curr_booking.check_in_date:
+					msg = "New room check-in date can't be same as or earlier than current check-in date"
+					err_flag = True
 						
 				# Allocate new room, bed only if there are no errors.
 				if err_flag == False:
 					# End existing allocation
-					curr_booking = Booking.objects.get(pk = booking_number)
 					b = Booking(
 							booking_number = booking_number,
 							guest = curr_booking.guest,
 							guesthouse = curr_booking.guesthouse,
 							check_in_date = curr_booking.check_in_date,
 							check_in_time = check_in_time,
-							check_out_date = check_in_date - datetime.timedelta(days = 1),
+							check_out_date = check_out_date,
 							check_out_time = check_out_time,
 							food_option = curr_booking.food_option,
 							food_preference = curr_booking.food_preference,
@@ -756,12 +773,12 @@ def change_room_bed(request):
 						alloc_id = room_allocation.alloc_id,
 						booking = room_allocation.booking,
 						guest = room_allocation.guest,
-						bed_id = bed_id[0],
-						room_id = room_id[0],
-						floor_id = floor_id[0],
-						block_id = block_id[0],
+						bed_id = room_allocation.bed_id,
+						room_id = room_allocation.room_id,
+						floor_id = room_allocation.floor_id,
+						block_id = room_allocation.block_id,
 						allocation_start_date = b.check_in_date,
-						allocation_end_date = b.check_out_date,
+						allocation_end_date = check_in_date - datetime.timedelta(days = 1),
 						created_date = room_allocation.created_date	
 					)
 					r.save()
@@ -786,8 +803,8 @@ def change_room_bed(request):
 						booking_id = booking_number, bed_id__isnull = False).select_related('guest', 'booking',
 							'block', 'floor','room','bed').order_by('-updated_date').first()			
 			
-	return render(request, 'guesthouse/change_room_bed.html', 
-		{'room_allocation':room_allocation, 'msg':msg} )	
+		return render(request, 'guesthouse/change_room_bed_confirm.html', 
+			{'room_allocation':room_allocation, 'msg':msg} )			
 
 	
 def booking_form(request, booking_number):

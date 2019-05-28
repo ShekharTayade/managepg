@@ -16,6 +16,7 @@ from django.db.models import Count, Q, Max, Sum
 from decimal import Decimal
 
 from .views import *
+from guesthouse.views import bill_views
 
 from .bill_views import generate_bills_for_month, get_outstanding_bills
 from guesthouse.forms import Room_allocationForm, Vacate
@@ -178,6 +179,9 @@ def process_vacate(booking_number, alloc_end_date):
 	##########################
 	## 	Get rent for the room
 	rent = 0
+	rent_adv = bill_views.get_room_adv_rent(room_alloc.alloc_id)			
+	rent = rent_adv['rent']		
+	'''
 	if room_alloc:
 		room_conv = Room_conversion.objects.filter(room_id = room_alloc.room_id, available_from__lte = alloc_end_dt,
 					available_to__gte = alloc_end_dt).first()
@@ -191,7 +195,7 @@ def process_vacate(booking_number, alloc_end_date):
 				rent = room_alloc.room.rent_per_bed
 			else:
 				rent = room_alloc.room.short_term_rent_per_bed				
-
+	'''
 	# Check the latest bill month
 	#max_month = Bill.objects.filter( booking_id = booking_number ).aggregate( max_month=Max('bill_for_month') )
 	#if max_month:

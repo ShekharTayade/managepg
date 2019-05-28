@@ -1,0 +1,81 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Monthly Bill Receipts</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "box">
+					<form id="get_details" action = "{% url 'monthly_bills_receipts' %}">
+						<div class = "row">
+							<div class = "col-sm-3">
+								<div class="form-group">
+									<label> Bills Receipts for Month:</label>
+									<input type = "text" 
+										id = "gen_month"
+										name = "month"
+										class = "form-control"
+										pattern = "^([12]\d{3}-(0[1-9]|1[0-2]))"
+										required>
+									<small>Enter billing month YYYY-MM (Ex. 2019-01)</small>
+								</div>
+							</div>
+							<div class = "col-sm-3">
+								<div class="form-group">
+									<label>&nbsp;</label>
+									<div class = "text-center mb-3">
+										<button class = "btn btn-primary" 
+										type="submit">
+											Get Details
+										</button>
+									</div>							
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	<script>	
+		$( document ).ready(function() {
+			var d = new Date();
+			var year = d.getFullYear().toString();
+			var d = new Date();
+			var mth = d.getMonth() + 1;
+
+			var month = zeroPad(mth);
+			document.getElementById("gen_month").value = year + "-" + month;
+			
+			$("#msg").hide(100);
+		});	
+	</script>
+	
+	<script>
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}
+	</script>
+
+	{% endblock jscripts %}	

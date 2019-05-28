@@ -246,10 +246,28 @@
 				placement:"bottom"            
 			});	
 
+			var checkin_dt = new Date();
+			checkin_dt.setDate( checkin_dt.getDate() + 1);
+			var to_dt = checkin_dt.getDate();
+			var to_mn = checkin_dt.getMonth();
+			var to_mn = to_mn + 1; //Javascript month start from 0
+			var to_yy = checkin_dt.getFullYear();
+			
+			$("#check_in_date").val( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
+			
 			if ($("#check_in_date").val() != 'undefined') {
 				get_blocks($("#check_in_date").val());
 			}
 		});
+		
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}		
 	</script>
 
 	<script>

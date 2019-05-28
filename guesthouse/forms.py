@@ -34,7 +34,7 @@ class BookingForm(forms.ModelForm):
 	guesthouse = forms.CharField(
 		widget=forms.TextInput(),
 		required=False
-	)		
+	)
 
 	class Meta:
 		model = Booking

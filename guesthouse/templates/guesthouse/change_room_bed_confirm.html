@@ -1,0 +1,138 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Change Room, Bed</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Room, Bed Allocation Complete</h3>
+							<p style = "text-primary"> Room, Bed changes done as per the details below</p>
+						</div>
+					</div>			
+				</div>
+				{% if room_allocation %}
+				<div class = "row">
+					<div class = "col-sm-4">
+						<h4>Guest Details</h4>
+						<div class="box info-bar">
+							{% if room_allocation.guest.guest_photo %}
+							<img id = "modal-photo" class="card-img-top img-display" src="{{ room_allocation.guest.guest_photo.url }}" alt="Photo" style="width:100%">
+							{% endif %}
+							<h4 id = "modal-name" class="card-title text-center">{{room_allocation.guest.first_name}} {{room_allocation.guest.middle_name}} {{room_allocation.guest.last_name}}</h4>
+							<div class="card-text">
+								{{room_allocation.guest.current_address_1}} {{room_allocation.guest.current_address_2}}<br />
+								{{room_allocation.guest.current_city}} {{room_allocation.guest.current_state}} {{room_allocation.guest.current_pin_code|default:''}}<br />
+								{{room_allocation.guest.email_id}} <br />
+								{{room_allocation.guest.phone_number}}
+							</div>
+						</div>
+					</div>
+					<div class = "col-sm-8">
+						<h4>Booking Number : {{room_allocation.booking_id}}</h4>
+						
+						{% if msg %}
+							<div id="errors" class="alert alert-warning alert-dismissable">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<div class="inner">
+									<ul>
+										<!-- Forms -->
+										<li>{{msg}}</li>
+										
+									</ul>
+								</div>
+							</div>
+						{% endif %}
+						
+						<div class = "box info-bar">
+							<div class = "row">
+								<div class = "col-sm-6">
+									<div class="form-group">
+										Block
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.block.block_name}}" />
+									</div>
+								</div>
+								<div class = "col-sm-6">
+									<div class="form-group">
+										Floor
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.floor.floor_name}}" />
+									</div>
+								</div>
+								<div class = "col-sm-6">
+									<div class="form-group">
+										Room
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.room.room_name}}" />
+									</div>
+								</div>
+								<div class = "col-sm-6">
+									<div class="form-group">
+										Bed
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.bed.bed_name}}" />
+									</div>
+								</div>													
+							</div>
+							<div class = "row ">
+								<div class = "col-sm-3">
+									<div class="form-group">
+										Check-in Date
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.allocation_start_date|date:'d-m-Y'}}" />
+									</div>
+								</div>
+								<div class = "col-sm-3">
+									<div class="form-group">
+										Check-in Time
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.booking.check_in_time|time:'H:i'}}" />
+									</div>
+								</div>
+								<div class = "col-sm-3">
+									<div class="form-group">
+										Check-out Date
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.allocation_end_date|date:'d-m-Y'}}" />
+									</div>
+								</div>
+								<div class = "col-sm-3">
+									<div class="form-group">
+										Check-out Time
+										<input disabled class = "form-control" 
+											value = "{{room_allocation.booking.check_out_time|time:'H:i'}}" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				{% endif %}
+				<!-- END`: Col-12 -->					
+			</div>
+        </div>
+    </div>
+
+	{% include 'guesthouse/message-modal_ok.html' %}
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	{% endblock jscripts %}

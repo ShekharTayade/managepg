@@ -7,3 +7,4 @@ from .reports_views import *
 from .vacate_views import *
 from .room_conversion_views import *
 from .send_mail import *
+from .send_sms import *

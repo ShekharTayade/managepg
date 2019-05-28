@@ -71,6 +71,7 @@ class Guesthouse (models.Model):
 	month_year_suffix = models.CharField(max_length = 6, null=True) # For generating booking numbers
 	logo_website = models.ImageField(upload_to='logo/', null=True)
 	logo_small = models.ImageField(upload_to='logo/', null=True)
+	birthday_card = models.ImageField(upload_to='card/', null=True)
 
 	def __str__(self):
 		return self.gh_name
@@ -178,7 +179,7 @@ class Bed_conversion(models.Model):
 class Food_price(models.Model):
 	FOOD_PREF = (
 		('VEG', 'Vegetarian'),
-		('NOV-VEG', 'Non-Vegetarian'),
+		('NON-VEG', 'Non-Vegetarian'),
 	)	
 	type = models.CharField(max_length = 7, primary_key=True, null=False, choices=FOOD_PREF, default = "VEG")
 	price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
@@ -297,7 +298,7 @@ class Booking (models.Model):
 
 	FOOD_PREF = (
 		('VEG', 'Vegetarian'),
-		('NOV-VEG', 'Non-Vegetarian'),
+		('NON-VEG', 'Non-Vegetarian'),
 	)	
 	
 	ONE_MONTH = 'ST'
@@ -314,8 +315,8 @@ class Booking (models.Model):
 	check_in_time = models.TimeField(null=True, blank=True)
 	check_out_date = models.DateField(null=True, blank=True)
 	check_out_time = models.TimeField(null=True, blank=True)
-	food_option = models.BooleanField(default=False)
-	food_preference = models.CharField(max_length = 7, blank=True, choices=FOOD_PREF, default = "VEG")
+	food_option = models.BooleanField(blank=False, default=True)
+	food_preference = models.CharField(max_length = 7, blank=False, choices=FOOD_PREF, default = "VEG")
 	tenure = models.CharField(max_length = 2, blank=True, choices=TENURE, default = LONG_TERM)
 	account_closed = models.BooleanField(default=False)
 	created_date = models.DateTimeField(auto_now_add=True, null=False)	
@@ -554,4 +555,19 @@ class Employee(models.Model):
 	is_manager = models.BooleanField('manager status', default=False)
 	is_ceo = models.BooleanField('ceo status', default=False)
 	
-  
+class Dormitory_conf(models.Model):
+	BED_TYPES = (
+		('U', 'Upper'),
+		('L', 'Lower'),
+	)
+	bed = models.ForeignKey(Bed, models.PROTECT, null=False, blank=True)
+	room = models.ForeignKey(Room, models.CASCADE, null=False, blank=True)
+	floor = models.ForeignKey(Floor, models.CASCADE, null=False, blank=True)
+	block = models.ForeignKey(Block, models.CASCADE, null=False, blank=True)
+	type = models.CharField(max_length = 1, choices=BED_TYPES, null=True, default = '')
+	rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	short_term_rent_per_bed = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	short_term_advance = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False)
+	rates_effective_from = models.DateField(null=False, blank=False)
+	rates_effective_to = models.DateField(null=False, blank=False)

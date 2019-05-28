@@ -1,0 +1,167 @@
+{% extends 'guesthouse/guesthouse_base.html' %}
+{% load static %}
+{% load l10n %}
+	<!-- Only Override the site content block -->
+	{% block sitecontent %}
+    <div id="all">
+		<div id="content">
+			<div class="container">
+				<div class = "row">
+					<div class="col-lg-12">
+						<!-- breadcrumb-->
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+								<li aria-current="page" class="breadcrumb-item active">Vacate(Check-out) Report</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-sm-12">
+						<div class="box">
+							<h3>Vacate(Check-out) Report</h3>
+						</div>
+					</div>
+				</div>
+				
+				<div class = "box">
+					<div class = "row">
+						<div class = "col-sm-12">
+							<h4> Enter Vacate Date From and To </h4>
+						</div>
+					</div>
+					
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								From Date:
+								<input class = "form-control" id = 'start_date' type = 'date'>
+							</div>																							
+						</div>
+						<div class = "col-sm-3">
+							<div class="form-group">
+								To Date (Blank to fetch all):
+								<input class = "form-control" id = 'end_date' type = 'date'>
+							</div>																							
+						</div>
+					</div>
+						
+					<div class = "row">
+						<div class = "col-sm-3">
+							<div class="form-group">
+								<button class = "btn btn-primary" 	
+									id = "date-submit"
+									onclick = "get_details()" type= "button">
+									Fetch Details
+								</button>
+							</div>
+						</div>
+					</div>					
+				</div>
+				<div id ="display-bookings">
+					{% include 'guesthouse/vacate_report_table.html' %}
+				</div>
+			</div>
+		</div>	
+	</div>
+
+	{% endblock sitecontent %}
+
+
+	{% block jscripts %}
+	
+	<script>
+    $(document).ready(function() {		
+		var today = new Date();
+
+		var from_dt = new Date();
+		from_dt.setDate( from_dt.getDate() - 30) 
+		var fm_dt = from_dt.getDate();
+		var fm_mn = from_dt.getMonth();
+		var fm_mn = fm_mn + 1; //Javascript month start from 0
+		var fm_yy = from_dt.getFullYear();			
+		document.getElementById("start_date").value = ( parseInt(fm_yy) + "-" + zeroPad(fm_mn) + "-" + zeroPad(fm_dt) );
+
+		var to_dt = today.getDate();
+		var to_mn = today.getMonth();
+		var to_mn = to_mn + 1; //Javascript month start from 0
+		var to_yy = today.getFullYear();			
+		
+		document.getElementById("end_date").value = ( parseInt(to_yy) + "-" + zeroPad(to_mn) + "-" + zeroPad(to_dt) );
+
+		// Trigger the inital fetch of orders
+		document.getElementById("date-submit").click();		
+		
+		
+    } );    	
+	</script>	
+
+	<script>
+	function set_datatable(){ 
+        table = $('#bookings').DataTable( {
+        retrieve: true,
+        paging: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        //dom: 'lBfrtip',
+        dom: '<"top"f>Brt<"bottom"ilp><"clear">',
+        buttons: [
+           'copy', 
+            {
+                extend: 'excel', 
+                messageTop: 'Vacate Date from ' + $('#start_date').val() + ' to ' + $('#end_date').val(),
+                title : "Vacate Report"
+            },
+            
+            {
+                extend: 'pdf',
+                messageTop: 'Vacate Date from ' + $('#start_date').val() + ' to ' + $('#end_date').val(),
+                title : "Vacate Report"
+            },
+            {
+                extend: 'print',
+                messageTop: 'Vacate Date from ' + $('#start_date').val() + ' to ' + $('#end_date').val(),
+                title : "Vacate Report"
+			}
+        ]
+        
+        } );
+	}
+	</script>
+	
+	<script>	
+		function zeroPad(val){
+			if(val < 10){
+				ret = "0" + String(val);
+			} else {
+				ret = String(val);
+			}
+			return ret;
+		}		
+	</script>	
+	
+	<script>
+		function get_details(){
+			start_date = $('#start_date').val();
+			end_date = $('#end_date').val();
+			
+			$.ajax({
+				url: '{% url "vacate_report_table" %}', 
+				data: {'start_date':start_date, 'end_date':end_date},
+				dataType: 'text', 
+				type: 'POST',
+				success: function (data) {
+					$("#display-bookings").html(data);
+					set_datatable();
+				},
+				error: function(xhr){
+					alert("An error occured: " + xhr.status + " " + xhr.statusText + " Apologies for the inconvenience!! Please contact support team and we will be happy to help sort it out."); 
+					return;
+				}					
+			});
+		
+		}
+	</script>
+	
+	
+	{% endblock jscripts %}

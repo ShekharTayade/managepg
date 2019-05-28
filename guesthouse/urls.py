@@ -83,6 +83,10 @@ urlpatterns =[
 	url(r'^waiting_list/$', views.waiting_list, name='waiting_list'),	
 	url(r'^monthly_due_bills_report/$', views.monthly_due_bills_report, name='monthly_due_bills_report'),	
 	url(r'^monthly_due_bills_table/$', views.monthly_due_bills_table, name='monthly_due_bills_table'),	
+	url(r'^monthly_bills_receipts_report/$', views.monthly_bills_receipts_report, name='monthly_bills_receipts_report'),	
+	url(r'^monthly_bills_receipts/$', views.monthly_bills_receipts, name='monthly_bills_receipts'),	
+	url(r'^vacate_report/$', views.vacate_report, name='vacate_report'),
+	url(r'^ajax/vacate_report_Table/$', views.vacate_report_table, name='vacate_report_table'),
 
 
 	
@@ -113,7 +117,7 @@ urlpatterns =[
 
 	url(r'^search_booking_vac_period/$', views.search_booking_vac_period, name='search_booking_vac_period'),
 	path('vac_period/<str:booking_number>/', views.vac_period, name='vac_period'),
-	
+
 ]
 	
 if settings.DEBUG:

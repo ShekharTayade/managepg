@@ -14,10 +14,13 @@ from django.http import JsonResponse
 from guesthouse.decorators import user_is_manager
 
 from .views import *
+from guesthouse.views import bill_views
+
 from guesthouse.models import Guesthouse, Booking, Guest, Room_allocation, Bill
 from guesthouse.models import Receipt, Food_price, Vacation_period, Block, Floor
-from guesthouse.models import Generate_number_by_month, Billing_error, Bills_receipts_dashboard
-from guesthouse.models import Room_conversion, Bed_conversion, Room, Bed, Occupancy_dashboard
+from guesthouse.models import Generate_number_by_month, Billing_error, Vacate
+from guesthouse.models import Room_conversion, Bed_conversion, Room, Bed, Dormitory_conf
+from guesthouse.models import Occupancy_dashboard, Bills_receipts_dashboard
 
 today = datetime.datetime.today()
 
@@ -212,7 +215,8 @@ def guest_account_report(request, booking_number):
 @login_required		
 def bills_receipts_report(request):
 
-	room_alloc = Room_allocation.objects.filter( Q(allocation_start_date__lte = today) &
+	room_alloc = Room_allocation.objects.filter( Q(booking__account_closed = False) &
+		Q(allocation_start_date__lte = today) &
 		( Q(allocation_end_date__gte = today, bed_id__isnull = False) |	
 		  Q(allocation_end_date__isnull = True, bed_id__isnull = False) )
 		).order_by('allocation_start_date')
@@ -226,13 +230,13 @@ def bills_receipts_report(request):
 	total_expected_advance = 0
 	total_expected_rent = 0
 	
-	
 	# Remove earlier data
 	Bills_receipts_dashboard.objects.all().delete()
 	for r in room_alloc:
 		row = {}
-
+			
 		# Expected Advance and Rent
+		'''
 		r_conv = Room_conversion.objects.filter(room_id = r.room_id, 
 				available_from__lte = r.allocation_start_date).last()
 		expected_adv = 0
@@ -246,7 +250,11 @@ def bills_receipts_report(request):
 				expected_adv = r.room.advance
 			else:
 				expected_adv = r.room.short_term_advance
-			
+		
+		'''
+		rent_adv = bill_views.get_room_adv_rent(r.alloc_id)		
+		expected_adv = rent_adv['advance']
+		
 		# advance receipt
 		adv_rcts = Receipt.objects.filter(booking_id = r.booking_id, 
 				receipt_for__in = ['AD', 'BK']).aggregate(adv_paid=Sum('amount'))
@@ -426,12 +434,16 @@ def monthly_due_bills_report(request):
 @login_required	
 def monthly_due_bills_table(request):
 	month = request.GET.get('month', '')
-	rcts = Receipt.objects.filter(receipt_for_month = month, 
-		bill_id__isnull = False).values_list('bill_id', flat=True)
+	
+	booking_ids = Booking.objects.filter(account_closed = False).values(
+			'booking_number')	
+	
+	rcts = Receipt.objects.filter( 
+		bill_id__isnull = False, booking__account_closed = False).values_list('bill_id', flat=True)
 	
 	# Get unpaid bills 
-	bills = Bill.objects.filter(bill_for_month = month, amount__gt = 0).exclude(
-		bill_number__in = rcts)
+	bills = Bill.objects.filter(bill_for_month = month, amount__gt = 0,
+		booking__account_closed = False).exclude(bill_number__in = rcts)
 	
 	results = []
 	for b in bills:
@@ -459,3 +471,142 @@ def monthly_due_bills_table(request):
 	
 	return render(request, 'guesthouse/monthly_due_bills_table.html', {
 		'bills':results, 'month':month})
+
+@login_required
+def monthly_bills_receipts_report(request):
+	
+	return render(request, 'guesthouse/monthly_bills_receipts_report.html')
+		
+
+@login_required	
+def monthly_bills_receipts(request):
+	month = request.GET.get('month', '')
+	
+	booking = Booking.objects.filter(account_closed = False)
+	booking_ids = Booking.objects.filter(account_closed = False).values(
+		'booking_number')
+
+
+	# Receipts with bill
+	rcts_with_bill = Receipt.objects.filter( 
+		receipt_for_month = month, bill_id__isnull = False, amount__gt = 0,
+				booking__account_closed = False).exclude(
+				receipt_for__in =['AD', 'BK'])
+	rcts_with_bill_ids = Receipt.objects.filter( 
+			receipt_for_month = month, bill_id__isnull = False, amount__gt = 0,
+			booking__account_closed = False).exclude(
+			receipt_for__in =['AD', 'BK']).values_list(
+			'bill_id', flat=True)
+
+	# Receipts without bill
+	rcts_without_bill = Receipt.objects.filter(
+		receipt_for_month = month, bill__isnull = True, amount__gt = 0,
+				booking__account_closed = False).exclude(
+				receipt_for__in =['AD', 'BK'])
+	
+	# All Bills without receipts
+	bills_without_receipts = Bill.objects.filter(
+			bill_for_month = month, amount__gt = 0,
+			booking__account_closed = False).exclude(
+			bill_number__in = rcts_with_bill_ids)
+
+	bills_sum = Bill.objects.filter(
+		bill_for_month = month, amount__gt = 0,
+		booking__account_closed = False).aggregate(bill_amt=Sum('amount'))
+		
+	rcts_sum = Receipt.objects.filter(
+		receipt_for_month = month, amount__gt = 0,
+				booking__account_closed = False).exclude(
+				receipt_for__in =['AD', 'BK']).aggregate(rct_amt=Sum('amount'))
+
+	total_bill_amt = bills_sum['bill_amt']
+	total_rct_amt = rcts_sum['rct_amt']
+		
+	# Result set is Transaction Date, Bill Amt, Rct amt, Type, For_month
+	results = []
+	for r in rcts_without_bill:
+		row = {}
+		room_alloc = Room_allocation.objects.filter(
+			booking_id = r.booking_id).order_by('updated_date').last()
+
+		if room_alloc:
+			row['booking_id'] = r.booking_id
+			row['guest_name'] = r.guest.first_name + " " + r.guest.middle_name + " " + r.guest.last_name
+			row['alloc'] = room_alloc.block.block_name + "/" + room_alloc.floor.floor_name + "/" + room_alloc.room.room_name + "/" + room_alloc.bed.bed_name
+			row['id'] = r.receipt_number
+			row['date'] = r.receipt_date
+			row['bill_amt'] = None
+			row['rct_amt'] = r.amount
+			row['type'] = r.get_receipt_for_display
+			
+			results.append(row)
+	
+	for rb in rcts_with_bill:
+		row = {}
+		room_alloc = Room_allocation.objects.filter(
+			booking_id = rb.booking_id).order_by('updated_date').last()
+		
+		if room_alloc:
+			row['booking_id'] = rb.booking_id
+			row['guest_name'] = rb.guest.first_name + " " + rb.guest.middle_name + " " + rb.guest.last_name
+			row['alloc'] = room_alloc.block.block_name + "/" + room_alloc.floor.floor_name + "/" + room_alloc.room.room_name + "/" + room_alloc.bed.bed_name
+			row['id'] = rb.receipt_number
+			row['date'] = rb.receipt_date
+			row['bill_amt'] = rb.bill.amount
+			row['rct_amt'] = rb.amount
+			row['type'] = rb.get_receipt_for_display
+			
+			results.append(row)
+
+	for b in bills_without_receipts:
+		row = {}
+		room_alloc = Room_allocation.objects.filter(
+			booking_id = b.booking_id).order_by('updated_date').last()
+		if room_alloc:
+			row['booking_id'] = b.booking_id
+			row['guest_name'] = b.guest.first_name + " " + b.guest.middle_name + " " + b.guest.last_name
+			row['alloc'] = room_alloc.block.block_name + "/" + room_alloc.floor.floor_name + "/" + room_alloc.room.room_name + "/" + room_alloc.bed.bed_name
+			row['id'] = b.bill_number
+			row['date'] = b.bill_date
+			row['bill_amt'] = b.amount
+			row['rct_amt'] = None
+			row['type'] = b.get_bill_for_display
+			
+			results.append(row)
+		
+	result_set = sorted(results, key=lambda k: k['date'])	
+	
+	return render(request, 'guesthouse/monthly_bills_receipts.html', {'result_set':result_set, 
+		'total_bill_amt':total_bill_amt, 'total_rct_amt':total_rct_amt, 'booking':booking,
+		'room_alloc':room_alloc, 'month':month})
+
+@login_required
+def vacate_report(request):
+	
+	return render(request, 'guesthouse/vacate_report.html')
+
+@csrf_exempt	
+def vacate_report_table(request):
+
+	from_date = request.POST.get("start_date", '')
+	if from_date != '' :
+		startDt = datetime.datetime.strptime(from_date+ " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	to_date = request.POST.get("end_date", '')
+	if to_date != '' :
+		endDt = datetime.datetime.strptime(to_date+ " 23:59:59", "%Y-%m-%d %H:%M:%S")
+	else:
+		endDt = None
+
+	if endDt:
+		vacate = Vacate.objects.filter(
+			vacate_date__gte = startDt,
+			vacate_date__lte = endDt).select_related('room_alloc').order_by('-vacate_date')
+	else:
+		vacate = Vacate.objects.filter(
+			vacate_date__gte = startDt).select_related('room_alloc').order_by('-vacate_date')
+		
+	count = vacate.count()
+
+	return render(request, 'guesthouse/vacate_report_table.html', {'count':count, 
+		'vacate': vacate, 'startDt':startDt, 'endDt':endDt})				
+	

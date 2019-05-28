@@ -56,6 +56,10 @@
 						<input hidden name = "conv_flag" value = "{{conv_flag}}">
 						<h4>Please use 'Manage Rooms' only to change the availability dates, rent and advance amounts for a room. To change the number of beds in a room please use 'Room Conversion'.</h4>
 						<hr>
+						{% if form.room_name.value|upper == 'DORMITORY' %}
+							<h5 class="text-primary">To change Dormitory room rent, advance etc., please get in touch with support team.</h5>
+						{% else %}
+							
 						<p><strong>Room {{ form.room_name.value }} </strong> 
 						{% if conv_flag %}
 							<span style = "padding-left:5em" > CONVERTED: 
@@ -269,7 +273,7 @@
 							{% endfor %}
 						
 						</div>
-						
+						{% endif %}
 					</form>
 				</div>
 				{% endif %}
